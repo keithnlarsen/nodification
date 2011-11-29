@@ -2,23 +2,26 @@
   "name": "nodification",
   "version": "0.0.1",
   "description": "A small notification server designed to multiplex events to any number of registered  (iOS, or Android) listeners.",
-  "private": true,
   "author": "Keith Larsen <keithnlarsen@gmail.com>",
-  "bin" : {
-    "nodeunit" : "./bin/nodeunit"
+  "engines": {
+    "node": ">= 0.6.0 < 0.7.0"
   },
+
   "dependencies": {
     "express": "2.5.1",
     "jade": ">= 0.0.1",
     "mongoose": ">= 2.3.13"
   },
+
   "devDependencies": {
     "mocha": "*",
     "should": "0.3.2"
   },
+
   "scripts": {
     "test": "make test"
   },
+
   "contributors": [
     { "name": "Keith Larsen", "email": "keithnlarsen@gmail.com" },
     { "name": "Michelle Schuster", "email": "schustermb@gmail.com" }
