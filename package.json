@@ -4,7 +4,7 @@
   "description": "A small notification server designed to multiplex events to any number of registered  (iOS, or Android) listeners.",
   "author": "Keith Larsen <keithnlarsen@gmail.com>",
   "engines": {
-    "node": ">= 0.6.0 < 0.7.0"
+    "node": ">= 0.4.0 < 0.7.0"
   },
 
   "dependencies": {
