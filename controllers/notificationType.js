@@ -8,7 +8,7 @@ module.exports.NotificationTypeController = function(notificationType){
     },
 
     getByName : function(name, callBack) {
-      notificationType.findOne({ name: name}, function(err, instance) {
+      notificationType.findOne({name:name}, function(err, instance) {
         callBack(err, instance);
       });
     },
@@ -26,10 +26,8 @@ module.exports.NotificationTypeController = function(notificationType){
     },
 
     update : function(id, json, callBack){
-//      var options = { safe: true, upsert: false, multi: false};
-
       try {
-        notificationType.update({_id: id}, json, function(err) {
+        notificationType.update({_id:id}, json, function(err) {
           if (err) {
             // TODO: Swallowing this error is bad, but this seems to be thrown when mongo can't find the document we are looking for.
             if (err == 'Error: Element extends past end of object')

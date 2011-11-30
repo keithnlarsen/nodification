@@ -1,7 +1,8 @@
 describe('Nodification.Tests.Unit.Controllers.NotificationTypeController', function(){
 
-  var createJSON = JSON.parse("{\"name\":\"Test\",\"registrationUrl\":\"url\",\"userName\": \"username\",\"password\": \"password\"}");
+  var should = require('should');
   var stub = require('../../stub.js');
+  var createJSON;
   var notificationType;
   var controller;
 
@@ -9,6 +10,7 @@ describe('Nodification.Tests.Unit.Controllers.NotificationTypeController', funct
     // Setup our connection to the database and load our model and controller
     notificationType = new stub();
     controller = require('../../../controllers/notificationType.js').NotificationTypeController(notificationType);
+    createJSON = JSON.parse("{\"name\":\"Test\",\"registrationUrl\":\"url\",\"userName\": \"username\",\"password\": \"password\"}");
     done();
   });
 
@@ -16,8 +18,8 @@ describe('Nodification.Tests.Unit.Controllers.NotificationTypeController', funct
     done();
   });
 
-  describe('.insert(JSON, fn)', function(){
-    it('should call save on a new NotificationType instance', function(done){
+  describe('.insert(json, fn)', function(){
+    it('should call create and return newly created NotificationType', function(done){
       notificationType.create =  new stub(null, createJSON);
 
       controller.insert(createJSON, function(err, actual) {
@@ -30,7 +32,7 @@ describe('Nodification.Tests.Unit.Controllers.NotificationTypeController', funct
       notificationType.create = new stub({message: "error"}, null);
 
       controller.insert(createJSON, function(err, actual) {
-        notificationType.create.called.withNoArguments(createJSON);
+        notificationType.create.called.withArguments(createJSON);
         err.message.should.equal("error");
         done();
       });
@@ -38,82 +40,99 @@ describe('Nodification.Tests.Unit.Controllers.NotificationTypeController', funct
   });
 
 
-  describe('.get(Id, fn)', function(){
+  describe('.get(id, fn)', function(){
     it('should call findById and return the results', function(done){
       notificationType.findById = new stub({message: "error"}, createJSON);
 
       controller.get("anything", function(err, actual) {
-
         notificationType.findById.called.withArguments("anything");
         err.message.should.equal("error");
         actual.should.equal(createJSON);
-
         done();
       });
     });
   });
 
-//
-//  describe('.getByName(name, fn)',function(){
-//    it('should return a single NotificationType when given an existing name', function(done){
-//      controller.getByName('Test', function(err, actual) {
-//        var expected = JSON.parse(createJSON);
-//
-//        actual.name.should.equal(expected.name);
-//        actual.registrationUrl.should.equal(expected.registrationUrl);
-//        actual.userName.should.equal(expected.userName);
-//        actual.password.should.equal(expected.password);
-//
-//        done(err);
-//      });
-//    });
-//  });
-//
-//  describe('.update(Id, JSON, fn)', function(){
-//    it('should update an existing NotificationType', function(done){
-//      controller.update(newId, JSON.parse(updateJSON), function(err, actual) {
-//        var expected = JSON.parse(updateJSON);
-//
-//        actual.name.should.equal(expected.name);
-//        actual.registrationUrl.should.equal(expected.registrationUrl);
-//        actual.userName.should.equal(expected.userName);
-//        actual.password.should.equal(expected.password);
-//
-//        done(err);
-//      });
-//    });
-//    it('should return null when trying to Update a NotificationType That Doesn\'t Exist', function(done){
-//      controller.update(new mongoose.Types.ObjectId('111111111111111111111111'), JSON.parse(updateJSON), function(err, actual) {
-//        should.not.exist(actual);
-//        done(err);
-//      });
-//    });
-//  });
-//
-//  describe('.list(fn)', function(){
-//    it('should return all NotificationTypes', function(done){
-//      controller.list(function(err, actual) {
-//        // TODO: figure out how to test for array
-//        //actual.should.be.a("array");
-//        actual.length.should.be.greaterThan(0);
-//        done(err);
-//      });
-//    });
-//  });
-//
-//  describe('.remove(Id, fn)', function(){
-//    it('should delete person when called with an existing Id', function(done){
-//      controller.remove(newId, function(err, actual) {
-//        // TODO: Figure out how to test ObjectId's
-//        //actual._id.toString().should.equals(newId.toString());
-//        done(err);
-//      });
-//    });
-//    it('should return nulls when called with an Id that doesn\'t exist', function(done){
-//      controller.remove(new mongoose.Types.ObjectId('111111111111111111111111'), function(err, actual) {
-//        should.not.exist(actual);
-//        done(err);
-//      });
-//    });
-//  });
+  describe('.getByName(name, fn)', function(){
+    it('should call findOne passing name and return the results', function(done){
+      notificationType.findOne = new stub({message: "error"}, createJSON);
+
+      controller.getByName("anything", function(err, actual) {
+        notificationType.findOne.called.withArguments({name:"anything"});
+        err.message.should.equal("error");
+        actual.should.equal(createJSON);
+        done();
+      });
+    });
+  });
+
+  describe('.list(fn)', function(){
+    it('should call find and return the results', function(done){
+      notificationType.find = new stub({message: "error"}, createJSON);
+
+      controller.list(function(err, actual) {
+        notificationType.find.called.withArguments({});
+        err.message.should.equal("error");
+        actual.should.equal(createJSON);
+        done();
+      });
+    });
+  });
+
+  describe('.update(id, json, fn)', function(){
+    it('should call update and then findById and return updated record', function(done){
+      notificationType.update =  new stub(null);
+      notificationType.findById = new stub(null, createJSON);
+
+      controller.update("anything", createJSON, function(err, actual) {
+        notificationType.update.called.withArguments({_id:"anything"}, createJSON);
+        notificationType.findById.called.withArguments("anything");
+        actual.should.equal(createJSON);
+        done();
+      });
+    });
+    it('should call update and return error that occurs', function(done){
+      notificationType.update =  new stub({message:"error"});
+
+      controller.update("anything", createJSON, function(err, actual) {
+        notificationType.update.called.withArguments({_id:"anything"}, createJSON);
+        err.message.should.equal("error");
+        done();
+      });
+    });
+    it('should call update and return nulls when \'Error: Element extends past end of object\' occurs', function(done){
+      notificationType.update =  new stub("Error: Element extends past end of object");
+
+      controller.update("anything", createJSON, function(err, actual) {
+        notificationType.update.called.withArguments({_id:"anything"}, createJSON);
+        should.not.exist(err);
+        should.not.exist(actual);
+        done();
+      });
+    });
+  });
+
+  describe('.remove(id, fn)', function(){
+    it('should call findById and then call remove on the record returned', function(done){
+      createJSON.remove = new stub({message:"error"});
+      notificationType.findById = new stub(null, createJSON);
+
+      controller.remove("anything", function(err, actual) {
+        notificationType.findById.called.withArguments("anything");
+        actual.remove.called.withNoArguments();
+        err.message.should.equal("error");
+        actual.should.equal(createJSON);
+        done();
+      });
+    });
+    it('should call findById and then return the error when no record found', function(done){
+      notificationType.findById = new stub({message:"error"}, null);
+
+      controller.remove("anything", function(err, actual) {
+        notificationType.findById.called.withArguments("anything");
+        err.message.should.equal("error");
+        done();
+      });
+    });
+  });
 });

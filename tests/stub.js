@@ -1,6 +1,5 @@
 module.exports = function(err, callBackValue) {
   var stub = function() {
-    //stub.called = true;
     stub.args = arguments;
     stub.thisArg = this;
 
@@ -9,16 +8,19 @@ module.exports = function(err, callBackValue) {
         for (var i = 0; i < arguments.length; i ++) {
           if (JSON.stringify(stub.args[i]) !== JSON.stringify(arguments[i]))
             throw new Error(" Actual arguments: " + JSON.stringify(stub.args[i]) + " does not match expected: " + JSON.stringify(arguments[i]));
-          //return false;
-        }
+          }
         return true;
       },
 
       withAnyArguments: function() {
-        return arguments.length > 0;
+        if (arguments.length == 0)
+          throw new Error(' was not called with any arguments.');
+        return true
       },
 
       withNoArguments: function() {
+        if (arguments.length > 0)
+          throw new Error(' was called with arguments.');
         return arguments.length == 0;
       }
     };

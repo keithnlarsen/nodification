@@ -1,5 +1,5 @@
 # Reporter Types: dot, spec, tap, landing, list, progress, doc, json
-REPORTER = dot
+REPORTER = spec
 UNIT_TESTS = $(shell find tests/unit/ -name '*Test.js')
 INTEGRATION_TESTS = $(shell find tests/integration -name '*Test.js')
 
