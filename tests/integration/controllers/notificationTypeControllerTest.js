@@ -4,24 +4,25 @@ describe('Nodification.Tests.Integration.Controllers.NotificationTypeController'
   var createJSON = JSON.parse("{\"name\":\"Test\",\"registrationUrl\":\"url\",\"userName\": \"username\",\"password\": \"password\"}");
   var updateJSON = JSON.parse("{\"name\":\"Test2\",\"registrationUrl\":\"url2\",\"userName\": \"username2\",\"password\": \"password2\"}");
   var mongoose = require('mongoose');
-  var newId = '';
   var notificationType;
   var controller;
+  var newId = '';
 
   before( function(done){
     // Setup our connection to the database and load our model and controller
     mongoose.connect('mongodb://localhost/nodification-dev');
-    notificationType = require('../../../models/notificationType.js').NotificationType(mongoose);
-    controller = require('../../../controllers/notificationType.js').NotificationTypeController(notificationType);
+    notificationType = require('../../../models/notificationType.js').create(mongoose);
+    controller = require('../../../controllers/notificationTypeController.js').create(notificationType.model);
+
     // Just in case something bad happened, let's clear out the database
-    notificationType.remove({}, function(err){
+    notificationType.model.remove({}, function(err){
       done(err)
     });
   });
 
   after(function(done){
     // Clear out our database once we are done
-    notificationType.remove({}, function(err){
+    notificationType.model.remove({}, function(err){
       done(err)
     });
   });

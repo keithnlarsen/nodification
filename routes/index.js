@@ -1,8 +1,21 @@
+module.exports = function(){
+  var app;
 
-/*
- * GET home page.
- */
+  return {
+    init: function(expressApp){
+      app = expressApp;
+    },
 
-exports.index = function(req, res){
-  res.render('index', { title: 'Express' })
-};
+    index: function(req, res){
+      res.render('index', { title: 'Express' })
+    },
+
+    notificationType: {
+      index: function(req, res){
+        app.controllers.NotificationTypeController.list(function(err, instance){
+          res.send(instance);
+        });
+      }
+    }
+  }
+}();

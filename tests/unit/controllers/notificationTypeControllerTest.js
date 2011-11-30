@@ -2,14 +2,14 @@ describe('Nodification.Tests.Unit.Controllers.NotificationTypeController', funct
 
   var should = require('should');
   var stub = require('../../stub.js');
+  var controller;
   var createJSON;
   var notificationType;
-  var controller;
 
   beforeEach( function(done){
     // Setup our connection to the database and load our model and controller
     notificationType = new stub();
-    controller = require('../../../controllers/notificationType.js').NotificationTypeController(notificationType);
+    controller = require('../../../controllers/notificationTypeController.js').create(notificationType);
     createJSON = JSON.parse("{\"name\":\"Test\",\"registrationUrl\":\"url\",\"userName\": \"username\",\"password\": \"password\"}");
     done();
   });

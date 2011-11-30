@@ -1,12 +1,11 @@
-module.exports.NotificationType = function (mongoose) {
-  var schema = mongoose.Schema;
+var baseModel = require('../libs/basemodel');
 
-  mongoose.model('NotificationType', new schema({
+module.exports = baseModel.extend({
+  name: "NotificationType",
+  fields: {
     name: { type: String, index : { unique : true }},
     registrationUrl: { type: String, required : true },
     userName: String,
     password: String
-  }));
-    
-  return mongoose.model('NotificationType');
-};
+  }
+});
