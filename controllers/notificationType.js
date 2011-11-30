@@ -20,9 +20,7 @@ module.exports.NotificationTypeController = function(notificationType){
     },
 
     insert : function(json, callBack){
-      var instance = new notificationType(json);
-
-      instance.save( function(err){
+      notificationType.create(json, function(err, instance) {
         callBack(err, instance);
       });
     },

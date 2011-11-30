@@ -1,4 +1,4 @@
-describe('Nodification.Controllers.NotificationTypeController', function(){
+describe('Nodification.Tests.Integration.Controllers.NotificationTypeController', function(){
 
   var should = require('should');
   var createJSON = "{\"name\":\"Test\",\"registrationUrl\":\"url\",\"userName\": \"username\",\"password\": \"password\"}";
