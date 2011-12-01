@@ -1,5 +1,4 @@
 var express = require('express');
-var routes = require('./routes');
 var mongoose = require('mongoose');
 
 var app = module.exports = express.createServer();
@@ -7,7 +6,9 @@ var app = module.exports = express.createServer();
 // Configuration
 app.configure(function() {
   app.set('views', __dirname + '/views');
-  app.set('view engine', 'jade');
+//  app.set('view engine', 'jade');
+  app.register('html', require('ejs'));
+  app.set('view engine', 'html');
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(express.cookieParser());
@@ -40,9 +41,12 @@ app.controllers = require('./controllers');
 app.controllers.init(app.models);
 
 // Register Routes
-routes.init(app);
-app.get('/', routes.index);
-app.get('/notificationTypes', routes.notificationType.index);
+app.actions = require('./routes');
+app.actions.init(app);
+
+app.get('/', app.actions.index);
+app.get('/notificationTypes.:format?', app.actions.notificationType.index);
+app.get('/notificationTypes/:id.:format?', app.actions.notificationType.show);
 // TODO: fill in the rest of the crud for NotificationTypes
 
 // Handle all other routes with a NotFound error

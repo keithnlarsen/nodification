@@ -2,6 +2,8 @@ var baseObject = require('./baseobject');
 
 module.exports = baseObject.extend({
   model : null,
+  name: 'controller',
+  plural: 'controllers',
 
   _construct: function(model) {
     this.model = model;

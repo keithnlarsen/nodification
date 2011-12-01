@@ -1,21 +1,18 @@
-module.exports = function(){
+module.exports = function() {
   var app;
+  var notificationRoute = require('./notificationType');
 
   return {
-    init: function(expressApp){
+    notificationType: {},
+
+    init: function(expressApp) {
       app = expressApp;
+
+      this.notificationType = notificationRoute(app);
     },
 
-    index: function(req, res){
-      res.render('index', { title: 'Express' })
-    },
-
-    notificationType: {
-      index: function(req, res){
-        app.controllers.NotificationTypeController.list(function(err, instance){
-          res.send(instance);
-        });
-      }
+    index: function(req, res) {
+      res.render('index.jade', { title: 'Express' });
     }
   }
 }();
