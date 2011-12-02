@@ -29,8 +29,8 @@ mongoose.connect('mongodb://localhost/nodification-dev');
 
 // Register ErrorHandler
 var restErrors = require('./libs/resterrors');
-app.error(restErrors.ErrorHandler);
-app.RestError = restErrors.RestError;
+app.error(restErrors.errorHandler);
+app.restErrors = restErrors.restError;
 
 // Register Models
 app.models = require('./models');
@@ -41,22 +41,25 @@ app.controllers = require('./controllers');
 app.controllers.init(app.models);
 
 // Register Routes
-app.actions = require('./routes');
-app.actions.init(app);
+var routes = require('./routes');
+routes.init(app);
 
-app.get('/', app.actions.index);
-app.get('/notificationTypes.:format?', app.actions.notificationType.index);
-app.get('/notificationTypes/:id.:format?', app.actions.notificationType.show);
-// TODO: fill in the rest of the crud for NotificationTypes
+app.get('/', routes.index);
 
-// Handle all other routes with a NotFound error
-app.use(function(req, res, next) {
-  next(app.RestError.NotFound.create(req.url));
+//app.get('/notificationTypes.:format?', routes.notificationType.index);
+app.get('/notificationTypes.:format?', function (req, res, next){
+  routes.notificationType.index(req, res, next);
 });
 
-// example of how to throw a 500
-app.get('/500', function(req, res, next) {
-  next(new Error('keyboard cat!'));
+app.get('/notificationTypes/:id.:format?', function (req, res, next) {
+  routes.notificationType.show(req, res, next);
+});
+
+// TODO: finish the rest of the CRUD operations for notificationTypes
+
+// Handle all other non-registered routes with a notFound error
+app.use(function (req, res, next) {
+  next(app.restError.notFound.create(req.url));
 });
 
 app.listen(3000);

@@ -1,7 +1,11 @@
-module.exports = {
-  NotificationType: {},
+module.exports = function(){
+  var notificationTypeModel = require('./notificationType.js');
 
-  init: function(mongoose){
-    this.NotificationType = require('./notificationType.js').create(mongoose);
+  return {
+    notificationType: {},
+
+    init: function(mongoose){
+      this.notificationType = notificationTypeModel.create(mongoose);
+    }
   }
-};
+}();

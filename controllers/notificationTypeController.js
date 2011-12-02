@@ -1,6 +1,6 @@
 var baseController = require('../libs/basecontroller');
 
-var controller = baseController.extend({
+var notificationTypeController = baseController.extend({
   name: 'notificationType',
   plural: 'notificationTypes'
 
@@ -12,4 +12,4 @@ var controller = baseController.extend({
 //  }
 });
 
-module.exports = controller;
+module.exports = notificationTypeController;

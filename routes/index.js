@@ -1,14 +1,11 @@
 module.exports = function() {
-  var app;
-  var notificationRoute = require('./notificationType');
+  var notificationTypeRoutes = require('./notificationType');
 
   return {
     notificationType: {},
 
-    init: function(expressApp) {
-      app = expressApp;
-
-      this.notificationType = notificationRoute(app);
+    init: function(app) {
+      this.notificationType = notificationTypeRoutes.create(app.controllers, app.restErrors);
     },
 
     index: function(req, res) {

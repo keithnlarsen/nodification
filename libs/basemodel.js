@@ -1,6 +1,6 @@
 var baseObject = require('./baseobject');
 
-module.exports = baseObject.extend({
+var baseModel = baseObject.extend({
   name: "",
   fields: {},
   model: {},
@@ -11,3 +11,5 @@ module.exports = baseObject.extend({
     this.model = mongoose.model(this.name);
   }
 });
+
+module.exports = baseModel;

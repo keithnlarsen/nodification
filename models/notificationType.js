@@ -1,6 +1,6 @@
 var baseModel = require('../libs/basemodel');
 
-module.exports = baseModel.extend({
+var notificationType = baseModel.extend({
   name: "NotificationType",
   fields: {
     name: { type: String, index : { unique : true }},
@@ -9,3 +9,5 @@ module.exports = baseModel.extend({
     password: String
   }
 });
+
+module.exports = notificationType;

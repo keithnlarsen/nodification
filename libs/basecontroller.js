@@ -1,6 +1,6 @@
 var baseObject = require('./baseobject');
 
-module.exports = baseObject.extend({
+var baseController = baseObject.extend({
   model : null,
   name: 'controller',
   plural: 'controllers',
@@ -70,3 +70,5 @@ module.exports = baseObject.extend({
     });
   }
 });
+
+module.exports = baseController;

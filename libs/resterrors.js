@@ -1,74 +1,67 @@
 var sys = require('sys');
 var baseObject = require('./baseobject');
 
-var baseRestError = function() {
-  var baseRestError = baseObject.extend({
-    name: 'RestError',
-    title: 'Rest Error',
-    description: '',
-    message: '',
+var baseRestError = baseObject.extend({
+  name: 'restError',
+  title: 'Rest Error',
+  description: '',
+  message: '',
 
-    _construct: function(message) {
-      this.message = message;
-      Error.call(this, message);
-      Error.captureStackTrace(this, arguments.callee);
-    },
+  _construct: function(message) {
+    this.message = message;
+    Error.call(this, message);
+    Error.captureStackTrace(this, arguments.callee);
+  },
 
-    toString: function() {
-      return this.title + ": " + this.message;
-    }
-  });
+  toString: function() {
+    return this.title + ": " + this.message;
+  }
+});
 
-  sys.inherits(baseRestError, Error);
+sys.inherits(baseRestError, Error);
 
-  return baseRestError;
-}();
-
-module.exports.BaseRestError = baseRestError;
-
-module.exports.RestError = restError = {
-  BadRequest: baseRestError.extend({
-    name: 'BadRequest',
+var restErrors = {
+  badRequest: baseRestError.extend({
+    name: 'badRequest',
     title: 'Bad Request',
     description: 'The request could not be understood by the server due to malformed syntax.',
     httpStatus: 400
   }),
-  NotFound: baseRestError.extend({
-    name: 'NotFound',
+  notFound: baseRestError.extend({
+    name: 'notFound',
     title: 'Not Found',
     description: 'The requested resource could not be found.',
     httpStatus: 404
   })
 };
 
-module.exports.ErrorMapper = errorMapper = function() {
-  return {
-    'RestError': function(error, request, response) {
-      if (process.env.NODE_ENV == 'debug') {
-        console.log(error);
-      }
-      response.render('restError/restError.jade', {
-        title: error.title,
-        status: error.httpStatus,
-        error: error
-      });
-    },
-    'default': function(error, request, response) {
-      if (process.env.NODE_ENV == 'debug' || process.env.NODE_ENV == 'release') {
-        console.log(error);
-      }
-      response.render('restError/500.jade', {
-        title: 'Error',
-        status: 500,
-        error: error
-      });
-    }
-  }
-}();
+var errorMapper = {
+  'restError': function(error, request, response) {
+    response.render('restError/restError.jade', {
+      title: error.title,
+      status: error.httpStatus,
+      error: error
+    });
+  },
+  'default': function(error, request, response) {
+    console.log(error);
 
-module.exports.ErrorHandler = function(error, request, response) {
+    response.render('restError/500.jade', {
+      title: 'Error',
+      status: 500,
+      error: error
+    });
+  }
+};
+
+var errorHandler = function(error, request, response) {
   var constructorName = error.prototype ? error.prototype.constructor.name : 'default';
   var errorHandler = errorMapper[error.name] || errorMapper[constructorName];
 
   errorHandler(error, request, response);
 };
+
+module.exports.baseRestError = baseRestError;
+module.exports.restErrors = restErrors;
+module.exports.errorMapper = errorMapper;
+module.exports.errorHandler = errorHandler;

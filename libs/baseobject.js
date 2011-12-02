@@ -1,4 +1,4 @@
-module.exports = {
+var baseObject = {
     create: function create() {
        var instance = Object.create(this);
        instance._construct.apply(instance, arguments);
@@ -34,3 +34,5 @@ module.exports = {
         return Object.getPrototypeOf(definedOn)[methodName].apply(this, args);
     }
 };
+
+module.exports = baseObject;

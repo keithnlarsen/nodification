@@ -1,7 +1,11 @@
-module.exports = {
-  NotificationTypeController: {},
+module.exports = function(){
+  var notificationTypeController = require('./notificationTypeController.js');
 
-  init: function(models){
-    this.NotificationTypeController = require('./notificationTypeController.js').create(models.NotificationType.model);
+  return {
+    notificationType: {},
+
+    init: function(models){
+      this.notificationType = notificationTypeController.create(models.notificationType.model);
+    }
   }
-};
+}();

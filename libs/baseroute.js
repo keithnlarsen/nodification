@@ -1,14 +1,24 @@
 var baseObject = require('./baseobject');
 
-module.exports = baseObject.extend({
-  cont : null,
+var baseRoute = baseObject.extend({
+  name: '',
+  controllers: null,
+  controller: null,
+  restError: null,
 
-  _construct: function(controller) {
-    this.cont = controller;
+  _construct: function(controllers, restError) {
+    this.controllers = controllers;
+    this.controller = controllers[this.name];
+    this.restError = restError;
+
+//    console.log(this.controller.list);
   },
 
   index: function(req, res, next) {
-    this.cont.list(function(err, instance) {
+//    console.log(req.url);
+//    console.log(this.controller);
+    var self = this;
+    this.controller.list(function(err, instance) {
       if (err)
         next(new Error('Internal Server Error: see logs for details: ' + err), req, res);
       else if (instance.length == 0) {
@@ -22,36 +32,39 @@ module.exports = baseObject.extend({
         }
 
         var options = {};
-        options[this.cont.plural] = instance.map(function(instance) {
+        options[self.controller.plural] = instance.map(function(instance) {
             return instance.toObject();
         });
 
-        res.render(this.cont.name, options);
+        res.render(self.controller.name, options);
       }
     });
   },
 
   show: function(req, res, next) {
-    this.cont.get(req.params.id, function(err, instance) {
+    var self = this;
+    this.controller.get(req.params.id, function(err, instance) {
       if (err)
         next(new Error('Internal Server Error: see logs for details: ' + err), req, res);
       else if (!instance)
-        next(app.RestError.NotFound.create(this.cont.name + ' Id: "' + req.params.id + '" was not found.'), req, res);
+        next(self.restError.notFound.create(self.controller.name + ' Id: "' + req.params.id + '" was not found.'), req, res);
       else {
         if (req.params.format) {
           if (req.params.format.toLowerCase() == '.json') {
             res.send(instance.toObject());
           }
           else {
-            next(app.RestError.BadRequest.create('The \'' + req.params.format + '\' format is not supported at this time.'), req, res);
+            next(self.restError.badRequest.create('The \'' + req.params.format + '\' format is not supported at this time.'), req, res);
           }
         }
         else {
           var options = {};
-          options[this.cont.name] = instance.toObject();
-          res.render(this.cont.name + '/show', options);
+          options[self.controller.name] = instance.toObject();
+          res.render(self.controller.name + '/show', options);
         }
       }
     });
   }
 });
+
+module.exports = baseRoute;
