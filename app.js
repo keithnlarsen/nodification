@@ -67,7 +67,7 @@ app.post('/notificationTypes/:id.:format?', function (req, res, next) {
 });
 
 app.put('/notificationTypes.:format?', function (req, res, next){
-  routes.notificationType.create(req, res, next);
+  routes.notificationType.add(req, res, next);
 });
 
 // Handle all other non-registered routes with a notFound error
