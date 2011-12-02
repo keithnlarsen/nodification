@@ -1,0 +1,15 @@
+<div>
+  <div id="sub-title">
+	<h3>Notification Type - <%=notificationType.name %></h3>
+  </div>
+  
+  <div id="content">
+	  <form action="/notificationTypes/<%-notificationType._id%>" method="post">
+		<input id="name" name="name" value="<%=notificationType.name %>"/><br/>
+		<input id="registrationUrl" name="registrationUrl" value="<%=notificationType.registrationUrl %>"/><br/>
+		<input id="userName" name="userName" value="<%=notificationType.userName %>"/><br/>
+		<input id="password" name="password" type="password" value="<%=notificationType.password %>"/><br/>
+		<input type="submit" value="Save"/><input type="button" value="Cancel"/>
+	  </form>
+  </div>
+</div>

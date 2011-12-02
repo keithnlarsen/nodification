@@ -60,6 +60,73 @@ var baseRoute = baseObject.extend({
         }
       }
     });
+  },
+
+  edit: function(req, res, next) {
+    var self = this;
+    this.controller.get(req.params.id, function(err, instance) {
+      if (err)
+        next(new Error('Internal Server Error: see logs for details: ' + err), req, res);
+      else if (!instance)
+        next(self.restErrors.notFound.create(self.controller.name + ' Id: "' + req.params.id + '" was not found.'), req, res);
+      else {
+		var options = {};
+		options[self.controller.name] = instance.toObject();
+		res.render(self.controller.name + '/edit', options); 
+      }
+    });
+  },
+
+  new: function(req, res, next) {
+	res.render(this.controller.name + '/new');
+  },
+  
+  update: function(req, res, next) {
+    var self = this;
+    this.controller.update(req.params.id, req.body, function(err, instance) {
+      if (err)
+        next(new Error('Internal Server Error: see logs for details: ' + err), req, res);
+      else if (!instance)
+        next(self.restErrors.notFound.create(self.controller.name + ' Id: "' + req.params.id + '" was not found.'), req, res);
+      else {
+        if (req.params.format) {
+          if (req.params.format.toLowerCase() == '.json') {
+            res.send(instance.toObject());
+          }
+          else {
+            next(self.restErrors.badRequest.create('The \'' + req.params.format + '\' format is not supported at this time.'), req, res);
+          }
+        }
+        else {
+          var options = {};
+          options[self.controller.name] = instance.toObject();
+          res.render(self.controller.name + '/show', options);
+        }
+      }
+    });
+  },
+  
+  add: function(req, res, next) {
+    var self = this;
+    this.controller.insert(req.body, function(err, instance) {
+      if (err)
+        next(new Error('Internal Server Error: see logs for details: ' + err), req, res);
+      else {
+        if (req.params.format) {
+          if (req.params.format.toLowerCase() == '.json') {
+            res.send(instance.toObject());
+          }
+          else {
+            next(self.restErrors.badRequest.create('The \'' + req.params.format + '\' format is not supported at this time.'), req, res);
+          }
+        }
+        else {
+          var options = {};
+          options[self.controller.name] = instance.toObject();
+          res.render(self.controller.name + '/show', options);
+        }
+      }
+    });
   }
 });
 

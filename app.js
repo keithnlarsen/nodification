@@ -51,11 +51,24 @@ app.get('/notificationTypes.:format?', function (req, res, next){
   routes.notificationType.index(req, res, next);
 });
 
+app.get('/notificationTypes/new', function (req, res, next) {
+  routes.notificationType.new(req, res, next);
+});
+
 app.get('/notificationTypes/:id.:format?', function (req, res, next) {
   routes.notificationType.show(req, res, next);
 });
+app.get('/notificationTypes/:id/edit', function (req, res, next) {
+  routes.notificationType.edit(req, res, next);
+});
 
-// TODO: finish the rest of the CRUD operations for notificationTypes
+app.post('/notificationTypes/:id.:format?', function (req, res, next) {
+  routes.notificationType.update(req, res, next);
+});
+
+app.put('/notificationTypes.:format?', function (req, res, next){
+  routes.notificationType.create(req, res, next);
+});
 
 // Handle all other non-registered routes with a notFound error
 app.use(function (req, res, next) {

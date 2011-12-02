@@ -1,6 +1,6 @@
 <div>
   <div id="sub-title">
-	<h3>Notification Types</h3>
+	<h3>Notification Types <a class="button secondary" href="/notificationTypes/new" style="float:right">New</a></h3>
   </div>
   
   <div id="content">
@@ -16,7 +16,7 @@
 		<tr>
 		  <td><%=notification.name %></td>
 		  <td><%=notification.registrationUrl %></td>
-		  <td><a class="button primary" href="">Edit</a></td>
+		  <td><a class="button primary" href="/notificationTypes/<%-notification._id%>/edit">Edit</a></td>
 		  <td><a class="button secondary" href="">Delete</a></td>
 		</tr>
 	  <% }); %>
