@@ -1,15 +1,26 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"  "http://www.w3.org/TR/html4/loose.dtd">
 <html>
   <head>
-    <link href="/stylesheets/style.css">
-    <title></title>
+    <link type="text/css" rel="stylesheet" href="/stylesheets/style.css">
+    <title>Nodifications</title>
   </head>
   <body>
-    <div>
-      <a href="/notificationTypes">Notification Types</a>
-      <a href="/">Registered devices</a>
-    </div>
+	<div id="title">
+	  <h2>Shaw Nodifications</h2>
+	</div>
+	<div id="container">
 
-    <%- body %>
+	  <div id="left-nav-container">
+		<ul id="left-nav">
+		  <li class="selected"><a href="/notificationTypes">Notification Types</a></li>
+		  <li><a href="/">Registered devices</a></li>
+		</ul>
+	  </div>
+
+	  <div id="content-container">
+		  <%- body %>
+	  </div>
+
+	</div>
   </body>
 </html>

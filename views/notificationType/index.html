@@ -1,8 +1,26 @@
 <div>
-  <% notificationTypes.forEach( function (notification) { %>
-    <ul>
-      <li><%=notification.name %></li>
-      <li><%=notification.registrationUrl %></li>
-    </ul>
-  <% }); %>
+  <div id="sub-title">
+	<h3>Notification Types</h3>
+  </div>
+  
+  <div id="content">
+	<div id="list-container">
+	  <table class="list">
+		<tr>
+		  <th>Name</th>
+		  <th>Registration URL</th>
+		  <th class="button-column"></th>
+		  <th class="button-column"></th>
+		</tr>
+	  <% notificationTypes.forEach( function (notification) { %>
+		<tr>
+		  <td><%=notification.name %></td>
+		  <td><%=notification.registrationUrl %></td>
+		  <td><a class="button primary" href="">Edit</a></td>
+		  <td><a class="button secondary" href="">Delete</a></td>
+		</tr>
+	  <% }); %>
+	  </table>
+	</div>
+  </div>
 </div>
