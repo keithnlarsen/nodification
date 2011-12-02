@@ -30,7 +30,7 @@ mongoose.connect('mongodb://localhost/nodification-dev');
 // Register ErrorHandler
 var restErrors = require('./libs/resterrors');
 app.error(restErrors.errorHandler);
-app.restErrors = restErrors.restError;
+app.restErrors = restErrors.restErrors;
 
 // Register Models
 app.models = require('./models');
@@ -59,7 +59,7 @@ app.get('/notificationTypes/:id.:format?', function (req, res, next) {
 
 // Handle all other non-registered routes with a notFound error
 app.use(function (req, res, next) {
-  next(app.restError.notFound.create(req.url));
+  next(app.restErrors.notFound.create(req.url));
 });
 
 app.listen(3000);

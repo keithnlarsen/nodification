@@ -2,7 +2,7 @@ var sys = require('sys');
 var baseObject = require('./baseobject');
 
 var baseRestError = baseObject.extend({
-  name: 'restError',
+  name: 'restErrors',
   title: 'Rest Error',
   description: '',
   message: '',
@@ -36,7 +36,7 @@ var restErrors = {
 };
 
 var errorMapper = {
-  'restError': function(error, request, response) {
+  "restErrors": function(error, request, response) {
     response.render('restError/restError.jade', {
       title: error.title,
       status: error.httpStatus,

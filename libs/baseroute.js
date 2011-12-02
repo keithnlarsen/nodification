@@ -4,19 +4,15 @@ var baseRoute = baseObject.extend({
   name: '',
   controllers: null,
   controller: null,
-  restError: null,
+  restErrors: null,
 
-  _construct: function(controllers, restError) {
+  _construct: function(controllers, restErrors) {
     this.controllers = controllers;
     this.controller = controllers[this.name];
-    this.restError = restError;
-
-//    console.log(this.controller.list);
+    this.restErrors = restErrors;
   },
 
   index: function(req, res, next) {
-//    console.log(req.url);
-//    console.log(this.controller);
     var self = this;
     this.controller.list(function(err, instance) {
       if (err)
@@ -47,14 +43,14 @@ var baseRoute = baseObject.extend({
       if (err)
         next(new Error('Internal Server Error: see logs for details: ' + err), req, res);
       else if (!instance)
-        next(self.restError.notFound.create(self.controller.name + ' Id: "' + req.params.id + '" was not found.'), req, res);
+        next(self.restErrors.notFound.create(self.controller.name + ' Id: "' + req.params.id + '" was not found.'), req, res);
       else {
         if (req.params.format) {
           if (req.params.format.toLowerCase() == '.json') {
             res.send(instance.toObject());
           }
           else {
-            next(self.restError.badRequest.create('The \'' + req.params.format + '\' format is not supported at this time.'), req, res);
+            next(self.restErrors.badRequest.create('The \'' + req.params.format + '\' format is not supported at this time.'), req, res);
           }
         }
         else {
