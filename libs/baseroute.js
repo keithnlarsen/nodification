@@ -17,14 +17,16 @@ var baseRoute = baseObject.extend({
     this.controller.list(function(err, instance) {
       if (err)
         next(new Error('Internal Server Error: see logs for details: ' + err), req, res);
-      else if (instance.length == 0) {
-        res.send(instance, 204);
-      }
       else {
         if (req.params.format && req.params.format == '.json') {
-          res.send(instance.map(function(instance) {
-            return instance.toObject();
-          }));
+          if (instance.length == 0) {
+            res.send(instance, 204);
+          }
+          else{
+            res.send(instance.map(function(instance) {
+              return instance.toObject();
+            }));
+          }
         }
 
         var options = {};

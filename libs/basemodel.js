@@ -2,12 +2,11 @@ var baseObject = require('./baseobject');
 
 var baseModel = baseObject.extend({
   name: "",
-  fields: {},
+  schema: {},
   model: {},
 
   _construct: function(mongoose) {
-    var schema = mongoose.Schema;
-    mongoose.model(this.name, new schema(this.fields));
+    mongoose.model(this.name, this.schema);
     this.model = mongoose.model(this.name);
   }
 });

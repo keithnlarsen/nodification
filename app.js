@@ -74,6 +74,11 @@ app.del('/notificationTypes/:id', function (req, res, next){
   routes.notificationType.remove(req, res, next);
 });
 
+
+app.get('/registrations.:format?', function (req, res, next){
+  routes.registration.index(req, res, next);
+});
+
 // Handle all other non-registered routes with a notFound error
 app.use(function (req, res, next) {
   next(app.restErrors.notFound.create(req.url));
