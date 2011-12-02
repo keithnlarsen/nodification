@@ -9,28 +9,32 @@ body {
 
 a {
   color: #00B7FF;
+  text-decoration:none;
+}
+
+h3 a {
+  font-size:12px;
 }
 
 .button-column {
-	width:30px;
+  width:30px;
 }
 .button {
-	border:0 none;
-	border-radius:5px;
-	-moz-border-radius:5px;
-	-webkit-border-radius:5px;
-	cursor:pointer;
-	display:inline-block;
-	padding:5px 15px;
+  border:0 none;
+  border-radius:5px;
+  -moz-border-radius:5px;
+  -webkit-border-radius:5px;
+  cursor:pointer;
+  display:inline-block;
+  padding:5px 15px;
 }
 .button.primary {
-	background-color:#B6C10C;
-	color:#f4f4f4;
-	text-decoration:none;
+  background-color:#B6C10C;
+  color:#f4f4f4;
+  font-size:12px;
 }
 .button.secondary {
-	background-color:transparent;
-	text-decoration:underline;
+  background-color:transparent;
 }
 
 #title {
@@ -59,20 +63,20 @@ a {
   width:225px;
 }
 ul#left-nav {
-	list-style:none;
-	padding:0;
+  list-style:none;
+  padding:0;
 }
 #left-nav li {
-	padding:5px 10px;
-	white-space:nowrap;
+  padding:5px 10px;
+  white-space:nowrap;
 }
 #left-nav li.selected {
-	background-color:#FFFF66;
+  background-color:#FFFF66;
 }
 
 #content-container {
-	float:right;
-	width:550px;
+  float:right;
+  width:550px;
 }
 
 #list-container {

@@ -70,6 +70,10 @@ app.put('/notificationTypes.:format?', function (req, res, next){
   routes.notificationType.add(req, res, next);
 });
 
+app.del('/notificationTypes/:id', function (req, res, next){
+  routes.notificationType.remove(req, res, next);
+});
+
 // Handle all other non-registered routes with a notFound error
 app.use(function (req, res, next) {
   next(app.restErrors.notFound.create(req.url));

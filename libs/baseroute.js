@@ -127,6 +127,19 @@ var baseRoute = baseObject.extend({
         }
       }
     });
+  },
+  
+  remove: function(req, res, next) {
+    var self = this;
+    this.controller.remove(req.params.id, function(err, instance) {
+      if (err)
+        next(new Error('Internal Server Error: see logs for details: ' + err), req, res);
+      else if (!instance)
+        next(self.restErrors.notFound.create(self.controller.name + ' Id: "' + req.params.id + '" was not found.'), req, res);
+      else {
+		res.render(self.controller.plural); 
+      }
+    });
   }
 });
 

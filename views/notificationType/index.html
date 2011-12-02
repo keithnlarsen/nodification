@@ -1,14 +1,17 @@
 <div>
   <div id="sub-title">
-	<h3>Notification Types <a class="button secondary" href="/notificationTypes/new" style="float:right">New</a></h3>
+	<h3>Notification Types <a class="button secondary" href="/notificationTypes/new" style="float:right">+ new notification type</a></h3>
   </div>
   
   <div id="content">
 	<div id="list-container">
+	  <form id="deleteform" method="post">
+		<input type="hidden" name="_method" value="delete" />
 	  <table class="list">
 		<tr>
 		  <th>Name</th>
 		  <th>Registration URL</th>
+		  <th>Username</th>
 		  <th class="button-column"></th>
 		  <th class="button-column"></th>
 		</tr>
@@ -16,11 +19,13 @@
 		<tr>
 		  <td><%=notification.name %></td>
 		  <td><%=notification.registrationUrl %></td>
+		  <td><%=notification.userName %></td>
 		  <td><a class="button primary" href="/notificationTypes/<%-notification._id%>/edit">Edit</a></td>
-		  <td><a class="button secondary" href="">Delete</a></td>
+		  <td><a class="button secondary" href="" onclick="document.getElementById('deleteform').setAttribute('action','/notificationTypes/<%-notification._id%>'); document.getElementById('deleteform').submit();">Delete</a></td>
 		</tr>
 	  <% }); %>
 	  </table>
+	  </form>
 	</div>
   </div>
 </div>
