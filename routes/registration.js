@@ -1,7 +1,9 @@
-var baseRoute = require('../libs/baseroute');
+module.exports = ( function(){
+  var baseRoute = require('../libs/baseroute');
 
-var registrationRoute = baseRoute.extend({
-  name: 'registration'
-});
+  var registrationRoute = baseRoute.extend({
+    name: 'registration'
+  });
 
-module.exports = registrationRoute;
+  return registrationRoute;
+}());

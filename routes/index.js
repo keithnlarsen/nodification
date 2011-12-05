@@ -1,4 +1,4 @@
-module.exports = function() {
+module.exports = ( function() {
   var notificationTypeRoutes = require('./notificationType');
   var registrationRoutes = require('./registration');
 
@@ -15,4 +15,4 @@ module.exports = function() {
       res.render('index.jade', { title: 'Express' });
     }
   }
-}();
+}());

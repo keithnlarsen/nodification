@@ -1,14 +1,14 @@
 describe('Nodification.Tests.Unit.Controllers.NotificationTypeController', function(){
 
   var should = require('should');
-  var stub = require('../../stub.js');
+  var Stub = require('../../stub.js');
   var controller;
   var createJSON;
   var notificationType;
 
   beforeEach( function(done){
     // Setup our connection to the database and load our model and controller
-    notificationType = new stub();
+    notificationType = new Stub();
     controller = require('../../../controllers/notificationTypeController.js').create(notificationType);
     createJSON = JSON.parse("{\"name\":\"Test\",\"registrationUrl\":\"url\",\"userName\": \"username\",\"password\": \"password\"}");
     done();
@@ -20,7 +20,7 @@ describe('Nodification.Tests.Unit.Controllers.NotificationTypeController', funct
 
   describe('.insert(json, fn)', function(){
     it('should call create and return newly created NotificationType', function(done){
-      notificationType.create =  new stub(null, createJSON);
+      notificationType.create =  new Stub(null, createJSON);
 
       controller.insert(createJSON, function(err, actual) {
         notificationType.create.called.withArguments(createJSON);
@@ -29,7 +29,7 @@ describe('Nodification.Tests.Unit.Controllers.NotificationTypeController', funct
       });
     });
     it('should return error that occurs when saving to database', function(done){
-      notificationType.create = new stub({message: "error"}, null);
+      notificationType.create = new Stub({message: "error"}, null);
 
       controller.insert(createJSON, function(err, actual) {
         notificationType.create.called.withArguments(createJSON);
@@ -42,7 +42,7 @@ describe('Nodification.Tests.Unit.Controllers.NotificationTypeController', funct
 
   describe('.get(id, fn)', function(){
     it('should call findById and return the results', function(done){
-      notificationType.findById = new stub({message: "error"}, createJSON);
+      notificationType.findById = new Stub({message: "error"}, createJSON);
 
       controller.get("anything", function(err, actual) {
         notificationType.findById.called.withArguments("anything");
@@ -55,7 +55,7 @@ describe('Nodification.Tests.Unit.Controllers.NotificationTypeController', funct
 
   describe('.getByName(name, fn)', function(){
     it('should call findOne passing name and return the results', function(done){
-      notificationType.findOne = new stub({message: "error"}, createJSON);
+      notificationType.findOne = new Stub({message: "error"}, createJSON);
 
       controller.getByName("anything", function(err, actual) {
         notificationType.findOne.called.withArguments({name:"anything"});
@@ -68,7 +68,7 @@ describe('Nodification.Tests.Unit.Controllers.NotificationTypeController', funct
 
   describe('.list(fn)', function(){
     it('should call find and return the results', function(done){
-      notificationType.find = new stub({message: "error"}, createJSON);
+      notificationType.find = new Stub({message: "error"}, createJSON);
 
       controller.list(function(err, actual) {
         notificationType.find.called.withArguments({});
@@ -81,8 +81,8 @@ describe('Nodification.Tests.Unit.Controllers.NotificationTypeController', funct
 
   describe('.update(id, json, fn)', function(){
     it('should call update and then findById and return updated record', function(done){
-      notificationType.update =  new stub(null);
-      notificationType.findById = new stub(null, createJSON);
+      notificationType.update =  new Stub(null);
+      notificationType.findById = new Stub(null, createJSON);
 
       controller.update("anything", createJSON, function(err, actual) {
         notificationType.update.called.withArguments({_id:"anything"}, createJSON);
@@ -92,7 +92,7 @@ describe('Nodification.Tests.Unit.Controllers.NotificationTypeController', funct
       });
     });
     it('should call update and return error that occurs', function(done){
-      notificationType.update =  new stub({message:"error"});
+      notificationType.update =  new Stub({message:"error"});
 
       controller.update("anything", createJSON, function(err, actual) {
         notificationType.update.called.withArguments({_id:"anything"}, createJSON);
@@ -101,7 +101,7 @@ describe('Nodification.Tests.Unit.Controllers.NotificationTypeController', funct
       });
     });
     it('should call update and return nulls when \'Error: Element extends past end of object\' occurs', function(done){
-      notificationType.update =  new stub("Error: Element extends past end of object");
+      notificationType.update =  new Stub("Error: Element extends past end of object");
 
       controller.update("anything", createJSON, function(err, actual) {
         notificationType.update.called.withArguments({_id:"anything"}, createJSON);
@@ -114,8 +114,8 @@ describe('Nodification.Tests.Unit.Controllers.NotificationTypeController', funct
 
   describe('.remove(id, fn)', function(){
     it('should call findById and then call remove on the record returned', function(done){
-      createJSON.remove = new stub({message:"error"});
-      notificationType.findById = new stub(null, createJSON);
+      createJSON.remove = new Stub({message:"error"});
+      notificationType.findById = new Stub(null, createJSON);
 
       controller.remove("anything", function(err, actual) {
         notificationType.findById.called.withArguments("anything");
@@ -126,7 +126,7 @@ describe('Nodification.Tests.Unit.Controllers.NotificationTypeController', funct
       });
     });
     it('should call findById and then return the error when no record found', function(done){
-      notificationType.findById = new stub({message:"error"}, null);
+      notificationType.findById = new Stub({message:"error"}, null);
 
       controller.remove("anything", function(err, actual) {
         notificationType.findById.called.withArguments("anything");

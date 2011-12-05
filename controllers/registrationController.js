@@ -1,8 +1,9 @@
-var baseController = require('../libs/basecontroller');
+module.exports = ( function() {
+  var baseController = require('../libs/basecontroller');
 
-var registrationController = baseController.extend({
-  name: 'registration',
-  plural: 'registrations'
+  var registrationController = baseController.extend({
+    name: 'registration',
+    plural: 'registrations'
 
 //  // An example of how to call the base class implementation.
 //  list: function(fn){
@@ -10,6 +11,7 @@ var registrationController = baseController.extend({
 //      fn(err, list);
 //    }]);
 //  }
-});
+  });
 
-module.exports = registrationController;
+  return registrationController;
+}());

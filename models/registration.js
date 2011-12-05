@@ -1,4 +1,4 @@
-module.exports = function(notificationType){
+module.exports = ( function(){
   var baseModel = require('../libs/basemodel');
   var Schema = require('mongoose').Schema;
 
@@ -19,8 +19,6 @@ module.exports = function(notificationType){
       devices: [device.schema]
     })
   });
-  
+
   return registration;
-};
-
-
+}());

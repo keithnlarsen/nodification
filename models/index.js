@@ -1,6 +1,6 @@
-module.exports = function(){
+module.exports = ( function(){
   var notificationTypeModel = require('./notificationType.js');
-  var registrationModel = require('./registration.js')(notificationTypeModel);
+  var registrationModel = require('./registration.js');
 
   return {
     notificationType: {},
@@ -8,8 +8,7 @@ module.exports = function(){
 
     init: function(mongoose){
       this.notificationType = notificationTypeModel.create(mongoose);
-
       this.registration = registrationModel.create(mongoose);
     }
   }
-}();
+}());

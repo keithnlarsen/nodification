@@ -1,4 +1,4 @@
-module.exports = function(){
+module.exports = (function(){
   var notificationTypeController = require('./notificationTypeController.js');
   var registrationController = require('./registrationController.js');
 
@@ -11,4 +11,4 @@ module.exports = function(){
       this.registration = registrationController.create(models.registration.model);
     }
   }
-}();
+}());

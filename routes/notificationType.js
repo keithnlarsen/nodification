@@ -1,7 +1,9 @@
-var baseRoute = require('../libs/baseroute');
+module.exports = ( function(){
+  var baseRoute = require('../libs/baseroute');
 
-var notificationTypeRoute = baseRoute.extend({
-  name: 'notificationType'
-});
+  var notificationTypeRoute = baseRoute.extend({
+    name: 'notificationType'
+  });
 
-module.exports = notificationTypeRoute;
+  return notificationTypeRoute;
+}());
