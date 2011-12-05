@@ -11,6 +11,7 @@ module.exports = ( function(){
     app.register('html', require('ejs'));
     app.set('view engine', 'html');
     app.use(express.bodyParser());
+    app.use(express.logger({ format: '\x1b[1m :date \x1b[1m:method\x1b[0m \x1b[33m:url\x1b[0m :response-time ms\x1b[0m :status' }));
     app.use(express.methodOverride());
     app.use(express.cookieParser());
     app.use(express.session({ secret: 'your secret here' }));
@@ -84,8 +85,10 @@ module.exports = ( function(){
     next(app.restErrors.notFound.create(req.url));
   });
 
-  app.listen(3000);
-  console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
-
+  if (!module.parent) {
+      app.listen(3000);
+    console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
+  }
+  
   return app;
 }());

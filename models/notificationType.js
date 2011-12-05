@@ -4,6 +4,7 @@ module.exports = ( function(){
 
   var notificationType = baseModel.extend({
     name: "NotificationType",
+    model: {},
     schema: new Schema({
       name: { type: String, index : { unique : true }},
       registrationUrl: { type: String, required : true },

@@ -3,19 +3,22 @@ module.exports = ( function(){
   var Schema = require('mongoose').Schema;
 
   var device = baseModel.extend({
-    name: "Device",
+    name: 'Device',
+    model: {},
     schema: new Schema({
-      type: { type: String, enum: ["android", "ios"] },
+      type: { type: String, enum: ['android', 'ios'] },
       name: String,
       token: String
     })
   });
 
   var registration = baseModel.extend({
-    name: "Registration",
+    name: 'Registration',
+    model: {},
     schema: new Schema({
-      notificationType: Schema.ObjectId,
+      notificationType: {type: Schema.ObjectId, ref: 'NotificationType' },
       notificationKey: String,
+      registrationConfirmed: Boolean,
       devices: [device.schema]
     })
   });

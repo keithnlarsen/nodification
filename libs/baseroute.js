@@ -80,7 +80,7 @@ var baseRoute = baseObject.extend({
   },
 
   new: function(req, res, next) {
-	res.render(this.controller.name + '/new');
+	  res.render(this.controller.name + '/new');
   },
   
   update: function(req, res, next) {
