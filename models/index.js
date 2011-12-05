@@ -9,6 +9,8 @@ module.exports = ( function(){
     init: function(mongoose){
       this.notificationType = notificationTypeModel.create(mongoose);
       this.registration = registrationModel.create(mongoose);
+
+      return this;
     }
   }
 }());

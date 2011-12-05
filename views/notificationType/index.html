@@ -1,3 +1,14 @@
+
+<!-- views/notificationType/index.html -->
+<script language="javascript" type="text/javascript">
+  var xmlhttp;
+
+  function delete_request(url){
+    xmlhttp=new XMLHttpRequest();
+    xmlhttp.open("DELETE",url,true);
+    xmlhttp.send(null);
+  }
+</script>
 <div>
   <div id="sub-title">
 	<h3>Notification Types <a class="button secondary" href="/notificationTypes/new" style="float:right">+ new notification type</a></h3>
@@ -5,8 +16,6 @@
   
   <div id="content">
 	<div id="list-container">
-	  <form id="deleteform" method="post" action="">
-		<input type="hidden" name="_method" value="delete" />
 	  <table class="list">
 		<tr>
 		  <th>Name</th>
@@ -21,11 +30,10 @@
 		  <td><%=notification.registrationUrl %></td>
 		  <td><%=notification.userName %></td>
 		  <td><a class="button primary" href="/notificationTypes/<%-notification._id%>/edit">Edit</a></td>
-		  <td><a class="button secondary" href="" onclick="document.getElementById('deleteform').setAttribute('action','/notificationTypes/<%-notification._id%>'); document.getElementById('deleteform').submit();">Delete</a></td>
+		  <td><a class="button secondary" href="javascript:delete_request('/notificationTypes/<%-notification._id%>');">Delete</a></td>
 		</tr>
 	  <% }); %>
 	  </table>
-	  </form>
 	</div>
   </div>
 </div>

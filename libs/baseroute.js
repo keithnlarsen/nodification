@@ -22,7 +22,7 @@ var baseRoute = baseObject.extend({
           if (instance.length == 0) {
             res.send(instance, 204);
           }
-          else{
+          else {
             res.send(instance.map(function(instance) {
               return instance.toObject();
             }));
@@ -31,7 +31,7 @@ var baseRoute = baseObject.extend({
 
         var options = {};
         options[self.controller.plural] = instance.map(function(instance) {
-            return instance.toObject();
+          return instance.toObject();
         });
 
         res.render(self.controller.name, options);
@@ -72,17 +72,17 @@ var baseRoute = baseObject.extend({
       else if (!instance)
         next(self.restErrors.notFound.create(self.controller.name + ' Id: "' + req.params.id + '" was not found.'), req, res);
       else {
-		var options = {};
-		options[self.controller.name] = instance.toObject();
-		res.render(self.controller.name + '/edit', options); 
+        var options = {};
+        options[self.controller.name] = instance.toObject();
+        res.render(self.controller.name + '/edit', options);
       }
     });
   },
 
   new: function(req, res, next) {
-	  res.render(this.controller.name + '/new');
+    res.render(this.controller.name + '/new');
   },
-  
+
   update: function(req, res, next) {
     var self = this;
     this.controller.update(req.params.id, req.body, function(err, instance) {
@@ -100,14 +100,12 @@ var baseRoute = baseObject.extend({
           }
         }
         else {
-          var options = {};
-          options[self.controller.name] = instance.toObject();
-          res.render(self.controller.name + '/show', options);
+          res.redirect('/' + self.controller.plural + '/' + instance._id);
         }
       }
     });
   },
-  
+
   add: function(req, res, next) {
     var self = this;
     this.controller.insert(req.body, function(err, instance) {
@@ -123,14 +121,12 @@ var baseRoute = baseObject.extend({
           }
         }
         else {
-          var options = {};
-          options[self.controller.name] = instance.toObject();
-          res.render(self.controller.name + '/show', options);
+          res.redirect('/' + self.controller.plural + '/' + instance._id);
         }
       }
     });
   },
-  
+
   remove: function(req, res, next) {
     var self = this;
     this.controller.remove(req.params.id, function(err, instance) {
@@ -139,7 +135,7 @@ var baseRoute = baseObject.extend({
       else if (!instance)
         next(self.restErrors.notFound.create(self.controller.name + ' Id: "' + req.params.id + '" was not found.'), req, res);
       else {
-		res.render(self.controller.plural); 
+        res.redirect("/" + self.controller.plural);
       }
     });
   }
