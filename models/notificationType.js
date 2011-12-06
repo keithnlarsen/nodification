@@ -2,7 +2,7 @@ module.exports = ( function(){
   var baseModel = require('../libs/basemodel');
   var Schema = require('mongoose').Schema;
 
-  var notificationType = baseModel.extend({
+  return baseModel.extend({
     name: "NotificationType",
     model: {},
     schema: new Schema({
@@ -12,6 +12,4 @@ module.exports = ( function(){
       password: String
     })
   });
-
-  return notificationType;
 }());

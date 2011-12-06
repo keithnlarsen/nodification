@@ -12,7 +12,7 @@ module.exports = ( function(){
     })
   });
 
-  var registration = baseModel.extend({
+  return baseModel.extend({
     name: 'Registration',
     model: {},
     schema: new Schema({
@@ -22,6 +22,4 @@ module.exports = ( function(){
       devices: [device.schema]
     })
   });
-
-  return registration;
 }());

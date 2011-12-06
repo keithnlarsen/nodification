@@ -21,10 +21,17 @@ describe('Nodification.Tests.Unit.Views.RegistrationView', function() {
   describe('.index', function() {
     it('should take a list of registrations and build a registration index page', function(done) {
       var registration1 = new Registration();
-      registration1.notificationKey = 'test 1';
+
+      registration1.notificationType = new NotificationType();
+      registration1.notificationType.name = "test";
+      registration1.key = 'test 1';
+      registration1.registrationConfirmed = true;
 
       var registration2 = new Registration();
-      registration2.notificationKey = 'test 2';
+      registration2.notificationType = new NotificationType();
+      registration1.notificationType.name = "test";
+      registration2.key = 'test 2';
+      registration2.registrationConfirmed = true;
 
       var locals = {
         locals: {
