@@ -17,8 +17,8 @@ module.exports = ( function(){
     model: {},
     schema: new Schema({
       notificationType: {type: Schema.ObjectId, ref: 'NotificationType' },
-      notificationKey: String,
-      registrationConfirmed: Boolean,
+      key: String,
+      registrationConfirmed: {type: Boolean, 'default': false },
       devices: [device.schema]
     })
   });

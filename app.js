@@ -60,6 +60,7 @@ module.exports = ( function(){
   app.get('/notificationTypes/:id.:format?', function (req, res, next) {
     routes.notificationType.show(req, res, next);
   });
+
   app.get('/notificationTypes/:id/edit', function (req, res, next) {
     routes.notificationType.edit(req, res, next);
   });
@@ -78,6 +79,26 @@ module.exports = ( function(){
 
   app.get('/registrations.:format?', function (req, res, next){
     routes.registration.index(req, res, next);
+  });
+
+  app.get('/registrations/new', function (req, res, next) {
+    routes.registration.new(req, res, next);
+  });
+
+  app.get('/registrations/:id.:format?', function (req, res, next) {
+    routes.registration.show(req, res, next);
+  });
+
+  app.get('/registrations/:id/edit', function (req, res, next) {
+    routes.registration.edit(req, res, next);
+  });
+
+  app.put('/registrations.:format?', function (req, res, next){
+    routes.registration.add(req, res, next);
+  });
+
+  app.del('/registrations/:id', function (req, res, next){
+    routes.registration.remove(req, res, next);
   });
 
   // Handle all other non-registered routes with a notFound error

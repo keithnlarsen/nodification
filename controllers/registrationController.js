@@ -3,9 +3,20 @@ module.exports = ( function() {
 
   var registrationController = baseController.extend({
     name: 'registration',
-    plural: 'registrations'
+    plural: 'registrations',
 
-//  // An example of how to call the base class implementation.
+    get : function(id, fn) {
+      this.model.findById(id).populate('notificationType', ['name']).run(function(err, instance) {
+        fn(err, instance);
+      });
+    },
+
+    list : function(fn) {
+      this.model.find({}).populate('notificationType', ['name']).run(function (err, list) {
+        fn(err, list);
+      });
+    }
+
 //  list: function(fn){
 //    this._super(controller, "list", [function(err, list){
 //      fn(err, list);

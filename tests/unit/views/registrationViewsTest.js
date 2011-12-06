@@ -3,8 +3,11 @@ describe('Nodification.Tests.Unit.Views.RegistrationView', function() {
   var should = require('should');
   var mongoose = require('mongoose');
   mongoose.connect('mongodb://localhost/nodification-dev');
-  var Registration = require('../../../models').init(mongoose).registration.model;
-  var templateName = 'views/registration/index.html';
+  var models = require('../../../models').init(mongoose);
+  var Registration = models.registration.model;
+  var NotificationType = models.notificationType.model;
+  var listTemplate = 'views/registration/index.html';
+  var newTemplate = 'views/registration/new.html';
   var templateEngine = require('../../../libs/templateengine');
 
   beforeEach(function(done) {
@@ -16,7 +19,7 @@ describe('Nodification.Tests.Unit.Views.RegistrationView', function() {
   });
 
   describe('.index', function() {
-    it('should transform a list of registrations into registration index page', function(done) {
+    it('should take a list of registrations and build a registration index page', function(done) {
       var registration1 = new Registration();
       registration1.notificationKey = 'test 1';
 
@@ -26,11 +29,11 @@ describe('Nodification.Tests.Unit.Views.RegistrationView', function() {
       var locals = {
         locals: {
           registrations: [registration1, registration2],
-          fileName: templateName
+          fileName: listTemplate
         }
       };
 
-      templateEngine.merge(templateName, locals, function(err, registrationIndexHtml) {
+      templateEngine.merge(listTemplate, locals, function(err, registrationIndexHtml) {
         should.exist(registrationIndexHtml);
         // TODO: need to test for specific html stuff here.
 //        console.log(registrationIndexHtml);
@@ -38,4 +41,29 @@ describe('Nodification.Tests.Unit.Views.RegistrationView', function() {
       });
     });
   });
+
+  describe('.new', function() {
+    it('should take a list of notificationTypes and build a create new registration page', function(done) {
+      var notificationType1 = new NotificationType();
+      notificationType1.Name = 'test 1';
+
+      var notificationType2 = new NotificationType();
+      notificationType2.Name = 'test 1';
+
+      var locals = {
+        locals: {
+          notificationTypes: [notificationType1, notificationType2],
+          fileName: newTemplate
+        }
+      };
+
+      templateEngine.merge(newTemplate, locals, function(err, registrationIndexHtml) {
+        should.exist(registrationIndexHtml);
+        // TODO: need to test for specific html stuff here.
+//        console.log(registrationIndexHtml);
+        done(err);
+      });
+    });
+  });
+
 });
