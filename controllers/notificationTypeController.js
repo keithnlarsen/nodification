@@ -1,9 +1,7 @@
 module.exports = ( function() {
-  var baseController = require('../libs/basecontroller');
+  var baseController = require('../libs/baseRestController');
 
   var notificationTypeController = baseController.extend({
-    name: 'notificationType',
-    plural: 'notificationTypes'
 
 //  // An example of how to call the base class implementation.
 //  list: function(fn){

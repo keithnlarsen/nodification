@@ -3,7 +3,10 @@ REPORTER = spec
 UNIT_TESTS = $(shell find tests/unit/ -name '*Test.js')
 INTEGRATION_TESTS = $(shell find tests/integration -name '*Test.js')
 
-test: test-unit test-integration
+test: test-unit run test-integration
+
+run:
+  @NODE_ENV=test node app.js &
 
 test-unit:
 	@NODE_ENV=test ./node_modules/.bin/mocha \
