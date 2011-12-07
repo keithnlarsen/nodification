@@ -9,30 +9,23 @@
     xmlhttp.send(null);
   }
 </script>
+
 <div>
-  <div id="sub-title">
-	<h3>Notification Types <a class="button secondary" href="/notificationTypes/new" style="float:right">+ new notification type</a></h3>
+  <div class="sub-title">
+	<h3>Notification Types <a class="button secondary" href="/notificationTypes/new">+ new notification type</a></h3>
   </div>
   
   <div id="content">
 	<div id="list-container">
 	  <table class="list">
-		<tr>
+		<thead>
 		  <th>Name</th>
 		  <th>Registration URL</th>
 		  <th>Username</th>
 		  <th class="button-column"></th>
 		  <th class="button-column"></th>
-		</tr>
-	  <% notificationTypes.forEach( function (notification) { %>
-		<tr>
-		  <td><%=notification.name %></td>
-		  <td><%=notification.registrationUrl %></td>
-		  <td><%=notification.userName %></td>
-		  <td><a class="button primary" href="/notificationTypes/<%-notification._id%>/edit">Edit</a></td>
-		  <td><a class="button secondary" href="javascript:delete_request('/notificationTypes/<%-notification._id%>');">Delete</a></td>
-		</tr>
-	  <% }); %>
+		</thead>
+		<tbody data-bind="tempate: { name:'notificationTypeTableTemplate', foreach:notificationTypes }"></tbody>
 	  </table>
 	</div>
   </div>

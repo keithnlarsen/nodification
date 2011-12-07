@@ -1,21 +1,34 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"  "http://www.w3.org/TR/html4/loose.dtd">
 <html>
   <head>
+	<script type='text/javascript' src='/javascript/jquery-1.7.1.min.js'></script>
+	<script type='text/javascript' src='/javascript/jquery.tmpl.js'></script>
+	<script type='text/javascript' src='/javascript/knockout-1.2.1.js'></script>
     <link type="text/css" rel="stylesheet" href="/stylesheets/style.css">
+	
     <title>Nodifications</title>
   </head>
   <body>
-	<div id="title">
-	  <h2>Shaw Nodifications</h2>
+	<div id="top-bar">
+	  
+	  <div class="container">
+		<a class="title" href="/">Nodifications</a>
+		<ul class="nav">
+		  <li class="selected"><a href="/notificationTypes">Types</a></li>
+		  <li><a href="/registrations">Registrations</a></li>
+		</ul>
+	  </div>
 	</div>
-	<div id="container">
+	<div id="main-container" class="container">
 
+<!--
 	  <div id="left-nav-container">
 		<ul id="left-nav">
 		  <li class="selected"><a href="/notificationTypes">Notification Types</a></li>
 		  <li><a href="/registrations">Notification Registrations</a></li>
 		</ul>
 	  </div>
+-->
 
 	  <div id="content-container">
 		  <%- body %>
