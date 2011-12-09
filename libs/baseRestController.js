@@ -28,7 +28,6 @@ var baseRestController = baseObject.extend( {
         if ( instance.length == 0 ) {
           res.send( instance, 204 );
         } else {
-          console.log(instance);
           res.send( instance.map( function( instance ) {
             return instance.toObject();
           } ) );
@@ -52,7 +51,6 @@ var baseRestController = baseObject.extend( {
 
   update: function( req, res, next ) {
     var self = this;
-    console.log(req.params.id + ": " + req.body);
     this.model.update( { _id:req.params.id}, req.body, function( err, count ) {
       if ( err ) {
         next( new Error( 'Internal Server Error: see logs for details: ' + err ), req, res );
