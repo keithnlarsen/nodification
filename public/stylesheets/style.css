@@ -12,7 +12,7 @@ a {
   text-decoration:none;
 }
 
-h3 a.button {
+h3 .button, .details-title .button {
   float:right;
   font-size:12px;
 }
@@ -83,52 +83,74 @@ h3 a.button {
 	height:55px;
 	padding:1px 20px 2px;
   }
+	#feedbackMessage {
+	  color:#444;
+	  display:none;
+	  font-weight:bold;
+	  font-size:12px;
+	  margin-top:-35px;
+	  text-align:center;
+	  width:100%
+	}
+	#feedbackMessage span {
+	  background-color:#B8FF94;
+	  border-radius:5px;
+	  -moz-border-radius:5px;
+	  -webkit-border-radius:5px;
+	  padding:5px 10px;
+	  text-align:center;
+	}
+	#feedbackMessage.error span {
+	  background-color:#DE5959;
+	  color:#f4f4f4;
+	  padding:5px 10px;
+	  text-align:center;
+	}
 
-/*
-#title {
-  color:#f4f4f4;
-  display:inline-block;
-  font-style:italic;
-  margin-top:10px;
-  text-align:right;
-  width:800px;
+#details-container {
+  padding-bottom:30px;
+  text-align:center;
+  display:none;
 }
-
-#left-nav-container {
-  display:block;
-  float:left;
-  width:225px;
-}
-ul#left-nav {
-  list-style:none;
-  padding:0;
-}
-#left-nav li {
-  padding:5px 10px;
-  white-space:nowrap;
-}
-#left-nav li.selected {
-  background-color:#FFFF66;
-}*/
-
-/*#content-container {
-  float:right;
-  width:550px;
-}*/
+  .details-title {
+	font-size: 14px;
+    font-weight: bold;
+    padding: 20px;
+    text-align: center;
+  }
+  .details-title span {
+	padding-left:70px;
+  }
+  
+  .details {
+	display:inline-block;
+  }
+  .details td {
+	padding:5px;
+  }
+  .details td.label {
+	text-align:right;
+  }
+  
+  .details {
+	display:inline-block;
+	list-style:none;
+	padding:0;
+  }
 
 #list-container {
   border:1px solid #f4f4f4;
   height:300px; 
 }
-table.list {
-  width:100%;
-}
-table.list th {
-  border-bottom:1px solid #e4e4e4;
-}
-table.list tr:nth-child(even) {
-  background-color:#F0F5FF;
-}
-table.list td, table.list th {
-  padding:0 10px;
-}
+  table.list {
+	width:100%;
+  }
+  table.list th {
+	border-bottom:1px solid #e4e4e4;
+  }
+  table.list tr:nth-child(even) {
+	background-color:#F0F5FF;
+  }
+  table.list td, table.list th {
+	padding:0 10px;
+  }

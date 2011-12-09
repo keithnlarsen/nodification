@@ -1,140 +1,190 @@
-describe('Nodification.Tests.Integration.Controllers.NotificationTypeController', function(){
+describe( 'Nodification.Tests.Integration.Controllers.NotificationTypeController', function() {
 
-  var should = require('should');
-  var createJSON = JSON.parse("{\"name\":\"Test\",\"registrationUrl\":\"url\",\"userName\": \"username\",\"password\": \"password\"}");
-  var updateJSON = JSON.parse("{\"name\":\"Test2\",\"registrationUrl\":\"url2\",\"userName\": \"username2\",\"password\": \"password2\"}");
-  var mongoose = require('mongoose');
-  var notificationType;
-  var controller;
+  var http = require( 'http' );
+  var should = require( 'should' );
+  var createJSON = JSON.parse( "{\"name\":\"Test\",\"registrationUrl\":\"url\",\"userName\": \"username\",\"password\": \"password\"}" );
+  var updateJSON = JSON.parse( "{\"name\":\"Test2\",\"registrationUrl\":\"url2\",\"userName\": \"username2\",\"password\": \"password2\"}" );
   var newId = '';
+  var notificationType;
+  var app;
 
-  before( function(done){
-    // Setup our connection to the database and load our model and controller
-    mongoose.connect('mongodb://localhost/nodification-dev');
-    notificationType = require('../../../models/notificationType.js').create(mongoose);
-    controller = require('../../../controllers/notificationTypeController.js').create(notificationType.model);
+  var localhost = http.createClient( 3000, 'localhost' );
+  var requestHelper = function( request, fn ) {
+    request.end();
 
-    // Just in case something bad happened, let's clear out the database
-    notificationType.model.remove({}, function(err){
-      done(err)
-    });
-//    done();
-  });
+    request.on( 'response', function ( response ) {
+      var responseBody = "";
+      response.setEncoding( 'utf8' );
 
-  after(function(done){
+      response.addListener( "data", function( chunk ) {
+        responseBody += chunk;
+      } );
+
+      response.on( 'end', function() {
+        response.body = responseBody;
+        fn( response );
+      } );
+    } );
+  };
+
+  before( function( done ) {
+    var app = require( '../../../app' );
+
+    app.listen( 3000 );
+    console.log( 'Running testing server at http://127.0.0.1:3000/' + '\r\r' );
+
+    // Delay to make sure that node server has time to start up on slower computers before running the tests.
+    setTimeout( function() {
+      // Setup our connection to the database and load our model and controller
+      var mongoose = require( 'mongoose' );
+      mongoose.connect( 'mongodb://localhost/nodification-dev' );
+      notificationType = require( '../../../models/notificationType.js' ).create( mongoose );
+      // Just in case something bad happened, let's clear out the database
+      notificationType.model.remove( {}, function( err ) {
+        done( err )
+      } );
+
+    }, 250 );
+  } );
+
+  after( function( done ) {
     // Clear out our database once we are done
-    notificationType.model.remove({}, function(err){
-      done(err)
-    });
-//    done();
-  });
+    notificationType.model.remove( {}, function( err ) {
+      done( err )
+    } );
+  } );
 
-  describe('.insert(JSON, fn)', function(){
-    it('should create a new NotificationType', function(done){
-      controller.insert(createJSON, function(err, actual) {
+  describe( 'PUT to /notificationType', function() {
+    it( 'should create a new NotificationType', function( done ) {
+      var request = localhost.request( 'PUT', '/notificationTypes', {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
+      request.write( JSON.stringify( createJSON ) );
+
+      requestHelper( request, function( response ) {
+        var actual = JSON.parse( response.body );
         var expected = createJSON;
 
         newId = actual._id.toString();
-        newId.should.be.a('string');
-        actual.name.should.equal(expected.name);
-        actual.registrationUrl.should.equal(expected.registrationUrl);
-        actual.userName.should.equal(expected.userName);
-        actual.password.should.equal(expected.password);
+        actual.name.should.equal( expected.name );
+        actual.registrationUrl.should.equal( expected.registrationUrl );
+        actual.userName.should.equal( expected.userName );
+        actual.password.should.equal( expected.password );
+        response.statusCode.should.equal( 201 );
 
-        done(err);
-      });
-    });
-    it('should fail to insert a duplicate name record', function(done){
-      controller.insert(createJSON, function(err, actual) {
-        should.exist(err);
-        err.message.should.match(/duplicate key error/);
         done();
-      });
-    })
-  });
+      } );
+    } );
+    it( 'should return 409 Conflict when trying to insert a duplicate name record', function( done ) {
+      var request = localhost.request( 'PUT', '/notificationTypes', {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
+      request.write( JSON.stringify( createJSON ) );
 
-  describe('.get(Id, fn)', function(){
-    it('should return a single NotificationType when given an existing Id', function(done){
-      controller.get(newId, function(err, actual) {
+      requestHelper( request, function( response ) {
+        response.statusCode.should.equal( 409 );
+        response.body.should.match( /duplicate key error/ );
+
+        done();
+      } );
+    } )
+  } );
+
+  describe( 'GET to /notificationType/:id', function() {
+    it( 'should return a single NotificationType when given an existing Id', function( done ) {
+      var request = localhost.request( 'GET', '/notificationTypes/' + newId, {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
+
+      requestHelper( request, function( response ) {
+        var actual = JSON.parse( response.body );
         var expected = createJSON;
 
-        actual.name.should.equal(expected.name);
-        actual.registrationUrl.should.equal(expected.registrationUrl);
-        actual.userName.should.equal(expected.userName);
-        actual.password.should.equal(expected.password);
+        response.statusCode.should.equal( 200 );
+        actual.name.should.equal( expected.name );
+        actual.registrationUrl.should.equal( expected.registrationUrl );
+        actual.userName.should.equal( expected.userName );
+        actual.password.should.equal( expected.password );
 
-        done(err);
-      });
-    });
+        done();
+      } );
+    } );
 
-    it('should return null when given a non-existing Id', function(done){
-      controller.get(new mongoose.Types.ObjectId('111111111111111111111111'), function(err, actual) {
-        should.not.exist(actual);
-        done(err);
-      });
-    });
-  });
+    it( 'should return 404 NotFound when given a non-existing Id', function( done ) {
+      var request = localhost.request( 'GET', '/notificationTypes/111111111111111111111111', {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
 
-  describe('.getByName(name, fn)',function(){
-    it('should return a single NotificationType when given an existing name', function(done){
-      controller.getByName('Test', function(err, actual) {
-        var expected = createJSON;
+      requestHelper( request, function( response ) {
+        response.statusCode.should.equal( 404 );
 
-        actual.name.should.equal(expected.name);
-        actual.registrationUrl.should.equal(expected.registrationUrl);
-        actual.userName.should.equal(expected.userName);
-        actual.password.should.equal(expected.password);
+        done();
+      } );
+    } );
+  } );
 
-        done(err);
-      });
-    });
-  });
+  describe( 'POST to /notificationType/:id', function() {
+    it( 'should update an existing NotificationType', function( done ) {
+      var request = localhost.request( 'POST', '/notificationTypes/' + newId, {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
+      request.write( JSON.stringify( updateJSON ) );
 
-  describe('.update(Id, JSON, fn)', function(){
-    it('should update an existing NotificationType', function(done){
-      controller.update(newId, updateJSON, function(err, actual) {
+      requestHelper( request, function( response ) {
+        var actual = JSON.parse( response.body );
         var expected = updateJSON;
 
-        actual.name.should.equal(expected.name);
-        actual.registrationUrl.should.equal(expected.registrationUrl);
-        actual.userName.should.equal(expected.userName);
-        actual.password.should.equal(expected.password);
+        newId = actual._id.toString();
+        actual.name.should.equal( expected.name );
+        actual.registrationUrl.should.equal( expected.registrationUrl );
+        actual.userName.should.equal( expected.userName );
+        actual.password.should.equal( expected.password );
+        response.statusCode.should.equal( 200 );
 
-        done(err);
-      });
-    });
-    it('should return null when trying to Update a NotificationType That Doesn\'t Exist', function(done){
-      controller.update(new mongoose.Types.ObjectId('111111111111111111111111'), updateJSON, function(err, actual) {
-        should.not.exist(actual);
-        done(err);
-      });
-    });
-  });
+        done();
+      } );
+    } );
+    it( 'should return 404 NotFound when trying to Update a NotificationType That Doesn\'t Exist', function( done ) {
+      var request = localhost.request( 'POST', '/notificationTypes/111111111111111111111111', {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
+      request.write( JSON.stringify( updateJSON ) );
 
-  describe('.list(fn)', function(){
-    it('should return all NotificationTypes', function(done){
-      controller.list(function(err, actual) {
-        // TODO: figure out how to test for array
-        actual.constructor.name.should.equal('Array');
-        actual.length.should.be.greaterThan(0);
-        done(err);
-      });
-    });
-  });
+      requestHelper( request, function( response ) {
+        response.statusCode.should.equal( 404 );
 
-  describe('.remove(Id, fn)', function(){
-    it('should delete person when called with an existing Id', function(done){
-      controller.remove(newId, function(err, actual) {
-        // TODO: Figure out how to test ObjectId's
-        //actual._id.toString().should.equals(newId.toString());
-        done(err);
-      });
-    });
-    it('should return nulls when called with an Id that doesn\'t exist', function(done){
-      controller.remove(new mongoose.Types.ObjectId('111111111111111111111111'), function(err, actual) {
-        should.not.exist(actual);
-        done(err);
-      });
-    });
-  });
-});
+        done();
+      } );
+    } );
+  } );
+
+  describe( 'GET to /notificationType', function() {
+    it( 'should return all NotificationTypes', function( done ) {
+      var request = localhost.request( 'GET', '/notificationTypes', {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
+
+      requestHelper( request, function( response ) {
+        var actual = JSON.parse( response.body );
+        var expected = updateJSON;
+
+        response.statusCode.should.equal( 200 );
+        actual[0].name.should.equal( expected.name );
+        actual[0].registrationUrl.should.equal( expected.registrationUrl );
+        actual[0].userName.should.equal( expected.userName );
+        actual[0].password.should.equal( expected.password );
+
+        done();
+      } );
+    } );
+  } );
+
+  describe( 'DELETE to /notificationType/:id', function() {
+    it( 'should delete person when called with an existing Id', function( done ) {
+      var request = localhost.request( 'DELETE', '/notificationTypes/' + newId, {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
+      request.write('{}');
+
+      requestHelper( request, function( response ) {
+        console.log( response.body );
+        response.statusCode.should.equal( 200 );
+
+        done();
+      } );
+    } );
+    it( 'should return 404 when called with an Id that doesn\'t exist', function( done ) {
+      var request = localhost.request( 'DELETE', '/notificationTypes/' + newId, {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
+      request.write('{}');
+      requestHelper( request, function( response ) {
+        response.statusCode.should.equal( 404 );
+
+        done();
+      } );
+    } );
+  } );
+} );

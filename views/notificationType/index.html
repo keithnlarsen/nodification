@@ -25,8 +25,13 @@
 		  <th class="button-column"></th>
 		  <th class="button-column"></th>
 		</thead>
-		<tbody data-bind="tempate: { name:'notificationTypeTableTemplate', foreach:notificationTypes }"></tbody>
+		<tbody data-bind="template: { name:'notificationTypeTableTemplate', foreach:notificationTypes }"></tbody>
 	  </table>
+
 	</div>
   </div>
 </div>
+
+<script language="javascript" type="text/javascript">
+console.log(notificationTypes);
+</script>

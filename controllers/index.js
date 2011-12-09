@@ -6,9 +6,9 @@ module.exports = (function(){
     notificationType: {},
     registration: {},
 
-    init: function(models){
-      this.notificationType = notificationTypeController.create(models.notificationType.model);
-      this.registration = registrationController.create(models.registration.model);
+    init: function(models, restErrors){
+      this.notificationType = notificationTypeController.create(models.notificationType.model, restErrors);
+      this.registration = registrationController.create(models.registration.model, restErrors);
     }
   }
 }());

@@ -1,24 +1,18 @@
 module.exports = ( function() {
-  var baseController = require('../libs/basecontroller');
+  var baseController = require('../libs/baseRestController');
 
   var registrationController = baseController.extend({
-    name: 'registration',
-    plural: 'registrations',
-
-    get : function(id, fn) {
-      this.model.findById(id).populate('notificationType', ['name']).run(function(err, instance) {
-        fn(err, instance);
-      });
+    getQuery: function(req) {
+      return this.model.findById(req.params.id).populate('notificationType', ['name']);
     },
 
-    list : function(fn) {
-      this.model.find({}).populate('notificationType', ['name']).run(function (err, list) {
-        fn(err, list);
-      });
+    listQuery: function() {
+      return this.model.find({}).populate('notificationType', ['name']);
     }
 
+    // Example of how to call the super class from the base class
 //  list: function(fn){
-//    this._super(controller, "list", [function(err, list){
+//    this._super(registrationController, "list", [function(err, list){
 //      fn(err, list);
 //    }]);
 //  }
