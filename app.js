@@ -71,6 +71,18 @@ module.exports = ( function() {
     app.controllers.notificationType.remove( req, res, next );
   } );
 
+  app.get( '/registrations', function ( req, res, next ) {
+    app.controllers.registration.list( req, res, next );
+  } );
+
+  app.put( '/registrations', function ( req, res, next ) {
+    app.controllers.registration.insert( req, res, next );
+  } );
+
+  app.get( '/registrations/:id', function ( req, res, next ) {
+    app.controllers.registration.get( req, res, next );
+  } );
+  
   // TODO: the following routes
   // [get, put]          /registrations
   // [get, post, delete] /registrations/:id

@@ -4,7 +4,7 @@ describe( 'Nodification.Tests.Unit.Libs.BaseRestController', function() {
   var createJSON = JSON.parse( "{\"name\":\"Test\",\"field2\":\"url\"}" );
   var updateJSON = JSON.parse( "{\"name\":\"Test2\",\"field2\":\"url2\"}" );
   var mongoose = require( 'mongoose' );
-  var Stub = require( '../../stub' );
+//  var Stub = require( '../../stub' );
   var Schema = mongoose.Schema;
   var baseController = require( '../../../libs/baseRestController' );
   var testType;

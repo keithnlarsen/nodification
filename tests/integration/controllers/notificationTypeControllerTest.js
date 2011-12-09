@@ -103,7 +103,6 @@ describe( 'Nodification.Tests.Integration.Controllers.NotificationTypeController
         done();
       } );
     } );
-
     it( 'should return 404 NotFound when given a non-existing Id', function( done ) {
       var request = localhost.request( 'GET', '/notificationTypes/111111111111111111111111', {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
 
