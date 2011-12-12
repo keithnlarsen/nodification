@@ -39,7 +39,13 @@ module.exports = ( function() {
       title: 'Conflict',
       description: 'The was a conflict that prevented the operation from continuing.',
       httpStatus: 409
-    } )
+    } ),
+    unsupportedMediaType: baseRestError.extend( {
+      name: 'unsupportedMediaType',
+      title: 'Unsupported Media Type',
+      description: 'The server is refusing to service the request beacuse the entity of the request is in a format not supported by the requested resource.',
+      httpStatus: 415
+    })
   };
 
   var errorMapper = {

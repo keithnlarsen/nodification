@@ -11,7 +11,7 @@ module.exports = ( function() {
       receivedDate: {type: Date, 'default': new Date()},
       deliveryConfirmed: {type: Boolean, 'default': false },
       deliveryDate: Date,
-      badge: Number,
+      count: Number,
       meta: Schema.Types.Mixed
     } )
   } );
