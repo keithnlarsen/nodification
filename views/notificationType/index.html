@@ -103,6 +103,7 @@
     } else {
       _create( data.notificationType );
     }
+    $( '#details-container' ).hide( 400 );
   }
 
   function deleteNotificationType ( notificationTypeId ) {
@@ -164,7 +165,6 @@
         ko.applyBindings( self.viewModel );
 
         _displayMessage( "Notification Type has been saved." );
-        cancelEdit();
       },
       error: function () {
         _displayMessage( "Notification Type could not be saved.", true );
