@@ -116,7 +116,21 @@
   }
 
   function _listNotificationTypes () {
-    $.get( "/notificationTypes", _bindData( data ));
+    $.ajax( {
+      type: 'GET',
+      url: '/notificationTypes',
+      contentType: 'application/json; charset=utf-8',
+//      data: JSON.stringify(notificationType),
+      success: function ( data ) {
+//        alert('success!');
+        _bindData( data );
+      },
+      error: function () {
+        _displayMessage( "An error occurred while retrieving the Notification Types.", true );
+      }
+    } );
+
+//    $.get( "/notificationTypes", _bindData( data ));
   }
 
   function _bindData( data ){
@@ -179,6 +193,7 @@
     $.ajax( {
       type: 'DELETE',
       url: '/notificationTypes/' + notificationType._id,
+      data: '{}',
       contentType: 'application/json; charset=utf-8',
       success: function ( data ) {
         _listNotificationTypes();
@@ -193,9 +208,13 @@
   function _displayMessage ( msg, error ) {
     $( '#feedbackMessage span' ).html( msg );
     if ( error ) {
-      $( '#feedbackMessage' ).addClass( 'error' ).show( 'slow' );
+      $( '#feedbackMessage' ).addClass( 'error' ).fadeIn( 'slow', function(){
+        $(this).fadeOut(2000);
+      });
     } else {
-      $( '#feedbackMessage' ).removeClass( 'error' ).show( 'slow' );
+      $( '#feedbackMessage' ).removeClass( 'error' ).fadeIn( 'slow', function(){
+        $(this).fadeOut(2000);
+      });
     }
   }
 </script>

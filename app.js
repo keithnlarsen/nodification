@@ -8,7 +8,6 @@ module.exports = ( function() {
   app.configure( function() {
     app.set('root', __dirname);
     app.set( 'views', __dirname + '/views' );
-    app.set('view engine', 'jade');
     app.register( 'html', require( 'ejs' ) );
     app.set( 'view engine', 'html' );
     app.use( express.logger( { format: '\x1b[1m :date \x1b[1m:method\x1b[0m \x1b[33m:url\x1b[0m :response-time ms\x1b[0m :status' } ) );
@@ -27,11 +26,6 @@ module.exports = ( function() {
 
   mongoose.connect( 'mongodb://localhost/nodification-dev' );
 
-//
-//  app.is('json', function(req){
-//    return 0 == req.headers['content-type'].indexOf('json');
-//  });
-
   // Register ErrorHandler
   var restErrors = require( './libs/resterrors' );
   app.error( restErrors.errorHandler );
@@ -45,6 +39,7 @@ module.exports = ( function() {
   app.controllers = require( './controllers' );
   app.controllers.init( app.models, app.restErrors );
 
+  // Load the routes
   var routes = require('./routes');
   routes.init(app);
   
