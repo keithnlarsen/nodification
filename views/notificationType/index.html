@@ -1,6 +1,8 @@
 <div class="sub-title">
-  <h3>Notification Types <a class="button secondary" href="javascript:void(0);" onclick="displayDetails();">+ new
-    notification type</a></h3>
+  <h3>Notification Types
+    <a class="button secondary" href="javascript:void(0);" data-bind="click: showNew">+ new
+    notification type</a>
+  </h3>
 
   <div id="feedbackMessage"><span></span></div>
 </div>
@@ -8,162 +10,185 @@
 <div id="content">
   <div id="details-container">
     <div class="details-title">
-      <span data-bind="text:notificationType.name || 'New Notification Type'"></span>
+      <span data-bind="text:currentType.name"></span>
       <a class="button secondary" href="javascript:void(0);" alt="delete notification type"
-         title="delete notification type"> delete</a>
+         title="delete notification type" data-bind="click: removeCurrent"> delete</a>
     </div>
     <table class="details">
       <tr>
         <td class="label">Name:</td>
-        <td><input type="text" data-bind="value:notificationType.name"/></td>
+        <td><input type="text" data-bind="value:currentType.name"/></td>
       </tr>
       <tr>
         <td class="label">Registration URL:</td>
-        <td><input type="text" data-bind="value:notificationType.registrationUrl"/></td>
+        <td><input type="text" data-bind="value:currentType.registrationUrl"/></td>
       </tr>
       <tr>
         <td class="label">Username:</td>
-        <td><input type="text" data-bind="value:notificationType.userName"/></td>
+        <td><input type="text" data-bind="value:currentType.userName"/></td>
       </tr>
       <tr>
         <td class="label">Password:</td>
-        <td><input type="password" data-bind="value:notificationType.password"/></td>
+        <td><input type="password" data-bind="value:currentType.password"/></td>
       </tr>
       <tr>
         <td colspan="2" class="label">
-          <a class="button primary" href="javascript:void(0);" onclick="saveDetails();">Save</a>
-          <a class="button secondary" href="javascript:void(0);" onclick="cancelEdit();">Cancel</a>
+          <a class="button primary" href="javascript:void(0);" data-bind="click: save">Save</a>
+          <a class="button secondary" href="javascript:void(0);" data-bind="click: cancel">Cancel</a>
         </td>
       </tr>
     </table>
   </div>
+  <!--			  <ul class="labels">
+       <li>Name:</li>
+       <li>Registration URL:</li>
+       <li>Username:</li>
+       <li>Password:</li>
+       </ul>
+       <ul class="details">
+       <li><input type="text" data-bind="value:notificationType.name || ''"/></li>
+       <li><input type="text" data-bind="value:notificationType.registrationUrl || ''"/></li>
+       <li><input type="text" data-bind="value:notificationType.userName || ''"/></li>
+       <li><input type="password" data-bind="value:notificationType.userName || ''"/></li>
+       </ul>-->
 
   <div id="list-container">
     <table class="list">
       <thead>
-        <th>Name</th>
-        <th>Registration URL</th>
-        <th>Username</th>
-        <th class="button-column"></th>
-        <th class="button-column"></th>
+      <th>Name</th>
+      <th>Registration URL</th>
+      <th>Username</th>
+      <th class="button-column"></th>
+      <th class="button-column"></th>
       </thead>
       <tbody data-bind="template: { name:'notificationTypeTableTemplate', foreach: notificationTypes }"></tbody>
     </table>
   </div>
 </div>
 
-<script id="notificationTypeTableTemplate" type="text/html" >
+<script id="notificationTypeTableTemplate" type="text/html">
   <tr>
     <td>${ name }</td>
     <td>${ registrationUrl }</td>
     <td>${ userName }</td>
-    <td><a class="button primary" href="javascript:void(0);" onclick="displayDetails('${_id}')">Edit</a></td>
-    <td><a class="button secondary" href="javascript:void(0);" onclick="deleteNotificationType('${_id}')">Delete</a>
-    </td>
+    <td><a class="button primary" href="javascript:void(0);" data-bind="click: show">Edit</a></td>
+    <td><a class="button secondary" href="javascript:void(0);" data-bind="click: remove">Delete</a></td>
   </tr>
 </script>
 
-<script type='text/javascript' >
-  var self = this;
-  this.viewModel = {};
-  this.notificationTypes = {};
+<script type='text/javascript'>
 
-  // Load the data for this form directly on initial load...
-  // do ajaxy call for subsequent actions.
-  _bindData( <%- JSON.stringify(notificationTypes) %> );
+  var parent = this;
+  this.viewModel;
 
-  function displayDetails ( notificationTypeId ) {
-    var data = ko.mapping.toJS( self.viewModel );
-    data.notificationType = {};
 
-    if ( notificationTypeId ) {
-      $.each( data.notificationTypes, function( i, notificationType ) {
-        if ( notificationType._id == notificationTypeId ) {
-          data.notificationType = notificationType;
-          return;
-        }
-      } );
-    }
+  function notificationType ( data ) {
+    this._id = ko.observable( data._id );
+    this.name = ko.observable( data.name || "New Notification Type" );
+    this.registrationUrl = ko.observable( data.registrationUrl || '' );
+    this.userName = ko.observable( data.userName || data.username || '' );
 
-    self.viewModel = ko.mapping.fromJS( data );
-    ko.applyBindings( self.viewModel );
+    this.show = function () {
+      parent.viewModel.currentType = this;
+      ko.applyBindings(parent.viewModel);
+      $( '#details-container' ).show( 400 );
+    };
 
-    $( '#details-container' ).show( 400 );
+    this.remove = function () {
+      var self = this;
+      _delete( ko.mapping.toJS( this )._id, function () {
+        parent.viewModel.notificationTypes.remove( self );
+      });
+    };
   }
 
-  function cancelEdit () {
-    self.viewModel.notificationType = {};
-    $( '#details-container' ).hide( 400 );
-  }
+  function notificationTypesViewModel () {
+    this.notificationTypes = ko.observableArray( [] );
+    this.currentType = new notificationType( {} );
 
-  function saveDetails ( notificationId ) {
-    var data = ko.mapping.toJS( self.viewModel );
-    if ( data.notificationType._id ) {
-      _save( data.notificationType );
-    } else {
-      _create( data.notificationType );
-    }
-    $( '#details-container' ).hide( 400 );
-  }
+    this.showNew = function() {
+      parent.viewModel.currentType = new notificationType( {} );
+      ko.applyBindings(parent.viewModel);
+      $( '#details-container' ).show( 400 );
+    };
 
-  function deleteNotificationType ( notificationTypeId ) {
-    var data = ko.mapping.toJS( self.viewModel );
-    $.each( data.notificationTypes, function( i, notificationType ) {
-      if ( notificationType._id == notificationTypeId ) {
-        data.notificationType = notificationType;
+    this.save = function() {
+      var self = parent.viewModel.currentType;
+      var notificationType = ko.mapping.toJS( self );
+      var id = notificationType._id;
+
+      delete notificationType['_id'];
+      delete notificationType['show'];
+      delete notificationType['remove'];
+
+      if( typeof id == 'undefined'){
+        _create( notificationType, function () {
+          parent.viewModel.notificationTypes.push(self);
+          $( '#details-container' ).hide( 400 );
+        });
+      } else {
+        _update( id, notificationType, function () {
+          $( '#details-container' ).hide( 400 );
+        });
       }
-    } );
-    _delete( data.notificationType );
+    };
+
+    this.removeCurrent = function () {
+      var self = parent.viewModel.currentType;
+      var notificationType = ko.mapping.toJS( self );
+      if( typeof notificationType._id != 'undefined' ) {
+        _delete( notificationType._id, function () {
+          parent.viewModel.notificationTypes.remove( self );
+          $( '#details-container' ).hide( 400 );
+        });
+      } else {
+        this.cancel();
+      }
+    };
+
+    this.cancel = function () {
+      $( '#details-container' ).hide( 400 );
+    };
+
+    var self = this;
+    _bindData( <%- JSON.stringify(notificationTypes) %>, self );
   }
 
-  function _listNotificationTypes () {
+  this.viewModel = new notificationTypesViewModel();
+  ko.applyBindings(this.viewModel);
+
+
+  function _bindData( data, self ){
+    var mappedTypes = $.map ( data, function( item ) {
+      return new notificationType( item );
+    });
+
+    self.notificationTypes( mappedTypes );
+  }
+
+  function _listNotificationTypes (self) {
     $.ajax( {
       type: 'GET',
       url: '/notificationTypes',
       contentType: 'application/json; charset=utf-8',
-//      data: JSON.stringify(notificationType),
       success: function ( data ) {
-//        alert('success!');
-        _bindData( data );
+        _bindData( data, self );
       },
       error: function () {
         _displayMessage( "An error occurred while retrieving the Notification Types.", true );
       }
     } );
-
-//    $.get( "/notificationTypes", _bindData( data ));
   }
 
-  function _bindData( data ){
-    var obj = {
-        notificationTypes: (data.length !== 'undefined') ? data : [],
-        notificationType: {}
-    };
-    self.notificationTypes = data;
-    self.viewModel = ko.mapping.fromJS( obj );
-    ko.applyBindings( self.viewModel );
-  }
 
-  function _create ( notificationType ) {
+  function _create ( notificationType, callback ) {
     $.ajax( {
       type: 'PUT',
       url: '/notificationTypes',
       data: JSON.stringify(notificationType),
       contentType: 'application/json; charset=utf-8',
-      success: function ( notificationTypeMod ) {
-
-        var data = ko.mapping.toJS( self.viewModel );
-        if ( data.notificationTypes.length && data.notificationTypes.length > 0 ) {
-          data.notificationTypes.push( notificationTypeMod );
-        } else {
-          data.notificationTypes = [notificationTypeMod];
-        }
-
-        data.notificationType = {};
-
-        self.viewModel = ko.mapping.fromJS( data );
-        ko.applyBindings( self.viewModel );
-
+      success: function () {
+        callback();
         _displayMessage( "Notification Type has been saved." );
       },
       error: function () {
@@ -172,15 +197,14 @@
     } );
   }
 
-  function _save ( notificationType ) {
-    var id = notificationType._id;
-    delete notificationType['_id'];
+  function _update ( notificationTypeId, notificationType, callback ) {
     $.ajax( {
       type: 'POST',
-      url: '/notificationTypes/' + id,
-      contentType: 'application/json; charset=utf-8',
+      url: '/notificationTypes/' + notificationTypeId,
       data: JSON.stringify(notificationType),
-      success: function ( data ) {
+      contentType: 'application/json; charset=utf-8',
+      success: function () {
+        callback();
         _displayMessage( "Notification Type has been saved." );
       },
       error: function () {
@@ -189,14 +213,14 @@
     } );
   }
 
-  function _delete ( notificationType ) {
+  function _delete ( notificationTypeId, callback ) {
     $.ajax( {
       type: 'DELETE',
-      url: '/notificationTypes/' + notificationType._id,
+      url: '/notificationTypes/' + notificationTypeId,
       data: '{}',
       contentType: 'application/json; charset=utf-8',
-      success: function ( data ) {
-        _listNotificationTypes();
+      success: function () {
+        callback();
         _displayMessage( "Notification Type has been deleted." );
       },
       error: function () {
@@ -216,5 +240,6 @@
         $(this).fadeOut(2000);
       });
     }
-  }
+  };
+  
 </script>

@@ -22,17 +22,19 @@ h3 .button, .details-title .button {
 }
 .button {
   border:0 none;
-  border-radius:5px;
-  -moz-border-radius:5px;
-  -webkit-border-radius:5px;
+  border-radius:12px;
+  -moz-border-radius:12px;
+  -webkit-border-radius:12px;
   cursor:pointer;
   display:inline-block;
-  padding:5px 15px;
+  font-size:12px;
+  font-weight: bold;
+  padding:4px 12px;
 }
 .button.primary {
-  background-color:#B6C10C;
+  /*background-color:#B6C10C;*/
+  background-color:#A38566;
   color:#f4f4f4;
-  font-size:12px;
 }
 .button.secondary {
   background-color:transparent;
@@ -152,5 +154,5 @@ h3 .button, .details-title .button {
 	background-color:#F0F5FF;
   }
   table.list td, table.list th {
-	padding:0 10px;
+	  padding:3px 10px;
   }

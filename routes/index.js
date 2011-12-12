@@ -43,7 +43,11 @@ module.exports = ( function() {
       } );
 
       app.get( '/registrations', function ( req, res, next ) {
-        app.controllers.registration.list( req, res, next );
+        if ( req.accepts( 'json' ) ) {
+          app.controllers.registration.list( req, res, next );
+        } else {
+          app.controllers.registration.index( req, res, next );
+        }
       } );
 
       app.put( '/registrations', function ( req, res, next ) {
@@ -54,8 +58,15 @@ module.exports = ( function() {
         app.controllers.registration.get( req, res, next );
       } );
 
+      app.post( '/registrations/:id', function ( req, res, next ) {
+        app.controllers.registration.update( req, res, next );
+      } );
+
+      app.del( '/registrations/:id', function ( req, res, next ) {
+        app.controllers.registration.remove( req, res, next );
+      } );
+
       // TODO: the following routes
-      // [get, post, delete] /registrations/:id
       // [get, put]          /registrations/:id/devices
       // [get, post, delete] /registrations/:id/devices/:id
       // [get, put]          /events
