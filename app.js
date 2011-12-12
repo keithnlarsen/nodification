@@ -4,25 +4,28 @@ module.exports = ( function() {
 
   var app = express.createServer();
 
+  app.configure( 'development', function() {
+    app.use( express.logger( { format: '\x1b[1m :date \x1b[1m:method\x1b[0m \x1b[33m:url\x1b[0m :response-time ms\x1b[0m :status' } ) );
+  } );
+
+  app.configure( 'test', function() {
+  });
+
+  app.configure( 'production', function() {
+    app.use( express.logger( { format: '\x1b[1m :date \x1b[1m:method\x1b[0m \x1b[33m:url\x1b[0m :response-time ms\x1b[0m :status' } ) );
+  } );
+
   // Configuration
   app.configure( function() {
     app.set('root', __dirname);
     app.set( 'views', __dirname + '/views' );
     app.register( 'html', require( 'ejs' ) );
     app.set( 'view engine', 'html' );
-    app.use( express.logger( { format: '\x1b[1m :date \x1b[1m:method\x1b[0m \x1b[33m:url\x1b[0m :response-time ms\x1b[0m :status' } ) );
     app.use( express.bodyParser() );
     app.use( express.methodOverride() );
     app.use( app.router );
     app.use( express.static( __dirname + '/public' ) );
   } );
-
-//  app.configure( 'development', function() {
-//  } );
-//  app.configure( 'test', function() {
-//  });
-//  app.configure( 'production', function() {
-//  } );
 
   mongoose.connect( 'mongodb://localhost/nodification-dev' );
 

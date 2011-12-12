@@ -85,7 +85,7 @@ var baseRestController = baseObject.extend( {
       } else if (count === 0) {
         next( self.restErrors.notFound.create( self.name + ' Id: "' + req.params.id + '" was not found.' ), req, res );
       } else {
-        res.send(200);
+        res.send({});
       }
     } );
   }

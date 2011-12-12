@@ -170,7 +170,6 @@ describe( 'Nodification.Tests.Integration.Controllers.NotificationTypeController
       request.write('{}');
 
       requestHelper( request, function( response ) {
-        console.log( response.body );
         response.statusCode.should.equal( 200 );
 
         done();
