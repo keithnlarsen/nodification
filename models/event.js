@@ -15,4 +15,5 @@ module.exports = ( function() {
       meta: Schema.Types.Mixed
     } )
   } );
+  
 }());
