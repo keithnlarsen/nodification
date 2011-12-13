@@ -59,6 +59,10 @@ describe( 'Nodification.Tests.Unit.Libs.BaseRestController', function() {
       testController.insert( mockReq, mockRes, next );
 
     } );
+
+    // TODO: Test inserting duplicate
+
+    // TODO: Test inserting another record
   } );
 
   describe( '.get( req, res, done )', function() {
@@ -123,6 +127,8 @@ describe( 'Nodification.Tests.Unit.Libs.BaseRestController', function() {
           body[0].name.should.be.equal( "Test2" );
           body[0].field2.should.be.equal( "url2" );
           done();
+
+          // TODO: Test for both records after inserting 2 records
         }
       };
 
@@ -153,6 +159,7 @@ describe( 'Nodification.Tests.Unit.Libs.BaseRestController', function() {
 
       testController.remove( mockReq, mockRes, next );
     } );
+    // TODO: test for removal of one records, then test for removal of second record.
   } );
 
 } );

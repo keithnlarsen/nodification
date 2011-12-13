@@ -10,26 +10,26 @@
 <div id="content">
   <div id="details-container">
     <div class="details-title">
-      <span data-bind="text:currentType.name"></span>
+      <span data-bind="text: currentType() ? currentType().name : 'New Notification Type'"></span>
       <a class="button secondary" href="javascript:void(0);" alt="delete notification type"
          title="delete notification type" data-bind="click: removeCurrent"> delete</a>
     </div>
     <table class="details">
       <tr>
         <td class="label">Name:</td>
-        <td><input type="text" data-bind="value:currentType.name"/></td>
+        <td><input type="text" id="name" data-bind="value: currentType() ? currentType().name : ''"/></td>
       </tr>
       <tr>
         <td class="label">Registration URL:</td>
-        <td><input type="text" data-bind="value:currentType.registrationUrl"/></td>
+        <td><input type="text" data-bind="value: currentType() ? currentType().registrationUrl : ''"/></td>
       </tr>
       <tr>
         <td class="label">Username:</td>
-        <td><input type="text" data-bind="value:currentType.userName"/></td>
+        <td><input type="text" data-bind="value: currentType() ? currentType().userName : ''"/></td>
       </tr>
       <tr>
         <td class="label">Password:</td>
-        <td><input type="password" data-bind="value:currentType.password"/></td>
+        <td><input type="password" data-bind="value: currentType() ? currentType().password : ''"/></td>
       </tr>
       <tr>
         <td colspan="2" class="label">
@@ -61,7 +61,7 @@
       <th class="button-column"></th>
       <th class="button-column"></th>
       </thead>
-      <tbody data-bind="template: { name:'notificationTypeTableTemplate', foreach: notificationTypes }"></tbody>
+      <tbody data-bind="template: { name:'notificationTypeTableTemplate', foreach: notificationTypes, templateOptions: { select: selectItem } }"></tbody>
     </table>
   </div>
 </div>
@@ -71,28 +71,33 @@
     <td>${ name }</td>
     <td>${ registrationUrl }</td>
     <td>${ userName }</td>
-    <td><a class="button primary" href="javascript:void(0);" data-bind="click: show">Edit</a></td>
+    <td><a class="button primary" href="javascript:void(0);" data-bind="clickWithParams: { action: $item.select, params: [$data ] }">Edit</a></td>
     <td><a class="button secondary" href="javascript:void(0);" data-bind="click: remove">Delete</a></td>
   </tr>
 </script>
 
 <script type='text/javascript'>
+  ko.bindingHandlers.clickWithParams = {
+    init: function(element, valueAccessor, allBindingsAccessor, context) {
+      var options = valueAccessor();
+      var newValueAccessor = function() {
+        return function() {
+          options.action.apply(context, options.params);
+        };
+    };
+      ko.bindingHandlers.click.init(element, newValueAccessor, allBindingsAccessor, context);
+    }
+  };
 
   var parent = this;
-  this.viewModel;
-
+  this.viewModel = {};
 
   function notificationType ( data ) {
     this._id = ko.observable( data._id );
     this.name = ko.observable( data.name || "New Notification Type" );
     this.registrationUrl = ko.observable( data.registrationUrl || '' );
     this.userName = ko.observable( data.userName || data.username || '' );
-
-    this.show = function () {
-      parent.viewModel.currentType = this;
-      ko.applyBindings(parent.viewModel);
-      $( '#details-container' ).show( 400 );
-    };
+    this.password = ko.observable( data.password || '' );
 
     this.remove = function () {
       var self = this;
@@ -104,17 +109,17 @@
 
   function notificationTypesViewModel () {
     this.notificationTypes = ko.observableArray( [] );
-    this.currentType = new notificationType( {} );
+    this.currentType = ko.observable();
+
 
     this.showNew = function() {
-      parent.viewModel.currentType = new notificationType( {} );
-      ko.applyBindings(parent.viewModel);
-      $( '#details-container' ).show( 400 );
+      parent.viewModel.selectItem(new notificationType( {} ));
     };
 
     this.save = function() {
       var self = parent.viewModel.currentType;
       var notificationType = ko.mapping.toJS( self );
+//      var notificationType = ko.toJSON( self );
       var id = notificationType._id;
 
       delete notificationType['_id'];
@@ -122,8 +127,8 @@
       delete notificationType['remove'];
 
       if( typeof id == 'undefined'){
-        _create( notificationType, function () {
-          parent.viewModel.notificationTypes.push(self);
+        _create( notificationType, function ( newNotificationType ) {
+          parent.viewModel.notificationTypes.push( newNotificationType );
           $( '#details-container' ).hide( 400 );
         });
       } else {
@@ -155,6 +160,15 @@
   }
 
   this.viewModel = new notificationTypesViewModel();
+
+  this.viewModel.selectItem = function ( notificationType ) {
+    $( '#details-container' ).show( 400 );
+    parent.viewModel.currentType( notificationType );
+    $('#name').focus();
+  }.bind(this.viewModel);
+
+
+  
   ko.applyBindings(this.viewModel);
 
 
@@ -181,14 +195,14 @@
   }
 
 
-  function _create ( notificationType, callback ) {
+  function _create ( newNotificationType, callback ) {
     $.ajax( {
       type: 'PUT',
       url: '/notificationTypes',
-      data: JSON.stringify(notificationType),
+      data: JSON.stringify(newNotificationType),
       contentType: 'application/json; charset=utf-8',
-      success: function () {
-        callback();
+      success: function ( data ) {
+        callback( new notificationType( data ) );
         _displayMessage( "Notification Type has been saved." );
       },
       error: function () {
