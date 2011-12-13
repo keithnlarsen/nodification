@@ -53,25 +53,25 @@ h3 .button, .details-title .button {
 }
 
   a.title {
-	color:#eee;
-	float:left;
-	font-size:20px;
-	margin:0;
+    color:#eee;
+    float:left;
+    font-size:20px;
+    margin:0;
   }
   ul.nav {
-	float:left;
-	list-style:none;
-	margin:-6px 0 0;
+    float:left;
+    list-style:none;
+    margin:-6px 0 0;
   }
   .nav li {
-	float:left;
-	padding:10px;
+    float:left;
+    padding:10px;
   }
   .nav li.selected {
-	background-color:#000;
+    background-color:#000;
   }
   ul.nav a {
-	color:#f4f4f4;
+    color:#f4f4f4;
   }
 
 #main-container {
@@ -80,10 +80,10 @@ h3 .button, .details-title .button {
   padding:0;
 }
   .sub-title {
-	background-color:#f4f4f4;
-	border-bottom:1px solid #e4e4e4;
-	height:55px;
-	padding:1px 20px 2px;
+    background-color:#f4f4f4;
+    border-bottom:1px solid #e4e4e4;
+    height:55px;
+    padding:1px 20px 2px;
   }
 	#feedbackMessage {
 	  color:#444;
@@ -115,7 +115,7 @@ h3 .button, .details-title .button {
   display:none;
 }
   .details-title {
-	font-size: 14px;
+    font-size: 14px;
     font-weight: bold;
     padding: 20px;
     text-align: center;
@@ -125,19 +125,20 @@ h3 .button, .details-title .button {
   }
   
   .details {
-	display:inline-block;
+    display:inline-block;
   }
   .details td {
-	padding:5px;
+    padding:5px;
+    text-align:left;
   }
   .details td.label {
-	text-align:right;
+    text-align:right;
   }
   
   .details {
-	display:inline-block;
-	list-style:none;
-	padding:0;
+    display:inline-block;
+    list-style:none;
+    padding:0;
   }
 
 #list-container {
@@ -145,13 +146,13 @@ h3 .button, .details-title .button {
   height:300px; 
 }
   table.list {
-	width:100%;
+    width:100%;
   }
   table.list th {
-	border-bottom:1px solid #e4e4e4;
+    border-bottom:1px solid #e4e4e4;
   }
   table.list tr:nth-child(even) {
-	background-color:#F0F5FF;
+    background-color:#F0F5FF;
   }
   table.list td, table.list th {
 	  padding:3px 10px;
