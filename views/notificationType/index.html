@@ -39,18 +39,6 @@
       </tr>
     </table>
   </div>
-  <!--			  <ul class="labels">
-       <li>Name:</li>
-       <li>Registration URL:</li>
-       <li>Username:</li>
-       <li>Password:</li>
-       </ul>
-       <ul class="details">
-       <li><input type="text" data-bind="value:notificationType.name || ''"/></li>
-       <li><input type="text" data-bind="value:notificationType.registrationUrl || ''"/></li>
-       <li><input type="text" data-bind="value:notificationType.userName || ''"/></li>
-       <li><input type="password" data-bind="value:notificationType.userName || ''"/></li>
-       </ul>-->
 
   <div id="list-container">
     <table class="list">
@@ -119,7 +107,6 @@
     this.save = function() {
       var self = parent.viewModel.currentType;
       var notificationType = ko.mapping.toJS( self );
-//      var notificationType = ko.toJSON( self );
       var id = notificationType._id;
 
       delete notificationType['_id'];

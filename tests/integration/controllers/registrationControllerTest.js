@@ -5,7 +5,8 @@ describe( 'Nodification.Tests.Integration.Controllers.RegistrationController', f
   var voiceMailJSON = JSON.parse( "{\"name\":\"VoiceMail\",\"registrationUrl\":\"url\",\"userName\": \"username\",\"password\": \"password\"}" );
   var voiceMailId;
   var createJSON = JSON.parse( "{\"notificationType\":\" \",\"key\":\"4039819330\",\"registrationConfirmed\":false,\"devices\":[{ \"type\":\"ios\",\"name\":\"test\",\"token\":\"123ef0b00000000\"}] }" );
-  var updateJSON = JSON.parse( "{\"notificationType\":\" \",\"key\":\"4039819330\",\"registrationConfirmed\":true,\"devices\":[{ \"type\":\"ios\",\"name\":\"test2\",\"token\":\"123ef0b00000000\"}] }" );
+  var updateJSON = JSON.parse( "{\"notificationType\":\" \",\"key\":\"4039819330\",\"registrationConfirmed\":true,\"devices\":[{ \"type\":\"android\",\"name\":\"test2\",\"token\":\"1234132414132\"}] }" );
+  var updateDevicesJSON = JSON.parse( "{\"devices\":[{ \"type\":\"ios\",\"name\":\"testios\",\"token\":\"ios123ef0b00000000\"},{ \"type\":\"android\",\"name\":\"testandroid\",\"token\":\"android209304823084\"}] }" );
   var newId = '';
   var notificationType;
   var registration;
@@ -48,13 +49,13 @@ describe( 'Nodification.Tests.Integration.Controllers.RegistrationController', f
       registration.model.remove( {}, function( err ) {
         notificationType.model.remove( {}, function( err ) {
           // populate the database with a new notificationType
-          notificationType.model.create(voiceMailJSON, function(err, voiceMail) {
+          notificationType.model.create( voiceMailJSON, function( err, voiceMail ) {
             // setup our test records to use that notificationType
             voiceMailId = voiceMail._id.toString();
             createJSON.notificationType = voiceMailId;
             updateJSON.notificationType = voiceMailId;
             done( err )
-          });
+          } );
         } );
       } );
     }, 250 );
@@ -72,7 +73,7 @@ describe( 'Nodification.Tests.Integration.Controllers.RegistrationController', f
   describe( 'PUT to /registrations', function() {
     it( 'should create a new Registration', function( done ) {
       var request = localhost.request( 'PUT', '/registrations', {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
-      request.write(JSON.stringify(createJSON));
+      request.write( JSON.stringify( createJSON ) );
 
       requestHelper( request, function( response ) {
         var actual = JSON.parse( response.body );
@@ -123,76 +124,94 @@ describe( 'Nodification.Tests.Integration.Controllers.RegistrationController', f
     } );
   } );
 
-//  describe( 'POST to /notificationType/:id', function() {
-//    it( 'should update an existing NotificationType', function( done ) {
-//      var request = localhost.request( 'POST', '/registrations/' + newId, {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
-//      request.write( JSON.stringify( updateJSON ) );
-//
-//      requestHelper( request, function( response ) {
-//        var actual = JSON.parse( response.body );
-//        var expected = updateJSON;
-//
-//        newId = actual._id.toString();
-//        actual.name.should.equal( expected.name );
-//        actual.registrationUrl.should.equal( expected.registrationUrl );
-//        actual.userName.should.equal( expected.userName );
-//        actual.password.should.equal( expected.password );
-//        response.statusCode.should.equal( 200 );
-//
-//        done();
-//      } );
-//    } );
-//    it( 'should return 404 NotFound when trying to Update a NotificationType That Doesn\'t Exist', function( done ) {
-//      var request = localhost.request( 'POST', '/registrations/111111111111111111111111', {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
-//      request.write( JSON.stringify( updateJSON ) );
-//
-//      requestHelper( request, function( response ) {
-//        response.statusCode.should.equal( 404 );
-//
-//        done();
-//      } );
-//    } );
-//  } );
-//
-//  describe( 'GET to /notificationType', function() {
-//    it( 'should return all NotificationTypes', function( done ) {
-//      var request = localhost.request( 'GET', '/registrations', {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
-//
-//      requestHelper( request, function( response ) {
-//        var actual = JSON.parse( response.body );
-//        var expected = updateJSON;
-//
-//        response.statusCode.should.equal( 200 );
-//        actual[0].name.should.equal( expected.name );
-//        actual[0].registrationUrl.should.equal( expected.registrationUrl );
-//        actual[0].userName.should.equal( expected.userName );
-//        actual[0].password.should.equal( expected.password );
-//
-//        done();
-//      } );
-//    } );
-//  } );
-//
-//  describe( 'DELETE to /notificationType/:id', function() {
-//    it( 'should delete person when called with an existing Id', function( done ) {
-//      var request = localhost.request( 'DELETE', '/registrations/' + newId, {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
-//      request.write('{}');
-//
-//      requestHelper( request, function( response ) {
-//        console.log( response.body );
-//        response.statusCode.should.equal( 200 );
-//
-//        done();
-//      } );
-//    } );
-//    it( 'should return 404 when called with an Id that doesn\'t exist', function( done ) {
-//      var request = localhost.request( 'DELETE', '/registrations/' + newId, {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
-//      request.write('{}');
-//      requestHelper( request, function( response ) {
-//        response.statusCode.should.equal( 404 );
-//
-//        done();
-//      } );
-//    } );
-//  } );
+  describe( 'POST to /registrations/:id', function() {
+    it( 'should update an existing Registration', function( done ) {
+      var request = localhost.request( 'POST', '/registrations/' + newId, {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
+      request.write( JSON.stringify( updateJSON ) );
+
+      requestHelper( request, function( response ) {
+        var actual = JSON.parse( response.body );
+        var expected = updateJSON;
+
+        actual.notificationType._id.toString().should.equal( voiceMailId );
+        actual.key.should.equal( expected.key );
+        actual.registrationConfirmed.should.equal( expected.registrationConfirmed );
+        actual.devices.should.have.length( 1 );
+        actual.devices[0].name.should.equal( expected.devices[0].name );
+        actual.devices[0].type.should.equal( expected.devices[0].type );
+        actual.devices[0].token.should.equal( expected.devices[0].token );
+        response.statusCode.should.equal( 200 );
+
+        done();
+      } );
+    } );
+  } );
+
+  describe( 'POST to /registrations/:id', function() {
+    it( 'should update the devices collection of an existing Registration', function( done ) {
+      var request = localhost.request( 'POST', '/registrations/' + newId, {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
+      request.write( JSON.stringify( updateDevicesJSON ) );
+
+      requestHelper( request, function( response ) {
+        var actual = JSON.parse( response.body );
+        var expected = updateJSON;
+        var expectedDevices = updateDevicesJSON;
+
+        actual.notificationType._id.toString().should.equal( voiceMailId );
+        actual.key.should.equal( expected.key );
+        actual.registrationConfirmed.should.equal( expected.registrationConfirmed );
+        actual.devices.should.have.length( 2 );
+        actual.devices[0].name.should.equal( expectedDevices.devices[0].name );
+        actual.devices[0].type.should.equal( expectedDevices.devices[0].type );
+        actual.devices[0].token.should.equal( expectedDevices.devices[0].token );
+        actual.devices[1].name.should.equal( expectedDevices.devices[1].name );
+        actual.devices[1].type.should.equal( expectedDevices.devices[1].type );
+        actual.devices[1].token.should.equal( expectedDevices.devices[1].token );
+        response.statusCode.should.equal( 200 );
+
+        done();
+      } );
+    } );
+  } );
+
+  describe( 'GET to /registrations', function() {
+    it( 'should return all registrations', function( done ) {
+      var request = localhost.request( 'GET', '/registrations', {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
+
+      requestHelper( request, function( response ) {
+        var actual = JSON.parse( response.body );
+        var expected = updateJSON;
+        var expectedDevices = updateDevicesJSON;
+
+        actual[0]._id.should.equal( newId );
+        actual[0].notificationType._id.should.equal( voiceMailId );
+        actual[0].notificationType.name.should.equal( voiceMailJSON.name );
+        actual[0].key.should.equal( expected.key );
+        actual[0].registrationConfirmed.should.equal( expected.registrationConfirmed );
+        actual[0].devices.should.have.length( 2 );
+        actual[0].devices[0].name.should.equal( expectedDevices.devices[0].name );
+        actual[0].devices[0].type.should.equal( expectedDevices.devices[0].type );
+        actual[0].devices[0].token.should.equal( expectedDevices.devices[0].token );
+        actual[0].devices[1].name.should.equal( expectedDevices.devices[1].name );
+        actual[0].devices[1].type.should.equal( expectedDevices.devices[1].type );
+        actual[0].devices[1].token.should.equal( expectedDevices.devices[1].token );
+        response.statusCode.should.equal( 200 );
+
+        done();
+      } );
+    } );
+  } );
+
+  describe( 'DELETE to /registrations/:id', function() {
+    it( 'should delete registrations when called with an existing Id', function( done ) {
+      var request = localhost.request( 'DELETE', '/registrations/' + newId, {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
+      request.write('{}');
+
+      requestHelper( request, function( response ) {
+        response.statusCode.should.equal( 200 );
+
+        done();
+      } );
+    } );
+  } );
 } );

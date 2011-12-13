@@ -22,7 +22,7 @@ module.exports = ( function() {
     app.register( 'html', require( 'ejs' ) );
     app.set( 'view engine', 'html' );
     app.use( express.bodyParser() );
-    app.use( express.methodOverride() );
+//    app.use( express.methodOverride() );
     app.use( app.router );
     app.use( express.static( __dirname + '/public' ) );
   } );
