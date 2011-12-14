@@ -95,7 +95,7 @@ describe( 'Nodification.Tests.Integration.Controllers.RegistrationDeviceControll
   } );
 
   describe( 'GET to /registrations/:id/devices/:eid', function() {
-    it( 'should create a second new Device', function( done ) {
+    it( 'should get a Device given an existing registration id and device id', function( done ) {
       var request = localhost.request( 'GET', '/registrations/' + registrationId + '/devices/' + newId, {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
 
       requestHelper( request, function( response ) {
@@ -156,7 +156,7 @@ describe( 'Nodification.Tests.Integration.Controllers.RegistrationDeviceControll
   } );
 
   describe( 'DELETE to /registrations/:id/devices/:eid', function() {
-    it( 'should delete device from a registration when called with an existing registration Id and device eid', function( done ) {
+    it( 'should delete a device from a registration when called with an existing registration id and device id', function( done ) {
       var request = localhost.request( 'DELETE', '/registrations/' + registrationId + '/devices/' + newId, {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
       request.write( '{}' );
 
