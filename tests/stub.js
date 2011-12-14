@@ -27,7 +27,7 @@ module.exports = function( err, callBackValue ) {
       withArguments: function() {
         for ( var i = 0; i < arguments.length; i ++ ) {
           if ( JSON.stringify( Stub.args[i] ) !== JSON.stringify( arguments[i] ) ) {
-            throw new Error( " Actual arguments: " + JSON.stringify( Stub.args[i] ) + " does not match expected: " + JSON.stringify( arguments[i] ) );
+            throw new Error( ' Actual arguments: ' + JSON.stringify( Stub.args[i] ) + ' does not match expected: ' + JSON.stringify( arguments[i] ) );
           }
         }
         return true;
@@ -49,7 +49,7 @@ module.exports = function( err, callBackValue ) {
     };
 
     if ( arguments.length > 0 ) {
-      if ( typeof arguments[arguments.length - 1] === "function" ) {
+      if ( typeof arguments[arguments.length - 1] === 'function' ) {
         var callBack = arguments[arguments.length - 1];
         callBack( err, callBackValue );
       } else {

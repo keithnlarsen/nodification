@@ -14,16 +14,17 @@ describe( 'Nodification.Tests.Unit.Gateways.NotificationRegistrationGateway', fu
     registrationUrl: 'http://hostname.sjrb.ca/urlpath',
     name: 'somename'
   };
+  var eventNotificationUrl = 'http://localhost/events';
 
   beforeEach( function( done ) {
     mockRequest.write = new Stub();
-    mockRequestHandler.handle = new Stub(null, mockResponse);
-    mockClient.request = new Stub(null, mockRequest);
-    done( );
+    mockRequestHandler.handle = new Stub( null, mockResponse );
+    mockClient.request = new Stub( null, mockRequest );
+    done();
   } );
 
   afterEach( function( done ) {
-    done( );
+    done();
   } );
 
   describe( '.register( registration, notificationType, callBack )', function() {
@@ -31,26 +32,25 @@ describe( 'Nodification.Tests.Unit.Gateways.NotificationRegistrationGateway', fu
 
       mockResponse.statusCode = 200;
 
-      var options = {
-        client: mockClient,
-        requestHandler: mockRequestHandler,
-        eventNotificationUrl: 'someUrl'
-      };
-
-      var message = {
+      var expectedMessage = {
         'registrationKey': mockRegistration.key,
-        'eventNotificationUrl': options.eventNotificationUrl,
+        'eventNotificationUrl': eventNotificationUrl,
         'notificationType': mockNotificationType.name
       };
 
-      registrationGateway.init(options);
-      registrationGateway.register(mockRegistration, mockNotificationType, function (err, success){
-        mockRequest.write.called.withAnyArguments(message);
-        mockRequestHandler.handle.called.withArguments(mockRequest);
+      registrationGateway.init( {
+        client: mockClient,
+        requestHandler: mockRequestHandler,
+        eventNotificationUrl: eventNotificationUrl
+      } );
+
+      registrationGateway.register( mockRegistration, mockNotificationType, function ( err, success ) {
+        mockRequest.write.called.withArguments( JSON.stringify( expectedMessage ) );
+        mockRequestHandler.handle.called.withArguments( mockRequest );
         mockClient.request.called.withArguments( 'GET', '/urlpath', { 'Host': 'hostname.sjrb.ca', 'Accept': 'application/json', 'Content-Type': 'application/json' } );
-        success.should.be.true;
-        done(err);
-      });
+        success.should.equal(true);
+        done( err );
+      } );
 
     } );
 
@@ -58,26 +58,25 @@ describe( 'Nodification.Tests.Unit.Gateways.NotificationRegistrationGateway', fu
 
       mockResponse.statusCode = 201;
 
-      var options = {
-        client: mockClient,
-        requestHandler: mockRequestHandler,
-        eventNotificationUrl: 'someUrl'
-      };
-
-      var message = {
+      var expectedMessage = {
         'registrationKey': mockRegistration.key,
-        'eventNotificationUrl': options.eventNotificationUrl,
+        'eventNotificationUrl': eventNotificationUrl,
         'notificationType': mockNotificationType.name
       };
 
-      registrationGateway.init(options);
-      registrationGateway.register(mockRegistration, mockNotificationType, function (err, success){
-        mockRequest.write.called.withAnyArguments(message);
-        mockRequestHandler.handle.called.withArguments(mockRequest);
+      registrationGateway.init( {
+        client: mockClient,
+        requestHandler: mockRequestHandler,
+        eventNotificationUrl: eventNotificationUrl
+      } );
+
+      registrationGateway.register( mockRegistration, mockNotificationType, function ( err, success ) {
+        mockRequest.write.called.withArguments( JSON.stringify( expectedMessage ) );
+        mockRequestHandler.handle.called.withArguments( mockRequest );
         mockClient.request.called.withArguments( 'GET', '/urlpath', { 'Host': 'hostname.sjrb.ca', 'Accept': 'application/json', 'Content-Type': 'application/json' } );
-        success.should.be.true;
-        done(err);
-      });
+        success.should.equal(true);
+        done( err );
+      } );
 
     } );
 
@@ -85,27 +84,26 @@ describe( 'Nodification.Tests.Unit.Gateways.NotificationRegistrationGateway', fu
       mockResponse.statusCode = 500;
       mockResponse.body = 'mock error';
 
-      var options = {
-        client: mockClient,
-        requestHandler: mockRequestHandler,
-        eventNotificationUrl: 'someUrl'
-      };
-
-      var message = {
+      var expectedMessage = {
         'registrationKey': mockRegistration.key,
-        'eventNotificationUrl': options.eventNotificationUrl,
+        'eventNotificationUrl': eventNotificationUrl,
         'notificationType': mockNotificationType.name
       };
 
-      registrationGateway.init(options);
-      registrationGateway.register(mockRegistration, mockNotificationType, function (err, success){
-        mockRequest.write.called.withAnyArguments(message);
-        mockRequestHandler.handle.called.withArguments(mockRequest);
+      registrationGateway.init( {
+        client: mockClient,
+        requestHandler: mockRequestHandler,
+        eventNotificationUrl: eventNotificationUrl
+      } );
+
+      registrationGateway.register( mockRegistration, mockNotificationType, function ( err, success ) {
+        mockRequest.write.called.withArguments( JSON.stringify( expectedMessage ) );
+        mockRequestHandler.handle.called.withArguments( mockRequest );
         mockClient.request.called.withArguments( 'GET', '/urlpath', { 'Host': 'hostname.sjrb.ca', 'Accept': 'application/json', 'Content-Type': 'application/json' } );
-        success.should.be.false;
-        err.message.should.match(/mock error/);
+        success.should.equal(false);
+        err.message.should.match( /mock error/ );
         done();
-      });
+      } );
 
     } );
   } );
