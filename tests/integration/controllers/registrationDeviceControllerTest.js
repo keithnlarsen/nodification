@@ -15,23 +15,7 @@ describe( 'Nodification.Tests.Integration.Controllers.RegistrationDeviceControll
   var app;
 
   var localhost = http.createClient( 3000, 'localhost' );
-  var requestHelper = function( request, fn ) {
-    request.end();
-
-    request.on( 'response', function ( response ) {
-      var responseBody = "";
-      response.setEncoding( 'utf8' );
-
-      response.addListener( "data", function( chunk ) {
-        responseBody += chunk;
-      } );
-
-      response.on( 'end', function() {
-        response.body = responseBody;
-        fn( response );
-      } );
-    } );
-  };
+  var requestHandler = require('../../../libs/requestHandler');
 
   before( function( done ) {
     var app = require( '../../../app' );
@@ -79,7 +63,7 @@ describe( 'Nodification.Tests.Integration.Controllers.RegistrationDeviceControll
       var request = localhost.request( 'PUT', '/registrations/' + registrationId + '/devices', {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
       request.write( JSON.stringify( createJSON ) );
 
-      requestHelper( request, function( response ) {
+      requestHandler.handle( request, function( err, response ) {
         var actual = JSON.parse( response.body );
         var expected = createJSON;
 
@@ -96,7 +80,7 @@ describe( 'Nodification.Tests.Integration.Controllers.RegistrationDeviceControll
       var request = localhost.request( 'PUT', '/registrations/' + registrationId + '/devices', {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
       request.write( JSON.stringify( createJSON2 ) );
 
-      requestHelper( request, function( response ) {
+      requestHandler.handle( request, function( err, response ) {
         var actual = JSON.parse( response.body );
         var expected = createJSON2;
 
@@ -111,10 +95,10 @@ describe( 'Nodification.Tests.Integration.Controllers.RegistrationDeviceControll
   } );
 
   describe( 'GET to /registrations/:id/devices/:eid', function() {
-    it( 'should create a second new Device', function( done ) {
+    it( 'should get a Device given an existing registration id and device id', function( done ) {
       var request = localhost.request( 'GET', '/registrations/' + registrationId + '/devices/' + newId, {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
 
-      requestHelper( request, function( response ) {
+      requestHandler.handle( request, function( err, response ) {
         var actual = JSON.parse( response.body );
         var expected = createJSON;
 
@@ -133,7 +117,7 @@ describe( 'Nodification.Tests.Integration.Controllers.RegistrationDeviceControll
       var request = localhost.request( 'POST', '/registrations/' + registrationId + '/devices/' + newId, {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
       request.write( JSON.stringify( updateJSON ) );
 
-      requestHelper( request, function( response ) {
+      requestHandler.handle( request, function( err, response ) {
         var actual = JSON.parse( response.body );
         var expected = updateJSON;
 
@@ -151,7 +135,7 @@ describe( 'Nodification.Tests.Integration.Controllers.RegistrationDeviceControll
     it( 'should get the full list of Devices for a given registration id', function( done ) {
       var request = localhost.request( 'GET', '/registrations/' + registrationId + '/devices', {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
 
-      requestHelper( request, function( response ) {
+      requestHandler.handle( request, function( err, response ) {
         var actual = JSON.parse( response.body );
         var expected = {};
         expected[0] = updateJSON;
@@ -172,17 +156,17 @@ describe( 'Nodification.Tests.Integration.Controllers.RegistrationDeviceControll
   } );
 
   describe( 'DELETE to /registrations/:id/devices/:eid', function() {
-    it( 'should delete device from a registration when called with an existing registration Id and device eid', function( done ) {
+    it( 'should delete a device from a registration when called with an existing registration id and device id', function( done ) {
       var request = localhost.request( 'DELETE', '/registrations/' + registrationId + '/devices/' + newId, {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
       request.write( '{}' );
 
-      requestHelper( request, function( response ) {
+      requestHandler.handle( request, function( err, response ) {
         response.statusCode.should.equal( 200 );
 
         // Check that it did actually delete the device from the registration
         var request = localhost.request( 'GET', '/registrations/' + registrationId + '/devices', {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
 
-        requestHelper( request, function( response ) {
+        requestHandler.handle( request, function( err, response ) {
           var actual = JSON.parse( response.body );
 
           actual.should.be.length(1);

@@ -13,23 +13,7 @@ describe( 'Nodification.Tests.Integration.Controllers.RegistrationController', f
   var app;
 
   var localhost = http.createClient( 3000, 'localhost' );
-  var requestHelper = function( request, fn ) {
-    request.end();
-
-    request.on( 'response', function ( response ) {
-      var responseBody = "";
-      response.setEncoding( 'utf8' );
-
-      response.addListener( "data", function( chunk ) {
-        responseBody += chunk;
-      } );
-
-      response.on( 'end', function() {
-        response.body = responseBody;
-        fn( response );
-      } );
-    } );
-  };
+  var requestHandler = require('../../../libs/requestHandler');
 
   before( function( done ) {
     var app = require( '../../../app' );
@@ -75,12 +59,12 @@ describe( 'Nodification.Tests.Integration.Controllers.RegistrationController', f
       var request = localhost.request( 'PUT', '/registrations', {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
       request.write( JSON.stringify( createJSON ) );
 
-      requestHelper( request, function( response ) {
+      requestHandler.handle( request, function( err, response ) {
         var actual = JSON.parse( response.body );
         var expected = createJSON;
 
         newId = actual._id.toString();
-        actual.notificationType.toString().should.equal( voiceMailId );
+        actual.notificationType._id.toString().should.equal( voiceMailId );
         actual.key.should.equal( expected.key );
         actual.registrationConfirmed.should.equal( expected.registrationConfirmed );
         actual.devices[0].name.should.equal( expected.devices[0].name );
@@ -97,7 +81,7 @@ describe( 'Nodification.Tests.Integration.Controllers.RegistrationController', f
     it( 'should return a single Registration when given an existing Id', function( done ) {
       var request = localhost.request( 'GET', '/registrations/' + newId, {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
 
-      requestHelper( request, function( response ) {
+      requestHandler.handle( request, function( err, response ) {
         var actual = JSON.parse( response.body );
         var expected = createJSON;
 
@@ -116,7 +100,7 @@ describe( 'Nodification.Tests.Integration.Controllers.RegistrationController', f
     it( 'should return 404 NotFound when given a non-existing Id', function( done ) {
       var request = localhost.request( 'GET', '/registrations/111111111111111111111111', {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
 
-      requestHelper( request, function( response ) {
+      requestHandler.handle( request, function( err, response ) {
         response.statusCode.should.equal( 404 );
 
         done();
@@ -129,7 +113,7 @@ describe( 'Nodification.Tests.Integration.Controllers.RegistrationController', f
       var request = localhost.request( 'POST', '/registrations/' + newId, {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
       request.write( JSON.stringify( updateJSON ) );
 
-      requestHelper( request, function( response ) {
+      requestHandler.handle( request, function( err, response ) {
         var actual = JSON.parse( response.body );
         var expected = updateJSON;
 
@@ -152,7 +136,7 @@ describe( 'Nodification.Tests.Integration.Controllers.RegistrationController', f
       var request = localhost.request( 'POST', '/registrations/' + newId, {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
       request.write( JSON.stringify( updateDevicesJSON ) );
 
-      requestHelper( request, function( response ) {
+      requestHandler.handle( request, function( err, response ) {
         var actual = JSON.parse( response.body );
         var expected = updateJSON;
         var expectedDevices = updateDevicesJSON;
@@ -178,7 +162,7 @@ describe( 'Nodification.Tests.Integration.Controllers.RegistrationController', f
     it( 'should return all registrations', function( done ) {
       var request = localhost.request( 'GET', '/registrations', {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
 
-      requestHelper( request, function( response ) {
+      requestHandler.handle( request, function( err, response ) {
         var actual = JSON.parse( response.body );
         var expected = updateJSON;
         var expectedDevices = updateDevicesJSON;
@@ -207,7 +191,7 @@ describe( 'Nodification.Tests.Integration.Controllers.RegistrationController', f
       var request = localhost.request( 'DELETE', '/registrations/' + newId, {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
       request.write('{}');
 
-      requestHelper( request, function( response ) {
+      requestHandler.handle( request, function( err, response ) {
         response.statusCode.should.equal( 200 );
 
         done();

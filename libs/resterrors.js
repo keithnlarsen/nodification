@@ -45,7 +45,7 @@ module.exports = ( function() {
       title: 'Unsupported Media Type',
       description: 'The server is refusing to service the request beacuse the entity of the request is in a format not supported by the requested resource.',
       httpStatus: 415
-    })
+    } )
   };
 
   var errorMapper = {
@@ -67,12 +67,12 @@ module.exports = ( function() {
     }
   };
 
-  var errorHandler = function( error, request, response ) {
+  function errorHandler ( error, request, response ) {
     var constructorName = error.prototype ? error.prototype.constructor.name : 'default';
     var errorHandler = errorMapper[error.name] || errorMapper[constructorName];
 
     errorHandler( error, request, response );
-  };
+  }
 
   return {
     baseRestError: baseRestError,

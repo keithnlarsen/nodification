@@ -72,7 +72,17 @@ var baseRestController = baseObject.extend( {
           next( new Error( 'Internal Server Error: see logs for details: ' + err ), req, res );
         }
       } else {
-        res.send( instance.toObject(), 201 );
+        req.params = req.params || {};
+        req.params.id = instance._id;
+        self.getQuery( req ).exec( function( err, instance ) {
+          if ( err ) {
+            next( new Error( 'Internal Server Error: see logs for details: ' + err ), req, res );
+          } else if ( !instance ) {
+            next( self.restErrors.notFound.create( self.name + ' Id: "' + req.params.id + '" was not found.' ), req, res );
+          } else {
+            res.send( instance.toObject(), 201 );
+          }
+        } );
       }
     } );
   },
