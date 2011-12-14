@@ -13,23 +13,7 @@ describe( 'Nodification.Tests.Integration.Controllers.RegistrationController', f
   var app;
 
   var localhost = http.createClient( 3000, 'localhost' );
-  var requestHelper = function( request, fn ) {
-    request.end();
-
-    request.on( 'response', function ( response ) {
-      var responseBody = "";
-      response.setEncoding( 'utf8' );
-
-      response.addListener( "data", function( chunk ) {
-        responseBody += chunk;
-      } );
-
-      response.on( 'end', function() {
-        response.body = responseBody;
-        fn( response );
-      } );
-    } );
-  };
+  var requestHelper = require('../../../libs/requestHelper');
 
   before( function( done ) {
     var app = require( '../../../app' );
