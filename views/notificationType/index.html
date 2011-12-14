@@ -65,6 +65,8 @@
 </script>
 
 <script type='text/javascript'>
+  $( "#top-bar #types" ).addClass( 'selected' );
+
   ko.bindingHandlers.clickWithParams = {
     init: function(element, valueAccessor, allBindingsAccessor, context) {
       var options = valueAccessor();
