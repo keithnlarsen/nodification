@@ -9,7 +9,7 @@ describe( 'Nodification.Tests.Integration.Controllers.NotificationTypeController
   var app;
 
   var localhost = http.createClient( 3000, 'localhost' );
-  var requestHelper = require('../../../libs/requestHelper');
+  var requestHandler = require('../../../libs/requestHandler');
 
   before( function( done ) {
     var app = require( '../../../app' );
@@ -43,7 +43,7 @@ describe( 'Nodification.Tests.Integration.Controllers.NotificationTypeController
       var request = localhost.request( 'PUT', '/notificationTypes', {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
       request.write( JSON.stringify( createJSON ) );
 
-      requestHelper( request, function( response ) {
+      requestHandler.handle( request, function( err, response ) {
         var actual = JSON.parse( response.body );
         var expected = createJSON;
 
@@ -61,7 +61,7 @@ describe( 'Nodification.Tests.Integration.Controllers.NotificationTypeController
       var request = localhost.request( 'PUT', '/notificationTypes', {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
       request.write( JSON.stringify( createJSON ) );
 
-      requestHelper( request, function( response ) {
+      requestHandler.handle( request, function( err, response ) {
         response.statusCode.should.equal( 409 );
         response.body.should.match( /duplicate key error/ );
 
@@ -74,7 +74,7 @@ describe( 'Nodification.Tests.Integration.Controllers.NotificationTypeController
     it( 'should return a single NotificationType when given an existing Id', function( done ) {
       var request = localhost.request( 'GET', '/notificationTypes/' + newId, {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
 
-      requestHelper( request, function( response ) {
+      requestHandler.handle( request, function( err, response ) {
         var actual = JSON.parse( response.body );
         var expected = createJSON;
 
@@ -90,7 +90,7 @@ describe( 'Nodification.Tests.Integration.Controllers.NotificationTypeController
     it( 'should return 404 NotFound when given a non-existing Id', function( done ) {
       var request = localhost.request( 'GET', '/notificationTypes/111111111111111111111111', {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
 
-      requestHelper( request, function( response ) {
+      requestHandler.handle( request, function( err, response ) {
         response.statusCode.should.equal( 404 );
 
         done();
@@ -103,7 +103,7 @@ describe( 'Nodification.Tests.Integration.Controllers.NotificationTypeController
       var request = localhost.request( 'POST', '/notificationTypes/' + newId, {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
       request.write( JSON.stringify( updateJSON ) );
 
-      requestHelper( request, function( response ) {
+      requestHandler.handle( request, function( err, response ) {
         var actual = JSON.parse( response.body );
         var expected = updateJSON;
 
@@ -121,7 +121,7 @@ describe( 'Nodification.Tests.Integration.Controllers.NotificationTypeController
       var request = localhost.request( 'POST', '/notificationTypes/111111111111111111111111', {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
       request.write( JSON.stringify( updateJSON ) );
 
-      requestHelper( request, function( response ) {
+      requestHandler.handle( request, function( err, response ) {
         response.statusCode.should.equal( 404 );
 
         done();
@@ -133,7 +133,7 @@ describe( 'Nodification.Tests.Integration.Controllers.NotificationTypeController
     it( 'should return all NotificationTypes', function( done ) {
       var request = localhost.request( 'GET', '/notificationTypes', {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
 
-      requestHelper( request, function( response ) {
+      requestHandler.handle( request, function( err, response ) {
         var actual = JSON.parse( response.body );
         var expected = updateJSON;
 
@@ -153,7 +153,7 @@ describe( 'Nodification.Tests.Integration.Controllers.NotificationTypeController
       var request = localhost.request( 'DELETE', '/notificationTypes/' + newId, {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
       request.write('{}');
 
-      requestHelper( request, function( response ) {
+      requestHandler.handle( request, function( err, response ) {
         response.statusCode.should.equal( 200 );
 
         done();
@@ -162,7 +162,7 @@ describe( 'Nodification.Tests.Integration.Controllers.NotificationTypeController
     it( 'should return 404 when called with an Id that doesn\'t exist', function( done ) {
       var request = localhost.request( 'DELETE', '/notificationTypes/' + newId, {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
       request.write('{}');
-      requestHelper( request, function( response ) {
+      requestHandler.handle( request, function( err, response ) {
         response.statusCode.should.equal( 404 );
 
         done();
