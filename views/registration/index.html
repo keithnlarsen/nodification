@@ -1,0 +1,188 @@
+<div class="sub-title">
+  <h3>Notification Registrations
+    <a class="button secondary" href="javascript:void(0);" data-bind="click: showNew">+ new registration</a>
+  </h3>
+
+  <div id="feedbackMessage"><span></span></div>
+</div>
+
+<div id="content">
+  <div id="details-container">
+    <div class="details-title">
+      <span data-bind="text:'New Notification Registration'"></span>
+      <a class="button secondary" href="javascript:void(0);" alt="delete registration"
+         title="delete notification type"> delete</a>
+    </div>
+    <table class="details">
+      <tr>
+        <td class="label">Notification Type:</td>
+        <td>
+          <select name="notificationType"  data-bind="options: notificationTypes,
+                                                      optionsText: 'name',
+                                                      optionsValue: '_id',
+                                                      value: current() ? current()._id : ''" >
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td class="label">Key:</td>
+        <td><input type="text" name="key" data-bind="value: current() ? current().key : ''"/></td>
+      </tr>
+      <tr>
+        <td class="label">Confirm:</td>
+        <td><input type="checkbox" name="key" data-bind="checked: current() ? current().confirmed : false"/></td>
+      </tr>
+      <tr>
+        <td class="label">Devices:</td>
+        <td>
+          <!--<select name="devices"  multiple="true" data-bind="options: devices,-->
+                                                      <!--optionsText: 'name',-->
+                                                      <!--optionsValue: '_id',-->
+                                                      <!--selectedOptions: current() ? current().devices : ''" >-->
+          <!--</select>-->
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2" class="label">
+          <a class="button primary" href="javascript:void(0);">Save</a>
+          <a class="button secondary" href="javascript:void(0);" data-bind="click: cancel">Cancel</a>
+        </td>
+      </tr>
+    </table>
+  </div>
+  
+  <div id="list-container">
+    <table class="list">
+      <thead>
+      <th>Notification Type</th>
+      <th>Key</th>
+      <th>Confirmed</th>
+      <th>Devices</th>
+      <th class="button-column"></th>
+      <th class="button-column"></th>
+      </thead>
+      <tbody data-bind="template: { name:'registrationTableTemplate', foreach: registrations }"></tbody>
+    </table>
+  </div>
+</div>
+
+<script id="registrationTableTemplate" type="text/html">
+  <tr>
+    <td>${ notificationType }</td>
+    <td>${ key }</td>
+    <td>${ confirmed }</td>
+    <td>${ devices }</td>
+    <td><a class="button primary" href="javascript:void(0);">Edit</a></td>
+    <td><a class="button secondary" href="javascript:void(0);">Delete</a></td>
+  </tr>
+</script>
+
+<script type='text/javascript'>
+  ko.bindingHandlers.clickWithParams = {
+    init: function(element, valueAccessor, allBindingsAccessor, context) {
+      var options = valueAccessor();
+      var newValueAccessor = function() {
+        return function() {
+          options.action.apply(context, options.params);
+        };
+    };
+      ko.bindingHandlers.click.init(element, newValueAccessor, allBindingsAccessor, context);
+    }
+  };
+  
+  var parent = this;
+  this.viewModel;
+
+  function device ( data ) {
+    
+  }
+
+  function registration ( data ) {
+    this._id = ko.observable( data._id );
+    this.notificationType = ko.observable( data.notificationType );
+    this.key = ko.observable( data.key );
+    this.confirmed = ko.observable( data.confirmed );
+    this.devices = ko.observableArray( data.devices );
+
+  }
+
+  function notificationType ( data ) {
+    this._id = ko.observable( data._id );
+    this.name = ko.observable( data.name || "" );
+  }
+  
+  function registrationViewModel () {
+    this.registrations = ko.observableArray( [] );
+    this.notificationTypes = ko.observableArray( [] );
+    this.current = ko.observable();
+
+    this.showNew = function() {
+      parent.viewModel.selectItem(new registration( {} ));
+    };
+    
+    this.cancel = function () {
+      $( '#details-container' ).hide( 400 );
+    };
+
+    var self = this;
+    _bindRegistrationData( <%- JSON.stringify( registrations ) %>, self );
+    _getNotifcationTypes( self );
+  };
+
+  this.viewModel = new registrationViewModel();
+  this.viewModel.selectItem = function ( registration ) {
+    $( '#details-container' ).show( 400 );
+    parent.viewModel.current( registration );
+    $('#name').focus();
+  }.bind(this.viewModel);
+
+  ko.applyBindings( this.viewModel );
+
+  function _bindRegistrationData( data, self ){
+    var mappedTypes = $.map ( data, function( item ) {
+      return new registration( item );
+    });
+
+    self.registrations( mappedTypes );
+  }
+  
+  function _bindNotificationTypeData( data, self ){
+    var mappedTypes = $.map ( data, function( item ) {
+      return new notificationType( item );
+    });
+    self.notificationTypes( mappedTypes );
+  };
+  
+  function _create ( newRegistration, callback ) {
+    $.ajax( {
+      type: 'PUT',
+      url: '/registrations',
+      data: JSON.stringify(newRegistration),
+      contentType: 'application/json; charset=utf-8',
+      success: function ( data ) {
+        callback( new registration( data ) );
+        _displayMessage( "Notification has been registered." );
+      },
+      error: function () {
+        _displayMessage( "Notification could not be registered.", true );
+      }
+    } );
+  };
+
+  function _getNotifcationTypes ( self ) {
+    $.ajax( {
+      type: 'GET',
+      url: '/notificationTypes',
+      contentType: 'application/json; charset=utf-8',
+      success: function ( data ) {
+        _bindNotificationTypeData( data, self );
+      },
+      error: function () {
+        _displayMessage( "An error occurred while retrieving the Notification Types.", true );
+      }
+    } );
+  };
+  
+
+
+</script>
