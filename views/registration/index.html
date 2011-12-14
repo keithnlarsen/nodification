@@ -1,5 +1,5 @@
 <div class="sub-title">
-  <h3>Notification Registrations
+  <h3>Registered Notifications
     <a class="button secondary" href="javascript:void(0);" data-bind="click: showNew">+ new registration</a>
   </h3>
 
@@ -9,42 +9,40 @@
 <div id="content">
   <div id="details-container">
     <div class="details-title">
-      <span data-bind="text:'New Notification Registration'"></span>
+      <span data-bind="text:'Register New Notification'"></span>
       <a class="button secondary" href="javascript:void(0);" alt="delete registration"
          title="delete notification type"> delete</a>
     </div>
     <table class="details">
       <tr>
-        <td class="label">Notification Type:</td>
-        <td>
-          <select name="notificationType"  data-bind="options: notificationTypes,
-                                                      optionsText: 'name',
-                                                      optionsValue: '_id',
-                                                      value: current() ? current()._id : ''" >
-          </select>
-        </td>
-      </tr>
-      <tr>
         <td class="label">Key:</td>
         <td><input type="text" name="key" data-bind="value: current() ? current().key : ''"/></td>
       </tr>
       <tr>
-        <td class="label">Confirm:</td>
+        <td class="label">Notification Type:</td>
+        <td>
+          <select name="notificationType" data-bind="options: notificationTypes,
+                                                      optionsText: 'name',
+                                                      optionsCaption: 'Choose One... ',
+                                                      value: current() ? current().notificationType : ''" >
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td class="label">Confirm Registration:</td>
         <td><input type="checkbox" name="key" data-bind="checked: current() ? current().confirmed : false"/></td>
       </tr>
       <tr>
-        <td class="label">Devices:</td>
+        <td class="label top">Devices:</td>
         <td>
-          <!--<select name="devices"  multiple="true" data-bind="options: devices,-->
-                                                      <!--optionsText: 'name',-->
-                                                      <!--optionsValue: '_id',-->
-                                                      <!--selectedOptions: current() ? current().devices : ''" >-->
-          <!--</select>-->
+          <ul data-bind="visible: current() && current().devices, template: { name:'deviceListTemplate', foreach: current() ? current().devices : ''}"></ul>
+          <a id="add-device" class="button secondary" href="javascript:void(0);" data-bind="click: addDevice"> register new device </a>
+          <a id="cancel-device" class="button secondary" href="javascript:void(0);" data-bind="click: cancelDevice"> cancel new device </a>
         </td>
       </tr>
       <tr>
         <td colspan="2" class="label">
-          <a class="button primary" href="javascript:void(0);">Save</a>
+          <a class="button primary" href="javascript:void(0);" data-bind="click: save">Save</a>
           <a class="button secondary" href="javascript:void(0);" data-bind="click: cancel">Cancel</a>
         </td>
       </tr>
@@ -61,18 +59,31 @@
       <th class="button-column"></th>
       <th class="button-column"></th>
       </thead>
-      <tbody data-bind="template: { name:'registrationTableTemplate', foreach: registrations }"></tbody>
+      <tbody data-bind="template: { name:'registrationTableTemplate', foreach: registrations, templateOptions: { select: selectItem } }"></tbody>
     </table>
   </div>
 </div>
 
+<script id="deviceListTemplate" type="text/html">
+  <li id="${ _id }" class="view">
+    <label>${ name }</label>
+    <a class="button secondary" href="javascript:void(0);" data-bind="click: removeDevice">Remove Device</a>
+    <br/>
+    <span id="device-detail">
+      Type: <select name="type"  data-bind="options: ['ios','android'], optionsCaption: 'Choose Type... ', value: type" /><br/>
+     Token: <input type="text" data-bind="value: token"/><br/>
+      Name: <input type="text" data-bind="value: name"/>
+    </span>
+  </li>
+</script>
+        
 <script id="registrationTableTemplate" type="text/html">
   <tr>
-    <td>${ notificationType }</td>
+    <td>${ notificationType().name }</td>
     <td>${ key }</td>
     <td>${ confirmed }</td>
     <td>${ devices }</td>
-    <td><a class="button primary" href="javascript:void(0);">Edit</a></td>
+    <td><a class="button primary" href="javascript:void(0);" data-bind="clickWithParams: { action: $item.select, params: [$data ] }">Edit</a></td>
     <td><a class="button secondary" href="javascript:void(0);">Delete</a></td>
   </tr>
 </script>
@@ -94,16 +105,22 @@
   this.viewModel;
 
   function device ( data ) {
-    
+    this._id = ko.observable( data._id || 'newDevice');
+    this.type = ko.observable( data.type );
+    this.name = ko.observable( data.name || 'New Device');
+    this.token = ko.observable( data.token );
+
+    this.removeDevice = function ( data ) {
+      parent.viewModel.current().devices.remove( this );
+    }
   }
 
   function registration ( data ) {
     this._id = ko.observable( data._id );
-    this.notificationType = ko.observable( data.notificationType );
     this.key = ko.observable( data.key );
-    this.confirmed = ko.observable( data.confirmed );
-    this.devices = ko.observableArray( data.devices );
-
+    this.notificationType = ko.observable( new notificationType( data.notificationType || {} ) );
+    this.confirmed = ko.observable( data.confirmed || false );
+    this.devices = ko.observableArray( _bindDeviceData( data.devices ? data.devices : [] ) );
   }
 
   function notificationType ( data ) {
@@ -119,8 +136,47 @@
     this.showNew = function() {
       parent.viewModel.selectItem(new registration( {} ));
     };
+
+    this.addDevice = function ( data ) {
+      this.current().devices.push( new device( {} ) );
+      $('#newDevice').removeClass('view').addClass('edit');
+      $( 'a#cancel-device' ).show( );
+      $( 'a#add-device' ).hide( );
+    };
+
+    this.cancelDevice = function ( data ) {
+      $('#newDevice').removeClass('edit').addClass('view');
+      $( 'a#cancel-device' ).hide( );
+      $( 'a#add-device' ).show( );
+    };
+
+
+    this.save = function () {
+      var self = this.current();
+      var registration = ko.toJS(self);
+
+      var id = registration._id;
+      delete registration['_id'];
+      registration.notificationType = registration.notificationType._id;
+
+      $.each( registration.devices, function( i, device ) {
+        delete device['_id'];
+        delete device['removeDevice'];
+      });
+
+      if( typeof id == 'undefined' ) {
+        _create( registration, function (newRegistration) {
+          parent.viewModel.registrations.push( newRegistration );
+          $( '#details-container' ).hide( 400 );
+        })
+      } else {
+        alert( registration.toSource() );
+      }
+
+    };
     
     this.cancel = function () {
+      $( '.device-detail' ).addClass( 'view' );
       $( '#details-container' ).hide( 400 );
     };
 
@@ -132,18 +188,25 @@
   this.viewModel = new registrationViewModel();
   this.viewModel.selectItem = function ( registration ) {
     $( '#details-container' ).show( 400 );
-    parent.viewModel.current( registration );
-    $('#name').focus();
+    this.current( registration );
   }.bind(this.viewModel);
 
   ko.applyBindings( this.viewModel );
 
+  function _bindDeviceData( data ){
+    var mappedDevices = $.map ( data, function( item ) {
+      return new device( item );
+    });
+
+    return mappedDevices ;
+  }
+
   function _bindRegistrationData( data, self ){
-    var mappedTypes = $.map ( data, function( item ) {
+    var mappedRegistrations = $.map ( data, function( item ) {
       return new registration( item );
     });
 
-    self.registrations( mappedTypes );
+    self.registrations( mappedRegistrations );
   }
   
   function _bindNotificationTypeData( data, self ){
@@ -183,6 +246,18 @@
     } );
   };
   
+  function _displayMessage ( msg, error ) {
+    $( '#feedbackMessage span' ).html( msg );
+    if ( error ) {
+      $( '#feedbackMessage' ).addClass( 'error' ).fadeIn( 'slow', function(){
+        $(this).fadeOut(2000);
+      });
+    } else {
+      $( '#feedbackMessage' ).removeClass( 'error' ).fadeIn( 'slow', function(){
+        $(this).fadeOut(2000);
+      });
+    }
+  };
 
 
 </script>

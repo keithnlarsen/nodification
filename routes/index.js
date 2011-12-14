@@ -51,7 +51,7 @@ module.exports = ( function() {
         app.controllers.notificationType.remove( req, res, next );
       } );
 
-      app.get( '/registrations', this.acceptTypeJson, function ( req, res, next ) {
+      app.get( '/registrations', function ( req, res, next ) {
         if ( req.accepts( 'json' ) ) {
           app.controllers.registration.list( req, res, next );
         } else {

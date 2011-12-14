@@ -40,6 +40,10 @@ h3 .button, .details-title .button {
   background-color:transparent;
 }
 
+.hidden {
+  display:none;
+}
+
 .container {
   display:inline-block;
   padding: 10px 5px;
@@ -134,11 +138,23 @@ h3 .button, .details-title .button {
   .details td.label {
     text-align:right;
   }
-  
-  .details {
-    display:inline-block;
+  .details td.label.top {
+    padding-top: 7px;
+    vertical-align: top;
+  }
+  .details td ul {
     list-style:none;
+    margin: 0;
     padding:0;
+  }
+  .details #cancel-device {
+    display:none;
+  }
+  .details li.view #device-detail {
+    display:none;
+  }
+  .details li.edit #device-detail {
+    display:block;
   }
 
 #list-container {
