@@ -11,7 +11,8 @@
     "express": "2.5.1",
     "jade": ">= 0.0.1",
     "ejs": "*",
-    "mongoose": ">= 2.3.13"
+    "mongoose": ">= 2.3.13",
+    "apn": "1.1.4"
   },
 
   "devDependencies": {

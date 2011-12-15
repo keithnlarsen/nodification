@@ -54,7 +54,7 @@ var baseRestController = baseObject.extend( {
     this.model.update( { _id:req.params.id}, req.body, function( err, count ) {
       if ( err ) {
         next( new Error( 'Internal Server Error: see logs for details: ' + err ), req, res );
-      } else if (count === 0) {
+      } else if ( count === 0 ) {
         next( self.restErrors.notFound.create( self.name + ' Id: "' + req.params.id + '" was not found.' ), req, res );
       } else {
         self.get( req, res, next );
@@ -92,10 +92,10 @@ var baseRestController = baseObject.extend( {
     this.model.remove( {_id:req.params.id}, function( err, count ) {
       if ( err ) {
         next( new Error( 'Internal Server Error: see logs for details: ' + err ), req, res );
-      } else if (count === 0) {
+      } else if ( count === 0 ) {
         next( self.restErrors.notFound.create( self.name + ' Id: "' + req.params.id + '" was not found.' ), req, res );
       } else {
-        res.send({});
+        res.send( {} );
       }
     } );
   }

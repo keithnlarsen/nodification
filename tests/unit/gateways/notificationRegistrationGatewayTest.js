@@ -48,7 +48,7 @@ describe( 'Nodification.Tests.Unit.Gateways.NotificationRegistrationGateway', fu
         mockRequest.write.called.withArguments( JSON.stringify( expectedMessage ) );
         mockRequestHandler.handle.called.withArguments( mockRequest );
         mockClient.request.called.withArguments( 'GET', '/urlpath', { 'Host': 'hostname.sjrb.ca', 'Accept': 'application/json', 'Content-Type': 'application/json' } );
-        success.should.equal(true);
+        success.should.equal( true );
         done( err );
       } );
 
@@ -74,7 +74,7 @@ describe( 'Nodification.Tests.Unit.Gateways.NotificationRegistrationGateway', fu
         mockRequest.write.called.withArguments( JSON.stringify( expectedMessage ) );
         mockRequestHandler.handle.called.withArguments( mockRequest );
         mockClient.request.called.withArguments( 'GET', '/urlpath', { 'Host': 'hostname.sjrb.ca', 'Accept': 'application/json', 'Content-Type': 'application/json' } );
-        success.should.equal(true);
+        success.should.equal( true );
         done( err );
       } );
 
@@ -100,7 +100,7 @@ describe( 'Nodification.Tests.Unit.Gateways.NotificationRegistrationGateway', fu
         mockRequest.write.called.withArguments( JSON.stringify( expectedMessage ) );
         mockRequestHandler.handle.called.withArguments( mockRequest );
         mockClient.request.called.withArguments( 'GET', '/urlpath', { 'Host': 'hostname.sjrb.ca', 'Accept': 'application/json', 'Content-Type': 'application/json' } );
-        success.should.equal(false);
+        success.should.equal( false );
         err.message.should.match( /mock error/ );
         done();
       } );

@@ -43,10 +43,10 @@ var baseController = baseObject.extend( {
       } else if ( !instance ) {
         next( self.restErrors.notFound.create( self.name + ' Id: "' + req.params.id + '" was not found.' ), req, res );
       } else {
-        var result = instance[self.embeddedFieldName].id(req.params.eid);
-        if (result){
+        var result = instance[self.embeddedFieldName].id( req.params.eid );
+        if ( result ) {
           res.send( result.toObject() );
-        } else{
+        } else {
           next( self.restErrors.notFound.create( self.embeddedFieldName + ': "' + req.params.eid + '" was not found.' ), req, res );
         }
       }
@@ -61,22 +61,22 @@ var baseController = baseObject.extend( {
       } else if ( !instance ) {
         next( self.restErrors.notFound.create( self.name + ' Id: "' + req.params.id + '" was not found.' ), req, res );
       } else {
-        var toUpdate = instance[self.embeddedFieldName].id(req.params.eid);
-        for( var name in req.body ) {
+        var toUpdate = instance[self.embeddedFieldName].id( req.params.eid );
+        for ( var name in req.body ) {
           toUpdate[name] = req.body[name];
         }
-        instance.save(function(err, updated){
-          if (err){
+        instance.save( function( err, updated ) {
+          if ( err ) {
             next( new Error( 'Internal Server Error: see logs for details: ' + err ), req, res );
           } else {
-            var result = updated[self.embeddedFieldName].id(req.params.eid);
-            if (result){
+            var result = updated[self.embeddedFieldName].id( req.params.eid );
+            if ( result ) {
               res.send( result.toObject() );
-            } else{
+            } else {
               next( self.restErrors.notFound.create( self.embeddedFieldName + ': "' + req.params.eid + '" was not found.' ), req, res );
             }
           }
-        });
+        } );
       }
     } );
   },
@@ -89,30 +89,30 @@ var baseController = baseObject.extend( {
       } else if ( !instance ) {
         next( self.restErrors.notFound.create( self.name + ' Id: "' + req.params.id + '" was not found.' ), req, res );
       } else {
-        instance[self.embeddedFieldName].push(req.body);
-        instance.save(function(err, instance){
-          if (err){
+        instance[self.embeddedFieldName].push( req.body );
+        instance.save( function( err, instance ) {
+          if ( err ) {
             next( new Error( 'Internal Server Error: see logs for details: ' + err ), req, res );
           } else {
             var embedded = instance[self.embeddedFieldName];
-            for (var i = 0; i < embedded.length; i ++ ) {
+            for ( var i = 0; i < embedded.length; i ++ ) {
               var doc = embedded[i];
               var found = true;
-              for( var name in req.body ) {
-                if( doc[name] != req.body[name] ) {
+              for ( var name in req.body ) {
+                if ( doc[name] != req.body[name] ) {
                   found = false;
                 }
               }
-              if(found){
-                res.send (doc, 201);
+              if ( found ) {
+                res.send( doc, 201 );
                 break;
               }
             }
-            if(!found){
+            if ( !found ) {
               next( new Error( 'Internal Server Error: see logs for details: ' + err ), req, res );
             }
           }
-        });
+        } );
       }
     } );
   },
@@ -125,14 +125,14 @@ var baseController = baseObject.extend( {
       } else if ( !instance ) {
         next( self.restErrors.notFound.create( self.name + ' Id: "' + req.params.id + '" was not found.' ), req, res );
       } else {
-        instance[self.embeddedFieldName].id(req.params.eid).remove();
-        instance.save(function(err){
-          if (err){
+        instance[self.embeddedFieldName].id( req.params.eid ).remove();
+        instance.save( function( err ) {
+          if ( err ) {
             next( new Error( 'Internal Server Error: see logs for details: ' + err ), req, res );
           } else {
-            res.send({});
+            res.send( {} );
           }
-        });
+        } );
       }
     } );
   }
