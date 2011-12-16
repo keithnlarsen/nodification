@@ -1,12 +1,13 @@
 describe( 'Nodification.Tests.Unit.Gateways.NotificationRegistrationGateway', function() {
 
   var should = require( 'should' );
-  var Stub = require( '../../stub' );
+  var stub = require( '../../stub' );
   var registrationGateway = require( '../../../gateways/notificationRegistrationGateway' );
   var mockClient = {};
   var mockRequest = {};
   var mockRequestHandler = {};
   var mockResponse = { statusCode: null, body: '' };
+  var expectedMessage;
   var mockRegistration = {
     key: 'somekey'
   };
@@ -17,9 +18,22 @@ describe( 'Nodification.Tests.Unit.Gateways.NotificationRegistrationGateway', fu
   var eventNotificationUrl = 'http://localhost/events';
 
   beforeEach( function( done ) {
-    mockRequest.write = new Stub();
-    mockRequestHandler.handle = new Stub( null, mockResponse );
-    mockClient.request = new Stub( null, mockRequest );
+    mockRequest.write = stub.sync();
+    mockRequestHandler.handle = stub.async( null, mockResponse );
+    mockClient.request = stub.sync( null, mockRequest );
+
+    expectedMessage = {
+      'registrationKey': mockRegistration.key,
+      'eventNotificationUrl': eventNotificationUrl,
+      'notificationType': mockNotificationType.name
+    };
+
+    registrationGateway.init( {
+      client: mockClient,
+      requestHandler: mockRequestHandler,
+      eventNotificationUrl: eventNotificationUrl
+    } );
+
     done();
   } );
 
@@ -31,18 +45,6 @@ describe( 'Nodification.Tests.Unit.Gateways.NotificationRegistrationGateway', fu
     it( 'should return sucess when calling registrationUrl for given notificationType and getting http status code 200 back', function( done ) {
 
       mockResponse.statusCode = 200;
-
-      var expectedMessage = {
-        'registrationKey': mockRegistration.key,
-        'eventNotificationUrl': eventNotificationUrl,
-        'notificationType': mockNotificationType.name
-      };
-
-      registrationGateway.init( {
-        client: mockClient,
-        requestHandler: mockRequestHandler,
-        eventNotificationUrl: eventNotificationUrl
-      } );
 
       registrationGateway.register( mockRegistration, mockNotificationType, function ( err, success ) {
         mockRequest.write.called.withArguments( JSON.stringify( expectedMessage ) );
@@ -58,18 +60,6 @@ describe( 'Nodification.Tests.Unit.Gateways.NotificationRegistrationGateway', fu
 
       mockResponse.statusCode = 201;
 
-      var expectedMessage = {
-        'registrationKey': mockRegistration.key,
-        'eventNotificationUrl': eventNotificationUrl,
-        'notificationType': mockNotificationType.name
-      };
-
-      registrationGateway.init( {
-        client: mockClient,
-        requestHandler: mockRequestHandler,
-        eventNotificationUrl: eventNotificationUrl
-      } );
-
       registrationGateway.register( mockRegistration, mockNotificationType, function ( err, success ) {
         mockRequest.write.called.withArguments( JSON.stringify( expectedMessage ) );
         mockRequestHandler.handle.called.withArguments( mockRequest );
@@ -83,18 +73,6 @@ describe( 'Nodification.Tests.Unit.Gateways.NotificationRegistrationGateway', fu
     it( 'should return error when calling registrationUrl for given notificationType and getting http status code 500 back', function( done ) {
       mockResponse.statusCode = 500;
       mockResponse.body = 'mock error';
-
-      var expectedMessage = {
-        'registrationKey': mockRegistration.key,
-        'eventNotificationUrl': eventNotificationUrl,
-        'notificationType': mockNotificationType.name
-      };
-
-      registrationGateway.init( {
-        client: mockClient,
-        requestHandler: mockRequestHandler,
-        eventNotificationUrl: eventNotificationUrl
-      } );
 
       registrationGateway.register( mockRegistration, mockNotificationType, function ( err, success ) {
         mockRequest.write.called.withArguments( JSON.stringify( expectedMessage ) );

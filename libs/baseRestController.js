@@ -5,8 +5,8 @@ var baseRestController = baseObject.extend( {
   name: '',
   model: null,
   restErrors: null,
-  preQueue: {},
-  postQueue: {},
+  beforeQueue: {},
+  afterQueue: {},
 
   _construct: function( model, restErrors ) {
     this.model = model;
@@ -14,12 +14,12 @@ var baseRestController = baseObject.extend( {
     this.name = model.modelName;
   },
 
-  pre: function( method, callback ){
-    this.preQueue[method] = callback;
+  beforeHook: function( method, callback ){
+    this.beforeQueue[method] = callback;
   },
 
-  post: function( method, callback ){
-    this.postQueue[method] = callback;
+  afterHook: function( method, callback ){
+    this.afterQueue[method] = callback;
   },
 
   listQuery: function( req ) {
@@ -69,18 +69,18 @@ var baseRestController = baseObject.extend( {
       } else {
         self.getQuery( req ).exec( function( err, instance ) {
           if ( err ) {
-            if (self.postQueue.update){
-              self.postQueue.update(new Error( 'Internal Server Error: see logs for details: ' + err ), instance);
+            if (self.afterQueue.update){
+              self.afterQueue.update(new Error( 'Internal Server Error: see logs for details: ' + err ), instance);
             }
             next( new Error( 'Internal Server Error: see logs for details: ' + err ), req, res );
           } else if ( !instance ) {
-            if (self.postQueue.update){
-              self.postQueue.update(self.restErrors.notFound.create( self.name + ' Id: "' + req.params.id + '" was not found.' ), instance);
+            if (self.afterQueue.update){
+              self.afterQueue.update(self.restErrors.notFound.create( self.name + ' Id: "' + req.params.id + '" was not found.' ), instance);
             }
             next( self.restErrors.notFound.create( self.name + ' Id: "' + req.params.id + '" was not found.' ), req, res );
           } else {
-            if (self.postQueue.update){
-              self.postQueue.update(null, instance);
+            if (self.afterQueue.update){
+              self.afterQueue.update(null, instance);
             }
             res.send( instance.toObject() );
           }
@@ -103,18 +103,18 @@ var baseRestController = baseObject.extend( {
         req.params.id = instance._id;
         self.getQuery( req ).exec( function( err, instance ) {
           if ( err ) {
-            if (self.postQueue.insert){
-              self.postQueue.insert(new Error( 'Internal Server Error: see logs for details: ' + err ), instance);
+            if (self.afterQueue.insert){
+              self.afterQueue.insert(new Error( 'Internal Server Error: see logs for details: ' + err ), instance);
             }
             next( new Error( 'Internal Server Error: see logs for details: ' + err ), req, res );
           } else if ( !instance ) {
-            if (self.postQueue.insert){
-              self.postQueue.insert(self.restErrors.notFound.create( self.name + ' Id: "' + req.params.id + '" was not found.' ), instance);
+            if (self.afterQueue.insert){
+              self.afterQueue.insert(self.restErrors.notFound.create( self.name + ' Id: "' + req.params.id + '" was not found.' ), instance);
             }
             next( self.restErrors.notFound.create( self.name + ' Id: "' + req.params.id + '" was not found.' ), req, res );
           } else {
-            if (self.postQueue.insert){
-              self.postQueue.insert(null, instance);
+            if (self.afterQueue.insert){
+              self.afterQueue.insert(null, instance);
             }
             res.send( instance.toObject(), 201 );
           }
@@ -133,8 +133,8 @@ var baseRestController = baseObject.extend( {
         next( self.restErrors.notFound.create( self.name + ' Id: "' + req.params.id + '" was not found.' ), req, res );
       } else {
         removedItem = instance;
-        if( self.preQueue.remove ) {
-          self.preQueue.remove( instance, function(err){
+        if( self.beforeQueue.remove ) {
+          self.beforeQueue.remove( instance, function(err){
             if (err) {
               next( new Error( 'Internal Server Error: see logs for details: ' + err ), req, res );
             } else {
@@ -149,18 +149,18 @@ var baseRestController = baseObject.extend( {
     function remove() {
       self.model.remove( {_id:req.params.id}, function( err, count ) {
         if ( err ) {
-          if (self.postQueue.remove){
-            self.postQueue.remove(new Error( 'Internal Server Error: see logs for details: ' + err ));
+          if (self.afterQueue.remove){
+            self.afterQueue.remove(new Error( 'Internal Server Error: see logs for details: ' + err ));
           }
           next( new Error( 'Internal Server Error: see logs for details: ' + err ), req, res );
         } else if ( count === 0 ) {
-          if (self.postQueue.remove){
-            self.postQueue.remove(self.restErrors.notFound.create( self.name + ' Id: "' + req.params.id + '" was not found.' ));
+          if (self.afterQueue.remove){
+            self.afterQueue.remove(self.restErrors.notFound.create( self.name + ' Id: "' + req.params.id + '" was not found.' ));
           }
           next( self.restErrors.notFound.create( self.name + ' Id: "' + req.params.id + '" was not found.' ), req, res );
         } else {
-          if (self.postQueue.remove){
-            self.postQueue.remove(null, removedItem);
+          if (self.afterQueue.remove){
+            self.afterQueue.remove(null, removedItem);
           }
           res.send( {} );
         }

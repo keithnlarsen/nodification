@@ -2,7 +2,7 @@
  * Creates a Stub method which you can bind to a mock object for testing purposes.
  *
  * @param {object} err
- * @param {object} callBackValue
+ * @param {object} returnValue
  *
  * Examples:
  *
@@ -18,72 +18,97 @@
  *  mockObject.method.called.withAnyArguments();
  *  mockObject.method.called.withNoArguments();
  */
-module.exports = function( err, callBackValue, synchronous ) {
-
-  var Stub = function() {
-    if (synchronous == null){
-      if ( arguments.length > 0 ) {
-        synchronous = typeof arguments[arguments.length - 1] !== 'function';
-      } else {
-        synchronous = true;
+module.exports = ( function() {
+  Number.prototype.nth= function(){
+      if(this> 3 && this<21) return this+'th';
+      var suffix= this%10;
+      switch(suffix){
+          case 1:return this+'st';
+          case 2:return this+'nd';
+          case 3:return this+'rd';
+          default:return this+'th';
       }
-    }
+  };
 
-    Stub.args = arguments;
-    Stub.thisArg = this;
+  var AssertionError = require('assert').AssertionError;
 
-    Stub.called = {
-      withArguments: function() {
-        for ( var i = 0; i < arguments.length; i ++ ) {
-          if ( JSON.stringify( Stub.args[i] ) !== JSON.stringify( arguments[i] ) ) {
-            throw new Error( ' Actual arguments: ' + JSON.stringify( Stub.args[i] ) + ' does not match expected: ' + JSON.stringify( arguments[i] ) );
+  function Stub ( err, returnValue, synchronous ) {
+    var stub = function() {
+      if ( synchronous == null ) {
+        throw new Error("Require parameter 'synchronous' was not supplied, it is needed to know if this is an asynchronous call or not.")
+      }
+
+      stub.args = arguments;
+      stub.thisArg = this;
+
+      stub.called = {
+        withArguments: function() {
+          for ( var i = 0; i < arguments.length; i ++ ) {
+            if ( JSON.stringify( stub.args[i] ) !== JSON.stringify( arguments[i] ) ) {
+              throw new AssertionError( {
+                message: '\n\tThe ' + (i + 1).nth() + ' parameter contained: \n\t\t' + JSON.stringify( stub.args[i] ) + ' \n\tinstead of the expected value: \n\t\t' + JSON.stringify( arguments[i] ),
+                stackStartFunction: stub.called.withArguments
+              } );
+            }
           }
-        }
-        return true;
-      },
+          return true;
+        },
 
-      withAnyArguments: function() {
-        if ( arguments.length == 0 ) {
-          throw new Error( ' was not called with any arguments.' );
-        }
-        return true
-      },
+        withAnyArguments: function() {
+          if ( arguments.length == 0 ) {
+            throw new AssertionError( {
+              message: 'The method was called with 0 arguments but at least 1 was expected.',
+              stackStartFunction: stub.called.withAnyArguments
+            } );
+          }
+          return true
+        },
 
-      withNoArguments: function() {
-        if ( arguments.length > 0 ) {
-          throw new Error( ' was called with arguments.' );
+        withNoArguments: function() {
+          if ( arguments.length > 0 ) {
+            throw new AssertionError( {
+              message: 'The method was called with ' + arguments.length + ' arguments but non were expected.',
+              stackStartFunction: stub.called.withNoArguments
+            } );
+          }
+          return arguments.length == 0;
         }
-        return arguments.length == 0;
-      }
-    };
+      };
 
-    if ( arguments.length > 0 ) {
       if ( !synchronous ) {
         var callBack = arguments[arguments.length - 1];
-        callBack( err, callBackValue );
+        callBack( err, returnValue );
       } else {
         if ( err ) {
           throw err;
         } else {
-          return callBackValue;
+          return returnValue;
         }
       }
+    };
 
-    }
+    stub.prototype.called = {
+      withArguments: function() {
+        return false
+      },
+      withAnyArguments: function() {
+        return false
+      },
+      withNoArguments: function() {
+        return false
+      }
+    };
 
-  };
+    return stub;
+  }
 
-  Stub.prototype.called = {
-    withArguments: function() {
-      return false
+  return {
+    async: function( err, returnValue ) {
+      return new Stub( err, returnValue, false );
     },
-    withAnyArguments: function() {
-      return false
-    },
-    withNoArguments: function() {
-      return false
+    sync: function( err, returnValue ) {
+      return new Stub( err, returnValue, true );
     }
-  };
+  }
 
-  return Stub;
-};
+}());
