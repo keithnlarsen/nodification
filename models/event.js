@@ -7,7 +7,7 @@ module.exports = ( function() {
     model: {},
     schema: new Schema( {
       notificationType: {type: Schema.ObjectId, ref: 'NotificationType' },
-      key: String,
+      registrationKey: String,
       receivedDate: {type: Date, 'default': new Date()},
       deliveryConfirmed: {type: Boolean, 'default': false },
       deliveryDate: Date,

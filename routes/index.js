@@ -51,6 +51,26 @@ module.exports = ( function() {
         app.controllers.notificationType.remove( req, res, next );
       } );
 
+      app.get( '/notificationTypes/:id/vendors', this.acceptTypeJson, function ( req, res, next ) {
+        app.controllers.notificationTypeVendor.list( req, res, next );
+      } );
+
+      app.put( '/notificationTypes/:id/vendors', this.contentTypeJson, function ( req, res, next ) {
+        app.controllers.notificationTypeVendor.insert( req, res, next );
+      } );
+
+      app.get( '/notificationTypes/:id/vendors/:eid', this.acceptTypeJson, function ( req, res, next ) {
+        app.controllers.notificationTypeVendor.get( req, res, next );
+      } );
+
+      app.post( '/notificationTypes/:id/vendors/:eid', this.contentTypeJson, function ( req, res, next ) {
+        app.controllers.notificationTypeVendor.update( req, res, next );
+      } );
+
+      app.del( '/notificationTypes/:id/vendors/:eid', function ( req, res, next ) {
+        app.controllers.notificationTypeVendor.remove( req, res, next );
+      } );
+
       app.get( '/registrations', function ( req, res, next ) {
         if ( req.accepts( 'json' ) ) {
           app.controllers.registration.list( req, res, next );
@@ -93,6 +113,22 @@ module.exports = ( function() {
 
       app.del( '/registrations/:id/devices/:eid', function ( req, res, next ) {
         app.controllers.registrationDevice.remove( req, res, next );
+      } );
+
+      app.put( '/events', this.contentTypeJson, function ( req, res, next ) {
+        app.controllers.event.insert( req, res, next );
+      } );
+
+      app.get( '/events/:id', this.acceptTypeJson, function ( req, res, next ) {
+        app.controllers.event.get( req, res, next );
+      } );
+
+      app.post( '/events/:id', this.contentTypeJson, function ( req, res, next ) {
+        app.controllers.event.update( req, res, next );
+      } );
+
+      app.del( '/events/:id', function ( req, res, next ) {
+        app.controllers.event.remove( req, res, next );
       } );
 
       // TODO: the following routes

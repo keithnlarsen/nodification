@@ -37,42 +37,75 @@ module.exports = ( function() {
   var AssertionError = require('assert').AssertionError;
 
   function Stub ( err, returnValue, synchronous ) {
-    var stub = function() {
+    var calledCount = 0;
+    var args = [];
+    var thisArg = [];
+    var time = 0;
 
-      stub.args = arguments;
-      stub.thisArg = this;
+    var stub = function() {
+      calledCount ++;
+      args[calledCount] = arguments;
+      thisArg[calledCount] = this;
+//      stub.args = arguments;
+//      stub.thisArg = this;
+      var time = calledCount;
+
+      function withArguments(){
+        for ( var i = 0; i < arguments.length; i ++ ) {
+          if ( JSON.stringify( args[time][i] ) !== JSON.stringify( arguments[i] ) ) {
+            throw new AssertionError( {
+              message: '\n\tThe ' + (i + 1).nth() + ' parameter contained: \n\t\t' + JSON.stringify( args[time][i] ) + ' \n\tinstead of the expected value: \n\t\t' + JSON.stringify( arguments[i] ),
+              stackStartFunction: stub.called.withArguments
+            } );
+          }
+        }
+        return true;
+      }
+
+      function withAnyArguments() {
+        if ( arguments.length == 0 ) {
+          throw new AssertionError( {
+            message: 'The method was called with 0 arguments but at least 1 was expected.',
+            stackStartFunction: stub.called.withAnyArguments
+          } );
+        }
+        return true
+      }
+
+      function withNoArguments() {
+        if ( arguments.length > 0 ) {
+          throw new AssertionError( {
+            message: 'The method was called with ' + arguments.length + ' arguments but non were expected.',
+            stackStartFunction: stub.called.withNoArguments
+          } );
+        }
+        return arguments.length == 0;
+      }
 
       stub.called = {
-        withArguments: function() {
-          for ( var i = 0; i < arguments.length; i ++ ) {
-            if ( JSON.stringify( stub.args[i] ) !== JSON.stringify( arguments[i] ) ) {
-              throw new AssertionError( {
-                message: '\n\tThe ' + (i + 1).nth() + ' parameter contained: \n\t\t' + JSON.stringify( stub.args[i] ) + ' \n\tinstead of the expected value: \n\t\t' + JSON.stringify( arguments[i] ),
-                stackStartFunction: stub.called.withArguments
-              } );
-            }
-          }
-          return true;
-        },
+        withArguments: withArguments,
 
-        withAnyArguments: function() {
-          if ( arguments.length == 0 ) {
+        withAnyArguments: withAnyArguments,
+
+        withNoArguments: withNoArguments,
+
+        count: function(n){
+          if (n !== calledCount) {
             throw new AssertionError( {
-              message: 'The method was called with 0 arguments but at least 1 was expected.',
-              stackStartFunction: stub.called.withAnyArguments
+              message: 'The method was called ' + calledCount + ' time(s) but expected to be called ' + n + ' time(s).',
+              stackStartFunction: stub.called.count
             } );
           }
-          return true
+          return (n === calledCount);
         },
 
-        withNoArguments: function() {
-          if ( arguments.length > 0 ) {
-            throw new AssertionError( {
-              message: 'The method was called with ' + arguments.length + ' arguments but non were expected.',
-              stackStartFunction: stub.called.withNoArguments
-            } );
+        time: function(n){
+          time = n;
+          return {
+            withArguments: withArguments,
+            withAnyArguments: withAnyArguments,
+            withNoArguments: withNoArguments
           }
-          return arguments.length == 0;
         }
       };
 
@@ -96,6 +129,9 @@ module.exports = ( function() {
         return false
       },
       withNoArguments: function() {
+        return false
+      },
+      count: function(){
         return false
       }
     };

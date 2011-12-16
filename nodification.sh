@@ -1,3 +1,3 @@
 #!/bin/bash
 
-sNODE_ENV=development node app
+NODE_ENV=development node app
