@@ -6,17 +6,21 @@
  *
  * Examples:
  *
- *  // You can declare your stub in one of 2 ways
- *  var mockObject = {};
- *  // 1. This will when executed in the method you are testing it assuming it is being called asynchronously
- *  mockObject.method = new Stub( errValue, callbackValue);
- *  // 2. This will result in the stub being called synchronously
- *  mockObject.method = new Stub( returnValue );
+ *   var stub = require('stub');
+ *   var mockObject = {};
  *
- *  // Inspect your mock later
- *  mockObject.method.called.withArguments(args);
- *  mockObject.method.called.withAnyArguments();
- *  mockObject.method.called.withNoArguments();
+ *   // You can declare your stub in one of 2 ways:
+ *   // 1. This will setup your mock so it will execute asynchronously and pass
+ *   //    'errValue' and 'callbackValue' to the callback in the system under test.
+ *   mockObject.method = stub.async( errValue, callbackValue);
+ *
+ *   // 2. This will setup your mock so it will exectue synchronously and return 'returnValue' to the caller.
+ *   mockObject.method = stub.sync( returnValue );
+ *
+ *   // Inspect your mock later
+ *   mockObject.method.called.withArguments(args);
+ *   mockObject.method.called.withAnyArguments();
+ *   mockObject.method.called.withNoArguments();
  */
 module.exports = ( function() {
   Number.prototype.nth= function(){
@@ -34,9 +38,6 @@ module.exports = ( function() {
 
   function Stub ( err, returnValue, synchronous ) {
     var stub = function() {
-      if ( synchronous == null ) {
-        throw new Error("Require parameter 'synchronous' was not supplied, it is needed to know if this is an asynchronous call or not.")
-      }
 
       stub.args = arguments;
       stub.thisArg = this;
