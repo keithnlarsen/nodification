@@ -42,6 +42,12 @@ module.exports = ( function() {
   app.controllers = require( './controllers' );
   app.controllers.init( app.models, app.restErrors );
 
+  // Register Middleware
+  var middleware = require('./middleware');
+  middleware.init(app.controllers);
+
+  app.notificationGateways = {};
+
   // Load the routes
   var routes = require('./routes');
   routes.init(app);

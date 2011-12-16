@@ -8,7 +8,11 @@ module.exports = ( function() {
     schema: new Schema( {
       type: { type: String, enum: ['android', 'ios'] },
       name: String,
-      token: String
+      keyData: String,
+      certData: String,
+      pushGatewayUrl: String,
+      feedbackGatewayUrl: String,
+      cacheLength: Number
     } )
   } );
 

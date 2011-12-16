@@ -3,33 +3,37 @@ module.exports = (function() {
   var apns = require( 'apn' );
   var apnsConnection;
 
-  function init ( notificationType ) {
-    options = { cert: 'cert.pem', /* Certificate file */
-      key:  'key.pem',  /* Key file */
-      gateway: 'gateway.push.apple.com', /* gateway address */
-      port: 2195, /* gateway port */
-      enhanced: true, /* enable enhanced format */
-      errorCallback: undefined, /* Callback when error occurs */
-      cacheLength: 5 /* Notifications to cache for error purposes */
+  function init ( vendor ) {
+    var url = require( 'url' ).parse( vendor.pushGatewayUrl );
+
+    options = {
+      certData: vendor.certData,
+      keyData:  vendor.keyData,
+      gateway: url.hostname,
+      port: url.port,
+      enhanced: true,
+      errorCallback: undefined,
+      cacheLength: 5
     };
 
-    apnsConnection = new apns.connection( options );
+    apnsConnection = new apns.Connection( options );
   }
 
-  function createNotification (myDevice) {
-    var notification = new apns.notification();
+  function createNotification (event, device) {
+    var myDevice = new apns.Device(device.token /*, ascii=true*/);
+    var notification = new apns.Notification();
 
-    notification.badge = 3;
+    notification.badge = event.badge;
     notification.sound = "ping.aiff";
-    notification.alert = "You have a new message";
-    notification.payload = {'messageFrom': 'Caroline'};
+    notification.alert = event.alert;
+    notification.payload = event.payload;
     notification.device = myDevice;
+
     return notification;
   }
 
-  function sendNotification ( device ) {
-    var myDevice = new apns.device(device.token /*, ascii=true*/);
-    var notification = createNotification(myDevice);
+  function sendNotification ( event, device ) {
+    var notification = createNotification(event, device);
     apnsConnection.sendNotification( notification );
   }
 

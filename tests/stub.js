@@ -18,8 +18,17 @@
  *  mockObject.method.called.withAnyArguments();
  *  mockObject.method.called.withNoArguments();
  */
-module.exports = function( err, callBackValue ) {
+module.exports = function( err, callBackValue, synchronous ) {
+
   var Stub = function() {
+    if (synchronous == null){
+      if ( arguments.length > 0 ) {
+        synchronous = typeof arguments[arguments.length - 1] !== 'function';
+      } else {
+        synchronous = true;
+      }
+    }
+
     Stub.args = arguments;
     Stub.thisArg = this;
 
@@ -49,7 +58,7 @@ module.exports = function( err, callBackValue ) {
     };
 
     if ( arguments.length > 0 ) {
-      if ( typeof arguments[arguments.length - 1] === 'function' ) {
+      if ( !synchronous ) {
         var callBack = arguments[arguments.length - 1];
         callBack( err, callBackValue );
       } else {
@@ -61,6 +70,7 @@ module.exports = function( err, callBackValue ) {
       }
 
     }
+
   };
 
   Stub.prototype.called = {

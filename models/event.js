@@ -13,7 +13,7 @@ module.exports = ( function() {
       deliveryDate: Date,
       badge: Number,
       alert: String,
-      payload: Schema.Types.Mixed,
+      payload: Schema.Types.Mixed
     } )
   } );
   

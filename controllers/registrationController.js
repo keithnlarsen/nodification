@@ -26,7 +26,6 @@ module.exports = ( function() {
       } );
     }
 
-
     // Example of how to call the super class from the base class
 //  list: function(fn){
 //    this._super(registrationController, "list", [function(err, list){
