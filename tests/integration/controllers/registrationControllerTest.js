@@ -1,4 +1,4 @@
-describe( 'Nodification.Tests.Integration.Controllers.RegistrationController', function() {
+describe( 'nodification.tests.integration.controllers.registration', function() {
 
   var http = require( 'http' );
   var should = require( 'should' );

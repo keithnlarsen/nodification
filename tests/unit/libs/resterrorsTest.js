@@ -1,4 +1,4 @@
-describe( 'Nodification.Tests.Unit.Libs.RestErrors', function() {
+describe( 'nodification.tests.unit.libs.restErrors', function() {
 
   var restErrors = require( '../../../libs/resterrors' );
   var restError = restErrors.errors;

@@ -1,7 +1,7 @@
-describe( 'Nodification.Tests.Unit.Middleware.EventMiddleware', function() {
+describe( 'nodification.tests.unit.middleware.event', function() {
 
   var should = require( 'should' );
-  var stub = require( '../../stub' );
+  var stub = require( 'stub.js' );
   var eventMiddleware = require( '../../../middleware/eventMiddleware' );
   var mockEvent;
   var mockRegistration;
@@ -12,7 +12,8 @@ describe( 'Nodification.Tests.Unit.Middleware.EventMiddleware', function() {
     mockEvent = {
       _id: '111111',
       notificationType: {
-        _id: '987654321'
+        _id: '987654321',
+        name: 'notificationTypeName'
       },
       registrationKey: 'abcd'
     };
@@ -20,7 +21,8 @@ describe( 'Nodification.Tests.Unit.Middleware.EventMiddleware', function() {
       _id: '123456789',
       key: 'abcd',
       notificationType: {
-        _id: '987654321'
+        _id: '987654321',
+        name: 'notificationTypeName'
       },
       devices: [ {
         _id: '12121212',
@@ -37,6 +39,10 @@ describe( 'Nodification.Tests.Unit.Middleware.EventMiddleware', function() {
       } ]
     };
 
+    mockApnGateway = {
+      sendNotification: stub.sync( null, true )
+    };
+
     mockApp = {
       controllers: {
         registration: {
@@ -47,11 +53,8 @@ describe( 'Nodification.Tests.Unit.Middleware.EventMiddleware', function() {
         event: {
           afterHook : stub.sync()
         }
-      }
-    };
-
-    mockApnGateway = {
-      sendNotification: stub.sync( null, true )
+      },
+      gateways: { notificationTypeName: mockApnGateway }
     };
 
     done();
@@ -73,7 +76,7 @@ describe( 'Nodification.Tests.Unit.Middleware.EventMiddleware', function() {
 
   describe( '.afterCreate( err, event ) ', function() {
     it( 'should send only apple devices to the apn gateway', function( done ) {
-      eventMiddleware.init( mockApp, mockApnGateway );
+      eventMiddleware.init( mockApp );
       eventMiddleware.afterCreate( null, mockEvent );
 
       mockApnGateway.sendNotification.called.count( 2 );

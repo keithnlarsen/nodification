@@ -1,7 +1,7 @@
-describe( 'Nodification.Tests.Unit.Middleware.RegistrationMiddleware', function() {
+describe( 'nodification.tests.unit.middleware.registration', function() {
 
   var should = require( 'should' );
-  var stub = require( '../../stub' );
+  var stub = require( 'stub.js' );
   var registrationMiddleware = require( '../../../middleware/registrationMiddleware' );
   var mockRegistration;
   var mockNotificationType;

@@ -1,7 +1,7 @@
-describe( 'Nodification.Tests.Unit.Gateways.NotificationRegistrationGateway', function() {
+describe( 'nodification.tests.unit.gateways.notificationRegistration', function() {
 
   var should = require( 'should' );
-  var stub = require( '../../stub' );
+  var stub = require( 'stub.js' );
   var registrationGateway = require( '../../../gateways/notificationRegistrationGateway' );
   var mockClient = {};
   var mockRequest = {};

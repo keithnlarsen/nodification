@@ -46,7 +46,7 @@ module.exports = ( function() {
   var middleware = require('./middleware');
   middleware.init(app.controllers);
 
-  app.notificationGateways = {};
+  app.gateways = {};
 
   // Load the routes
   var routes = require('./routes');

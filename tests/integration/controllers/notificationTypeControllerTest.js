@@ -1,4 +1,4 @@
-describe( 'Nodification.Tests.Integration.Controllers.NotificationTypeController', function() {
+describe( 'nodification.tests.integration.controllers.notificationType', function() {
 
   var http = require( 'http' );
   var should = require( 'should' );

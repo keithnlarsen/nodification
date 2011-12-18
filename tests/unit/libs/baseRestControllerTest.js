@@ -1,4 +1,4 @@
-describe( 'Nodification.Tests.Unit.Libs.BaseRestController', function() {
+describe( 'nodification.tests.unit.libs.baseRestController', function() {
 
   var should = require( 'should' );
   var createJSON = JSON.parse( "{\"name\":\"Test\",\"field2\":\"url\"}" );
