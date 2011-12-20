@@ -1,15 +1,15 @@
-module.exports = ( function() {
+module.exports = ( function () {
   var baseController = require( '../libs/baseRestController' );
 
   var notificationTypeController = baseController.extend( {
 
     index: function ( req, res, next ) {
-      this.listQuery( req ).exec( function( err, instance ) {
+      this.listQuery( req ).exec( function ( err, instance ) {
         if ( err ) {
           next( new Error( 'Internal Server Error: see logs for details: ' + err ), req, res );
         } else {
           var options = {};
-          options['notificationTypes'] = instance.map( function( instance ) {
+          options['notificationTypes'] = instance.map( function ( instance ) {
             return instance.toObject();
           } );
 

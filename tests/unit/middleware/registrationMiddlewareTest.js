@@ -11,7 +11,7 @@ describe( 'nodification.tests.unit.middleware.registration', function() {
   beforeEach( function( done ) {
     mockNotificationType = {
       _id: '987654321',
-      name: 'testNotificaiton',
+      name: 'testNotification',
       registrationUrl: 'http://localhost:2343/register'
     };
 
@@ -65,14 +65,15 @@ describe( 'nodification.tests.unit.middleware.registration', function() {
   describe( '.afterInsert( err, registration ) ', function() {
     it( 'should do a bunch of stuff', function( done ) {
       registrationMiddleware.init(mockApp);
-      registrationMiddleware.afterInsert( null, mockRegistration );
+      registrationMiddleware.afterInsert( null, mockRegistration, function() {
+        mockApp.models.notificationType.getModel.called.withNoArguments();
+        mockApp.models.notificationType.getModel().findById.called.withArguments( mockNotificationType._id );
+        mockRegistrationGateway.register.called.withArguments( mockRegistration, mockNotificationType );
+        mockApp.controllers.registration.model.update.called.withArguments( { _id: mockRegistration._id }, { registrationConfirmed: true } );
 
-      mockApp.models.notificationType.getModel.called.withNoArguments();
-      mockApp.models.notificationType.getModel().findById.called.withArguments( mockNotificationType._id );
-//      mockRegistrationGateway.register.called.withArguments( mockRegistration, mockNotificationType );
-//      mockApp.controllers.registration.model.update.called.withArguments( { _id: mockRegistration._id }, { registrationConfirmed: true } );
+        done();
+      } );
 
-      done();
     } );
   } );
 } );

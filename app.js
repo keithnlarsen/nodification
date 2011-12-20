@@ -39,7 +39,6 @@ module.exports = ( function() {
   app.models = require( './models' );
   app.models.init( app );
 
-
   // Register Controllers
   app.controllers = require( './controllers' );
   app.controllers.init( app.models, app.restErrors );
@@ -51,7 +50,6 @@ module.exports = ( function() {
   app.gateways = {};
   app.gateways.notificationRegistration = {};
   app.gateways.apn = {};
-  
 
   // Load the routes
   var routes = require('./routes');

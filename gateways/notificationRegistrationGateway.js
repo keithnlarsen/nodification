@@ -7,7 +7,7 @@
 // gateway.init( options );
 // gateway.register( registrationData, voiceMailType, function ( err, success) { ... });
 //
-module.exports = (function() {
+module.exports = (function () {
   var client;
   var requestOptions = {
     'Host': '',
@@ -19,9 +19,9 @@ module.exports = (function() {
   var urlParser = require( 'url' );
 
   function init ( options ) {
-    if (options){
+    if ( options ) {
       client = options.client || null;
-      requestHandler = options.requestHandler || require('../libs/requestHandler');
+      requestHandler = options.requestHandler || require( '../libs/requestHandler' );
       eventNotificationUrl = options.eventNotificationUrl || eventNotificationUrl;
     }
   }
@@ -46,7 +46,7 @@ module.exports = (function() {
   }
 
   function register ( registration, notificationType, callBack ) {
-    requestHandler.handle( createRequest( registration, notificationType ), function( err, response ) {
+    requestHandler.handle( createRequest( registration, notificationType ), function ( err, response ) {
       if ( response.statusCode >= 200 && response.statusCode < 300 ) {
         callBack( null, true );
       } else {

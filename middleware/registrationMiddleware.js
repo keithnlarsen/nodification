@@ -1,4 +1,4 @@
-module.exports = (function() {
+module.exports = (function () {
   var app;
 
   function init ( nodificationApp ) {
@@ -6,15 +6,16 @@ module.exports = (function() {
     nodificationApp.controllers.registration.afterHook( 'insert', afterInsert );
   }
 
-  function afterInsert ( err, registration ) {
-    console.log(registration.notificationType._id);
-    app.models.notificationType.getModel().findById( registration.notificationType._id, function( err, notificationType ) {
-      console.log("Here");
+  function afterInsert ( err, registration, callback ) {
+//    console.log( registration.notificationType._id );
+    app.models.notificationType.getModel().findById(registration.notificationType._id, function ( err, notificationType ) {
 
-      getGateway(notificationType).register( registration, notificationType, function ( err ) {
-        if ( !err ) {
-          app.controllers.registration.model.update( { _id : registration._id }, { registrationConfirmed: true }, function ( err, count ) {
-            // TODO: Need to log this error somewhere?
+      getGateway( notificationType ).register( registration, notificationType, function ( err ) {
+        if ( err ) {
+          callback(err, null);
+        }else{
+          app.controllers.registration.model.update( { _id: registration._id }, { registrationConfirmed: true }, function ( err, count ) {
+            callback(err, count);
           } );
         }
       } );
@@ -25,7 +26,7 @@ module.exports = (function() {
     if ( app.gateways.notificationRegistration[notificationType.name] ) {
       return app.gateways.notificationRegistration[notificationType.name];
     } else {
-      var gateway = require('../gateways/notificationRegistrationGateway');
+      var gateway = require( '../gateways/notificationRegistrationGateway' );
       gateway.init();
       app.gateways.notificationRegistration[notificationType.name] = gateway;
       return gateway;

@@ -10,7 +10,7 @@ module.exports = ( function () {
     beforeQueue: null,
     afterQueue: null,
 
-    _construct: function( model, restErrors ) {
+    _construct: function ( model, restErrors ) {
       this.model = model;
       this.restErrors = restErrors;
       this.name = model.modelName;
@@ -18,31 +18,31 @@ module.exports = ( function () {
       this.afterQueue = {};
     },
 
-    beforeHook: function( method, callback ) {
+    beforeHook: function ( method, callback ) {
       this.beforeQueue[method] = callback;
     },
 
-    afterHook: function( method, callback ) {
+    afterHook: function ( method, callback ) {
       this.afterQueue[method] = callback;
     },
 
-    listQuery: function( req ) {
+    listQuery: function ( req ) {
       return this.model.find( {} );
     },
 
-    getQuery: function( req ) {
+    getQuery: function ( req ) {
       return this.model.findById( req.params.id );
     },
 
-    list: function( req, res, next ) {
-      this.listQuery( req ).exec( function( err, instance ) {
+    list: function ( req, res, next ) {
+      this.listQuery( req ).exec( function ( err, instance ) {
         if ( err ) {
           next( new Error( 'Internal Server Error: see logs for details: ' + err ), req, res );
         } else {
           if ( instance.length == 0 ) {
             res.send( instance, 204 );
           } else {
-            res.send( instance.map( function( instance ) {
+            res.send( instance.map( function ( instance ) {
               return instance.toObject();
             } ) );
           }
@@ -50,9 +50,9 @@ module.exports = ( function () {
       } );
     },
 
-    get: function( req, res, next ) {
+    get: function ( req, res, next ) {
       var self = this;
-      this.getQuery( req ).exec( function( err, instance ) {
+      this.getQuery( req ).exec( function ( err, instance ) {
         if ( err ) {
           next( new Error( 'Internal Server Error: see logs for details: ' + err ), req, res );
         } else if ( !instance ) {
@@ -63,15 +63,15 @@ module.exports = ( function () {
       } );
     },
 
-    update: function( req, res, next ) {
+    update: function ( req, res, next ) {
       var self = this;
-      this.model.update( { _id:req.params.id}, req.body, function( err, count ) {
+      this.model.update( { _id: req.params.id}, req.body, function ( err, count ) {
         if ( err ) {
           next( new Error( 'Internal Server Error: see logs for details: ' + err ), req, res );
         } else if ( count === 0 ) {
           next( self.restErrors.notFound.create( self.name + ' Id: "' + req.params.id + '" was not found.' ), req, res );
         } else {
-          self.getQuery( req ).exec( function( err, instance ) {
+          self.getQuery( req ).exec( function ( err, instance ) {
             if ( err ) {
               if ( self.afterQueue.update ) {
                 self.afterQueue.update( new Error( 'Internal Server Error: see logs for details: ' + err ), instance );
@@ -93,9 +93,9 @@ module.exports = ( function () {
       } );
     },
 
-    insert: function( req, res, next ) {
+    insert: function ( req, res, next ) {
       var self = this;
-      this.model.create( req.body, function( err, instance ) {
+      this.model.create( req.body, function ( err, instance ) {
         if ( err ) {
           if ( err.message.search( /duplicate key error/ ) ) {
             next( self.restErrors.conflict.create( err.message ), req, res );
@@ -105,32 +105,41 @@ module.exports = ( function () {
         } else {
           req.params = req.params || {};
           req.params.id = instance._id;
-          self.getQuery( req ).exec( function( err, instance ) {
+          self.getQuery( req ).exec( function ( err, instance ) {
             if ( err ) {
               if ( self.afterQueue.insert ) {
-                self.afterQueue.insert( new Error( 'Internal Server Error: see logs for details: ' + err ), instance );
+                self.afterQueue.insert( new Error( 'Internal Server Error: see logs for details: ' + err ), instance, function (err, count) {
+                  next( new Error( 'Internal Server Error: see logs for details: ' + err ), req, res );
+                } );
+              } else {
+                next( new Error( 'Internal Server Error: see logs for details: ' + err ), req, res );
               }
-              next( new Error( 'Internal Server Error: see logs for details: ' + err ), req, res );
             } else if ( !instance ) {
               if ( self.afterQueue.insert ) {
-                self.afterQueue.insert( self.restErrors.notFound.create( self.name + ' Id: "' + req.params.id + '" was not found.' ), instance );
+                self.afterQueue.insert( self.restErrors.notFound.create( self.name + ' Id: "' + req.params.id + '" was not found.' ), instance, function(err, count){
+                  next( self.restErrors.notFound.create( self.name + ' Id: "' + req.params.id + '" was not found.' ), req, res );
+                } );
+              } else {
+                next( self.restErrors.notFound.create( self.name + ' Id: "' + req.params.id + '" was not found.' ), req, res );
               }
-              next( self.restErrors.notFound.create( self.name + ' Id: "' + req.params.id + '" was not found.' ), req, res );
             } else {
               if ( self.afterQueue.insert ) {
-                self.afterQueue.insert( null, instance );
+                self.afterQueue.insert( null, instance, function(err, count){
+                  res.send( instance.toObject(), 201 );
+                } );
+              } else {
+                res.send( instance.toObject(), 201 );
               }
-              res.send( instance.toObject(), 201 );
             }
           } );
         }
       } );
     },
 
-    remove: function( req, res, next ) {
+    remove: function ( req, res, next ) {
       var self = this;
       var removedItem;
-      this.getQuery( req ).exec( function( err, instance ) {
+      this.getQuery( req ).exec( function ( err, instance ) {
         if ( err ) {
           next( new Error( 'Internal Server Error: see logs for details: ' + err ), req, res );
         } else if ( !instance ) {
@@ -138,7 +147,7 @@ module.exports = ( function () {
         } else {
           removedItem = instance;
           if ( self.beforeQueue.remove ) {
-            self.beforeQueue.remove( instance, function( err ) {
+            self.beforeQueue.remove( instance, function ( err ) {
               if ( err ) {
                 next( new Error( 'Internal Server Error: see logs for details: ' + err ), req, res );
               } else {
@@ -151,7 +160,7 @@ module.exports = ( function () {
         }
       } );
       function remove () {
-        self.model.remove( {_id:req.params.id}, function( err, count ) {
+        self.model.remove( {_id: req.params.id}, function ( err, count ) {
           if ( err ) {
             if ( self.afterQueue.remove ) {
               self.afterQueue.remove( new Error( 'Internal Server Error: see logs for details: ' + err ) );
@@ -175,7 +184,5 @@ module.exports = ( function () {
 
   return baseRestController;
 }() );
-
-
 
 //module.exports = baseRestController;
