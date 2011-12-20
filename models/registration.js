@@ -1,25 +1,27 @@
 module.exports = ( function() {
-  var baseModel = require( '../libs/basemodel' );
-  var Schema = require( 'mongoose' ).Schema;
+  var app;
 
-  var device = baseModel.extend( {
-    name: 'Device',
-    model: {},
-    schema: new Schema( {
-      type: { type: String, enum: ['android', 'ios'] },
-      name: String,
-      token: String
-    } )
-  } );
+  var name = 'Registration';
+  var model;
+  var schema;
 
-  return baseModel.extend( {
-    name: 'Registration',
-    model: {},
-    schema: new Schema( {
+  function init ( nodificationApp ) {
+    app = nodificationApp;
+    var Schema = app.mongoose.Schema;
+
+    schema = new Schema( {
       notificationType: {type: Schema.ObjectId, ref: 'NotificationType' },
       key: String,
       registrationConfirmed: {type: Boolean, 'default': false },
-      devices: [device.schema]
-    } )
-  } );
+      devices: [app.models.device.getSchema()]
+    } );
+    model = app.mongoose.model( name, schema );
+  }
+
+  return {
+    getName: function() { return name; },
+    getModel: function () { return model; },
+    getSchema: function() { return schema; },
+    init: init
+  }
 }());

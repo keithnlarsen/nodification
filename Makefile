@@ -2,6 +2,7 @@
 REPORTER = spec
 UNIT_TESTS = $(shell find tests/unit/ -name '*Test.js')
 INTEGRATION_TESTS = $(shell find tests/integration -name '*Test.js')
+ACCEPTANCE_TESTS = $(shell find tests/acceptance -name '*Test.js')
 
 test: test-unit test-integration
 
@@ -18,3 +19,10 @@ test-integration:
 		--reporter $(REPORTER) \
 		--growl \
 		$(INTEGRATION_TESTS)
+
+acceptance:
+	@NODE_ENV=test ./node_modules/.bin/mocha \
+		--require should \
+		--reporter $(REPORTER) \
+		--growl \
+		$(ACCEPTANCE_TESTS)

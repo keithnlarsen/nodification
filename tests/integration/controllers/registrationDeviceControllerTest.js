@@ -18,28 +18,20 @@ describe( 'nodification.tests.integration.controllers.tegistrationDevice', funct
   var requestHandler = require('../../../libs/requestHandler');
 
   before( function( done ) {
-    var app = require( '../../../app' );
-
+    app = require( '../../../app' );
     app.listen( 3000 );
-    console.log( 'Running testing server at http://127.0.0.1:3000/' + '\r\r' );
 
     // Delay to make sure that node server has time to start up on slower computers before running the tests.
     setTimeout( function() {
-      // Setup our connection to the database and load our model and controller
-      var mongoose = require( 'mongoose' );
-      mongoose.connect( 'mongodb://localhost/nodification-dev' );
-      notificationType = require( '../../../models/notificationType.js' ).create( mongoose );
-      registration = require( '../../../models/registration.js' ).create( mongoose );
-
       // Just in case something bad happened, let's clear out the database
-      registration.model.remove( {}, function( err ) {
-        notificationType.model.remove( {}, function( err ) {
+      app.models.registration.getModel().remove( {}, function( err ) {
+        app.models.notificationType.getModel().remove( {}, function( err ) {
           // populate the database with a new notificationType
-          notificationType.model.create( voiceMailJSON, function( err, voiceMail ) {
+          app.models.notificationType.getModel().create( voiceMailJSON, function( err, voiceMail ) {
             // setup our test records to use that notificationType
             voiceMailId = voiceMail._id.toString();
             registrationJSON.notificationType = voiceMailId;
-            registration.model.create( registrationJSON, function( err, registration ) {
+            app.models.registration.getModel().create( registrationJSON, function( err, registration ) {
               registrationId = registration._id.toString();
               done( err )
             } );
@@ -51,8 +43,8 @@ describe( 'nodification.tests.integration.controllers.tegistrationDevice', funct
 
   after( function( done ) {
     // Clear out our database once we are done
-    registration.model.remove( {}, function( err ) {
-      notificationType.model.remove( {}, function( err ) {
+    app.models.registration.getModel().remove( {}, function( err ) {
+      app.models.notificationType.getModel().remove( {}, function( err ) {
         done( err )
       } );
     } );

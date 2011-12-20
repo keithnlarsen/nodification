@@ -1,7 +1,7 @@
 module.exports = ( function() {
   var app;
 
-  var name = 'Event';
+  var name = 'Device';
   var model;
   var schema;
 
@@ -10,14 +10,9 @@ module.exports = ( function() {
     var Schema = app.mongoose.Schema;
 
     schema = new Schema( {
-      notificationType: {type: Schema.ObjectId, ref: 'NotificationType' },
-      registrationKey: String,
-      receivedDate: {type: Date, 'default': new Date()},
-      deliveryConfirmed: {type: Boolean, 'default': false },
-      deliveryDate: Date,
-      badge: Number,
-      alert: String,
-      payload: Schema.Types.Mixed
+      type: { type: String, enum: ['android', 'ios'] },
+      name: String,
+      token: String
     } );
 
     model = app.mongoose.model( name, schema );

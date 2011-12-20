@@ -13,11 +13,11 @@ module.exports = (function(){
     event: {},
 
     init: function(models, restErrors){
-      this.notificationType = notificationTypeController.create(models.notificationType.model, restErrors);
-      this.notificationTypeVendor = notificationTypeVendorController.create(models.notificationType.model, 'vendors', restErrors);
-      this.registration = registrationController.create(models.registration.model, restErrors);
-      this.registrationDevice = registrationDeviceController.create(models.registration.model, 'devices', restErrors);
-      this.event = eventController.create(models.event.model);
+      this.notificationType = notificationTypeController.create(models.notificationType.getModel(), restErrors);
+      this.notificationTypeVendor = notificationTypeVendorController.create(models.notificationType.getModel(), 'vendors', restErrors);
+      this.registration = registrationController.create(models.registration.getModel(), restErrors);
+      this.registrationDevice = registrationDeviceController.create(models.registration.getModel(), 'devices', restErrors);
+      this.event = eventController.create(models.event.getModel());
     }
   }
 }());

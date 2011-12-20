@@ -3,6 +3,7 @@ module.exports = ( function() {
   var mongoose = require( 'mongoose' );
 
   var app = express.createServer();
+  app.mongoose = mongoose;
 
   app.configure( 'development', function() {
     app.use( express.logger( { format: '\x1b[1m :date \x1b[1m:method\x1b[0m \x1b[33m:url\x1b[0m :response-time ms\x1b[0m :status' } ) );
@@ -36,17 +37,21 @@ module.exports = ( function() {
 
   // Register Models
   app.models = require( './models' );
-  app.models.init( mongoose );
+  app.models.init( app );
+
 
   // Register Controllers
   app.controllers = require( './controllers' );
   app.controllers.init( app.models, app.restErrors );
 
   // Register Middleware
-  var middleware = require('./middleware');
-  middleware.init(app.controllers);
+  app.middleWare = require('./middleware');
+  app.middleWare.init(app);
 
   app.gateways = {};
+  app.gateways.notificationRegistration = {};
+  app.gateways.apn = {};
+  
 
   // Load the routes
   var routes = require('./routes');

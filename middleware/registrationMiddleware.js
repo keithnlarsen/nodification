@@ -1,20 +1,19 @@
 module.exports = (function() {
-  var notificationRegistrationGateway = require( '../gateways/notificationRegistrationGateway' );
-  var cons;
+  var app;
 
-  // TODO: Come up with a dependancy injection design for javascript
-  function init ( controllers, gateway ) {
-    notificationRegistrationGateway = gateway || notificationRegistrationGateway;
-    cons = controllers;
-    controllers.registration.afterHook( 'create', afterCreate );
+  function init ( nodificationApp ) {
+    app = nodificationApp;
+    nodificationApp.controllers.registration.afterHook( 'insert', afterInsert );
   }
 
-  function afterCreate ( err, registration ) {
-    cons.notificationType.getQuery( { params: { id: registration.notificationType._id } } )
-                         .exec( function( err, notificationType ) {
-      notificationRegistrationGateway.register( registration, notificationType, function ( err ) {
+  function afterInsert ( err, registration ) {
+    console.log(registration.notificationType._id);
+    app.models.notificationType.getModel().findById( registration.notificationType._id, function( err, notificationType ) {
+      console.log("Here");
+
+      getGateway(notificationType).register( registration, notificationType, function ( err ) {
         if ( !err ) {
-          cons.registration.model.update( { _id : registration._id }, { registrationConfirmed: true }, function ( err, count ) {
+          app.controllers.registration.model.update( { _id : registration._id }, { registrationConfirmed: true }, function ( err, count ) {
             // TODO: Need to log this error somewhere?
           } );
         }
@@ -22,8 +21,19 @@ module.exports = (function() {
     } );
   }
 
+  function getGateway ( notificationType ) {
+    if ( app.gateways.notificationRegistration[notificationType.name] ) {
+      return app.gateways.notificationRegistration[notificationType.name];
+    } else {
+      var gateway = require('../gateways/notificationRegistrationGateway');
+      gateway.init();
+      app.gateways.notificationRegistration[notificationType.name] = gateway;
+      return gateway;
+    }
+  }
+
   return {
     init: init,
-    afterCreate: afterCreate
+    afterInsert: afterInsert
   }
 }());

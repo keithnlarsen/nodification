@@ -2,7 +2,8 @@ describe( 'nodification.tests.integration.controllers.registration', function() 
 
   var http = require( 'http' );
   var should = require( 'should' );
-  var voiceMailJSON = JSON.parse( "{\"name\":\"VoiceMail\",\"registrationUrl\":\"url\",\"userName\": \"username\",\"password\": \"password\"}" );
+  var stub = require( 'stub.js' );
+  var voiceMailJSON = JSON.parse( "{\"name\":\"Voicemail\",\"registrationUrl\":\"http://something:2343/register\",\"userName\": \"username\",\"password\": \"password\"}" );
   var voiceMailId;
   var createJSON = JSON.parse( "{\"notificationType\":\" \",\"key\":\"4039819330\",\"registrationConfirmed\":false,\"devices\":[{ \"type\":\"ios\",\"name\":\"test\",\"token\":\"123ef0b00000000\"}] }" );
   var updateJSON = JSON.parse( "{\"notificationType\":\" \",\"key\":\"4039819330\",\"registrationConfirmed\":true,\"devices\":[{ \"type\":\"android\",\"name\":\"test2\",\"token\":\"1234132414132\"}] }" );
@@ -16,24 +17,20 @@ describe( 'nodification.tests.integration.controllers.registration', function() 
   var requestHandler = require('../../../libs/requestHandler');
 
   before( function( done ) {
-    var app = require( '../../../app' );
-
+    app = require( '../../../app' );
     app.listen( 3000 );
-    console.log( 'Running testing server at http://127.0.0.1:3000/' + '\r\r' );
 
     // Delay to make sure that node server has time to start up on slower computers before running the tests.
     setTimeout( function() {
-      // Setup our connection to the database and load our model and controller
-      var mongoose = require( 'mongoose' );
-      mongoose.connect( 'mongodb://localhost/nodification-dev' );
-      notificationType = require( '../../../models/notificationType.js' ).create( mongoose );
-      registration = require( '../../../models/registration.js' ).create( mongoose );
 
+      // Hardcode a stub gateway to register voicemail with
+      app.gateways.notificationRegistration.Voicemail = { register: stub.async( null, true ) };
+      
       // Just in case something bad happened, let's clear out the database
-      registration.model.remove( {}, function( err ) {
-        notificationType.model.remove( {}, function( err ) {
+      app.models.registration.getModel().remove( {}, function( err ) {
+        app.models.notificationType.getModel().remove( {}, function( err ) {
           // populate the database with a new notificationType
-          notificationType.model.create( voiceMailJSON, function( err, voiceMail ) {
+          app.models.notificationType.getModel().create( voiceMailJSON, function( err, voiceMail ) {
             // setup our test records to use that notificationType
             voiceMailId = voiceMail._id.toString();
             createJSON.notificationType = voiceMailId;
@@ -47,8 +44,8 @@ describe( 'nodification.tests.integration.controllers.registration', function() 
 
   after( function( done ) {
     // Clear out our database once we are done
-    registration.model.remove( {}, function( err ) {
-      notificationType.model.remove( {}, function( err ) {
+    app.models.registration.getModel().remove( {}, function( err ) {
+      app.models.notificationType.getModel().remove( {}, function( err ) {
         done( err )
       } );
     } );
@@ -88,7 +85,8 @@ describe( 'nodification.tests.integration.controllers.registration', function() 
         actual.notificationType._id.should.equal( voiceMailId );
         actual.notificationType.name.should.equal( voiceMailJSON.name );
         actual.key.should.equal( expected.key );
-        actual.registrationConfirmed.should.equal( expected.registrationConfirmed );
+        // This field gets updated to be true because it registers with the back end server (or at least a stub)
+        actual.registrationConfirmed.should.equal( true );
         actual.devices[0].name.should.equal( expected.devices[0].name );
         actual.devices[0].type.should.equal( expected.devices[0].type );
         actual.devices[0].token.should.equal( expected.devices[0].token );
@@ -119,7 +117,8 @@ describe( 'nodification.tests.integration.controllers.registration', function() 
 
         actual.notificationType._id.toString().should.equal( voiceMailId );
         actual.key.should.equal( expected.key );
-        actual.registrationConfirmed.should.equal( expected.registrationConfirmed );
+        // This field gets updated to be true because it registers with the back end server (or at least a stub)
+        actual.registrationConfirmed.should.equal( true );
         actual.devices.should.have.length( 1 );
         actual.devices[0].name.should.equal( expected.devices[0].name );
         actual.devices[0].type.should.equal( expected.devices[0].type );
@@ -143,7 +142,8 @@ describe( 'nodification.tests.integration.controllers.registration', function() 
 
         actual.notificationType._id.toString().should.equal( voiceMailId );
         actual.key.should.equal( expected.key );
-        actual.registrationConfirmed.should.equal( expected.registrationConfirmed );
+        // This field gets updated to be true because it registers with the back end server (or at least a stub)
+        actual.registrationConfirmed.should.equal( true );
         actual.devices.should.have.length( 2 );
         actual.devices[0].name.should.equal( expectedDevices.devices[0].name );
         actual.devices[0].type.should.equal( expectedDevices.devices[0].type );
@@ -171,7 +171,8 @@ describe( 'nodification.tests.integration.controllers.registration', function() 
         actual[0].notificationType._id.should.equal( voiceMailId );
         actual[0].notificationType.name.should.equal( voiceMailJSON.name );
         actual[0].key.should.equal( expected.key );
-        actual[0].registrationConfirmed.should.equal( expected.registrationConfirmed );
+        // This field gets updated to be true because it registers with the back end server (or at least a stub)
+        actual[0].registrationConfirmed.should.equal( true );
         actual[0].devices.should.have.length( 2 );
         actual[0].devices[0].name.should.equal( expectedDevices.devices[0].name );
         actual[0].devices[0].type.should.equal( expectedDevices.devices[0].type );

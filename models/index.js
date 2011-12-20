@@ -1,19 +1,25 @@
 module.exports = ( function() {
-  var notificationTypeModel = require( './notificationType.js' );
-  var registrationModel = require( './registration.js' );
-  var eventModel = require( './event.js' );
+  var vendor = require( './vendor' );
+  var notificationType = require( './notificationType' );
+  var device = require( './device' );
+  var registration = require( './registration' );
+  var event = require( './event' );
+
+  function init ( nodificationApp ) {
+    vendor.init( nodificationApp);
+    notificationType.init( nodificationApp );
+    device.init( nodificationApp );
+    registration.init( nodificationApp );
+    event.init( nodificationApp );
+  }
 
   return {
-    notificationType: {},
-    registration: {},
-    event: {},
+    vendor: vendor,
+    notificationType: notificationType,
+    device: device,
+    registration: registration,
+    event: event,
 
-    init: function( mongoose ) {
-      this.notificationType = notificationTypeModel.create( mongoose );
-      this.registration = registrationModel.create( mongoose );
-      this.event = eventModel.create( mongoose );
-
-      return this;
-    }
+    init: init
   }
 }());

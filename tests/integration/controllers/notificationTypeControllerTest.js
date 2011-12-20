@@ -12,28 +12,22 @@ describe( 'nodification.tests.integration.controllers.notificationType', functio
   var requestHandler = require('../../../libs/requestHandler');
 
   before( function( done ) {
-    var app = require( '../../../app' );
-
+    app = require( '../../../app' );
     app.listen( 3000 );
-    console.log( 'Running testing server at http://127.0.0.1:3000/' + '\r\r' );
 
     // Delay to make sure that node server has time to start up on slower computers before running the tests.
     setTimeout( function() {
-      // Setup our connection to the database and load our model and controller
-      var mongoose = require( 'mongoose' );
-      mongoose.connect( 'mongodb://localhost/nodification-dev' );
-      notificationType = require( '../../../models/notificationType.js' ).create( mongoose );
       // Just in case something bad happened, let's clear out the database
-      notificationType.model.remove( {}, function( err ) {
+      app.models.notificationType.getModel().remove( {}, function( err ) {
         done( err )
       } );
 
-    }, 250 );
+    }, 500 );
   } );
 
   after( function( done ) {
     // Clear out our database once we are done
-    notificationType.model.remove( {}, function( err ) {
+    app.models.notificationType.getModel().remove( {}, function( err ) {
       done( err )
     } );
   } );

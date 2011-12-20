@@ -18,7 +18,7 @@
   "devDependencies": {
     "mocha": "*",
     "should": "0.3.2",
-    "stub.js": "*"
+    "stub.js": "1.0.0"
   },
 
   "scripts": {

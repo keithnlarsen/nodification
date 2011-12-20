@@ -9,26 +9,30 @@
 //
 module.exports = (function() {
   var client;
-  var requestHandler = require( '../libs/requestHandler' );
+  var requestOptions = {
+    'Host': '',
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+  };
+  var requestHandler;
   var eventNotificationUrl = 'http://localhost:3000/events';
+  var urlParser = require( 'url' );
 
   function init ( options ) {
-    client = options.client || client;
-    requestHandler = options.requestHandler || requestHandler;
-    eventNotificationUrl = options.eventNotificationUrl || eventNotificationUrl;
+    if (options){
+      client = options.client || null;
+      requestHandler = options.requestHandler || require('../libs/requestHandler');
+      eventNotificationUrl = options.eventNotificationUrl || eventNotificationUrl;
+    }
   }
 
   function createRequest ( registration, notificationType ) {
-    var url = require( 'url' ).parse( notificationType.registrationUrl );
+    var url = urlParser.parse( notificationType.registrationUrl );
     var http = (url.protocol == 'http') ? require( 'http' ) : require( 'https' );
 
-    client = client || http.createClient( url.port, url.hostname );
+    requestOptions['Host'] = url.hostname;
 
-    var requestOptions = {
-      'Host': url.hostname,
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    };
+    var requestClient = client || http.createClient( url.port, url.hostname );
 
     var message = {
       'registrationKey': registration.key,
@@ -36,7 +40,7 @@ module.exports = (function() {
       'notificationType': notificationType.name
     };
 
-    var request = client.request( 'GET', url.path, requestOptions );
+    var request = requestClient.request( 'GET', url.path, requestOptions );
     request.write( JSON.stringify( message ) );
     return request;
   }

@@ -24,19 +24,23 @@ describe( 'nodification.tests.unit.middleware.event', function() {
         _id: '987654321',
         name: 'notificationTypeName'
       },
-      devices: [ {
-        _id: '12121212',
-        name: 'test1',
-        type: 'ios'
-      },{
-        _id: '34343434',
-        name: 'test2',
-        type: 'android'
-      },{
-        id: '56565656',
-        name:'test3',
-        type:'ios'
-      } ]
+      devices: [
+        {
+          _id: '12121212',
+          name: 'test1',
+          type: 'ios'
+        },
+        {
+          _id: '34343434',
+          name: 'test2',
+          type: 'android'
+        },
+        {
+          id: '56565656',
+          name:'test3',
+          type:'ios'
+        }
+      ]
     };
 
     mockApnGateway = {
@@ -54,7 +58,9 @@ describe( 'nodification.tests.unit.middleware.event', function() {
           afterHook : stub.sync()
         }
       },
-      gateways: { notificationTypeName: mockApnGateway }
+      gateways: {
+        apn: { notificationTypeName: mockApnGateway }
+      }
     };
 
     done();
@@ -68,20 +74,20 @@ describe( 'nodification.tests.unit.middleware.event', function() {
     it( 'should bind the after create hook to the afterCreate function', function( done ) {
       eventMiddleware.init( mockApp );
 
-      mockApp.controllers.event.afterHook.called.withArguments( 'create', eventMiddleware.afterCreate );
+      mockApp.controllers.event.afterHook.called.withArguments( 'insert', eventMiddleware.afterInsert );
 
       done();
     } );
   } );
 
-  describe( '.afterCreate( err, event ) ', function() {
+  describe( '.afterInsert( err, event ) ', function() {
     it( 'should send only apple devices to the apn gateway', function( done ) {
       eventMiddleware.init( mockApp );
-      eventMiddleware.afterCreate( null, mockEvent );
+      eventMiddleware.afterInsert( null, mockEvent );
 
       mockApnGateway.sendNotification.called.count( 2 );
-      mockApnGateway.sendNotification.called.time(1).withArguments( mockEvent, mockRegistration.devices[0] );
-      mockApnGateway.sendNotification.called.time(2).withArguments( mockEvent, mockRegistration.devices[2] );
+      mockApnGateway.sendNotification.called.time( 1 ).withArguments( mockEvent, mockRegistration.devices[0] );
+      mockApnGateway.sendNotification.called.time( 2 ).withArguments( mockEvent, mockRegistration.devices[2] );
 
       done();
     } );
