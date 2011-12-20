@@ -147,14 +147,34 @@ h3 .button, .details-title .button {
     margin: 0;
     padding:0;
   }
-  .details #cancel-device {
-    display:none;
+  .details li:first-child #device-detail, .details li:first-child #vendor-detail {
+    margin-top:20px;
   }
-  .details li.view #device-detail {
-    display:none;
+
+  #vendor-detail, #device-detail {
+    background-color: #e4e4e4;
+    border-radius: 2px;
+    margin-left: -150px;
+    padding: 0 20px;
   }
-  .details li.edit #device-detail {
-    display:block;
+  #device-detail {
+    margin-left:-110px;
+  }
+  .details .input-box {
+    background-color: #ccc;
+    border-radius:5px;
+    display:none;
+    height:200px;
+    padding: 10px;
+    position:absolute;
+    text-align: right;
+    width:370px;
+  }
+  .details .input-box textarea {
+    background-color: #fff;
+    border:0 none;
+    height:170px;
+    margin-bottom: 5px;
   }
 
 #list-container {

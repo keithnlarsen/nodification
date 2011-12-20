@@ -36,9 +36,8 @@
       <tr>
         <td class="label top">Devices:</td>
         <td>
-          <ul data-bind="visible: current() && current().devices, template: { name:'deviceListTemplate', foreach: current() ? current().devices : ''}"></ul>
+          <ul data-bind="visible: current() && current().devices, template: { name: deviceDisplayMode, foreach: current() ? current().devices : ''}"></ul>
           <a id="add-device" class="button secondary" href="javascript:void(0);" data-bind="click: addDevice"> register new device </a>
-          <a id="cancel-device" class="button secondary" href="javascript:void(0);" data-bind="click: cancelDevice"> cancel new device </a>
         </td>
       </tr>
       <tr>
@@ -65,29 +64,56 @@
   </div>
 </div>
 
-<script id="deviceListTemplate" type="text/html">
-  <li id="${ _id }" class="view">
-    <label>${ name }</label>
-    <a class="button secondary" href="javascript:void(0);" data-bind="click: removeDevice">Remove Device</a>
-    <br/>
-    <span id="device-detail">
-      Type: <select name="type"  data-bind="options: ['ios','android'], optionsCaption: 'Choose Type... ', value: type" /><br/>
-     Token: <input type="text" data-bind="value: token"/><br/>
-      Name: <input type="text" data-bind="value: name"/>
-    </span>
-  </li>
-</script>
-        
 <script id="registrationTableTemplate" type="text/html">
   <tr>
     <td>${ key }</td>
     <td>${ getNotificationTypeName( notificationType() ) }</td>
     <td>${ confirmed }</td>
-    <td>${ devices }</td>
+    <td data-bind="template: { name: 'registrationTableDevicesTemplate', foreach: devices } "></td>
     <td><a class="button primary" href="javascript:void(0);" data-bind="clickWithParams: { action: $item.select, params: [$data ] }">Edit</a></td>
     <td><a class="button secondary" href="javascript:void(0);" data-bind="click: remove">Delete</a></td>
   </tr>
 </script>
+
+<script type="text/html" id="registrationTableDevicesTemplate">
+  <span>${ name }, &nbsp;</span>
+</script>
+        
+<script id="viewDeviceListTemplate" type="text/html">
+  <li id="${ _id }">
+    <label>${ name }</label>
+    <a class="button secondary" href="javascript:void(0);" data-bind="click: function () { this.editing( true ); }">edit</a>
+    <a class="button secondary" href="javascript:void(0);" data-bind="click: removeDevice">remove</a>
+  </li>
+</script>
+
+<script id="editDeviceListTemplate" type="text/html">
+  <li id="${ _id }">
+    <div id="device-detail">
+      <table>
+        <tr>
+          <td class="label">Name:</td>
+          <td><input type="text" data-bind="value: name"/></td>
+        </tr>
+        <tr>
+          <td class="label">Type:</td>
+          <td><select name="type"  data-bind="options: ['ios','android'], optionsCaption: 'Choose Type... ', value: type" /></td>
+        </tr>
+        <tr>
+          <td class="label">Token:</td>
+          <td><input type="text" data-bind="value: token"/></td>
+        </tr>
+        <tr>
+          <td colspan="2" style="text-align:right">
+            <a id="cancel-device" class="button secondary" href="javascript:void(0);" data-bind="click: ( _id() == 'newDevice' ) ? removeDevice : function () { this.editing( false ); } "> cancel </a>
+            <a id="cancel-device" class="button secondary" href="javascript:void(0);" data-bind="click: function () { this.editing( false ); }"> done </a>
+          </td>
+        </tr>
+      </table>
+     </div>
+  </li>
+</script>
+
 
 <script type='text/javascript'>
   $( "#top-bar #registrations" ).addClass( 'selected' );
@@ -108,18 +134,20 @@
   this.viewModel;
 
   function device ( data ) {
-    this._id = ko.observable( data._id || 'newDevice');
+    this._id = ko.observable( data._id || 'newDevice' );
     this.type = ko.observable( data.type );
     this.name = ko.observable( data.name || 'New Device');
     this.token = ko.observable( data.token );
 
+    this.editing = ko.observable( false );
+
     this.removeDevice = function ( data ) {
       parent.viewModel.current().devices.remove( this );
-    }
+    };
   }
 
   function notificationType ( data ) {
-    this._id = data._id;
+    this._id = data._id || '';
     this.name = data.name || "" ;
   }
 
@@ -128,10 +156,11 @@
     this.key = ko.observable( data.key );
     this.notificationType = ko.observable( data.notificationType ? data.notificationType._id : '');
     this.confirmed = ko.observable( data.confirmed || false );
-    this.devices = ko.observableArray( _bindDeviceData( data.devices ? data.devices : [] ) );
+    var mappedDevices = bindData( device, ( data.devices ? data.devices : []) );
+    this.devices = ko.observableArray( mappedDevices );
 
     this.getNotificationTypeName = function ( notificationTypeId ){
-      var notificationType = _findObjectInArray( notificationTypeId, '_id', ko.toJS( parent.viewModel.notificationTypes ) );
+      var notificationType = findObjectInArray( notificationTypeId, '_id', ko.toJS( parent.viewModel.notificationTypes ) );
       return notificationType.name || '';
     };
 
@@ -153,18 +182,14 @@
     };
 
     this.addDevice = function ( data ) {
-      this.current().devices.push( new device( {} ) );
-      $('#newDevice').removeClass('view').addClass('edit');
-      $( 'a#cancel-device' ).show( );
-      $( 'a#add-device' ).hide( );
+      var newDevice = new device( {} );
+      newDevice.editing( true );
+      this.current().devices.push( newDevice );
     };
 
-    this.cancelDevice = function ( data ) {
-      $('#newDevice').removeClass('edit').addClass('view');
-      $( 'a#cancel-device' ).hide( );
-      $( 'a#add-device' ).show( );
+    this.deviceDisplayMode = function ( device ) {
+       return device.editing()  ? 'editDeviceListTemplate' : 'viewDeviceListTemplate';
     };
-
 
     this.save = function () {
       var self = this.current();
@@ -175,6 +200,7 @@
 
       for( var name in registration.devices ) {
         delete registration.devices[name]['_id'];
+        delete registration.devices[name]['editing'];
         delete registration.devices[name]['removeDevice'];
       }
 
@@ -199,50 +225,25 @@
     };
     
     this.cancel = function () {
-      $( '.device-detail' ).addClass( 'view' );
       $( '#details-container' ).hide( 400 );
     };
 
     var self = this;
-    _getNotifcationTypes( self, function () {
-      _bindRegistrationData( <%- JSON.stringify( registrations ) %>, self );
+    getNotifcationTypes( self, function () {
+      var mappedRegistrations = bindData( registration, <%- JSON.stringify( registrations ) %> );
+      self.registrations( mappedRegistrations );
     });
-  };
+  }
 
   this.viewModel = new registrationViewModel();
   this.viewModel.selectItem = function ( registration ) {
     $( '#details-container' ).show( 400 );
-    
     this.current( registration );
   }.bind(this.viewModel);
 
   ko.applyBindings( this.viewModel );
 
-  function _bindDeviceData( data ){
-    var mappedDevices = $.map ( data, function( item ) {
-      return new device( item );
-    });
 
-    return mappedDevices ;
-  }
-
-  function _bindRegistrationData( data, self ){
-    var mappedRegistrations = $.map ( data, function( item ) {
-      return new registration( item );
-    });
-
-    self.registrations( mappedRegistrations );
-  }
-  
-  function _bindNotificationTypeData( data, self, callback ){
-    var mappedTypes = $.map ( data, function( item ) {
-      return new notificationType( item );
-    });
-    
-    self.notificationTypes( mappedTypes );
-    callback();
-  };
-  
   function _create ( newRegistration, callback ) {
     $.ajax( {
       type: 'PUT',
@@ -251,10 +252,10 @@
       contentType: 'application/json; charset=utf-8',
       success: function ( data ) {
         callback( new registration( data ) );
-        _displayMessage( "Notification has been registered." );
+        displayMessage( "Notification has been registered." );
       },
       error: function () {
-        _displayMessage( "Notification could not be registered.", true );
+        displayMessage( "Notification could not be registered.", true );
       }
     } );
   };
@@ -267,10 +268,10 @@
       contentType: 'application/json; charset=utf-8',
       success: function () {
         callback();
-        _displayMessage( "Registration has been updated." );
+        displayMessage( "Registration has been updated." );
       },
       error: function () {
-        _displayMessage( "Registration could not be updated.", true );
+        displayMessage( "Registration could not be updated.", true );
       }
     } );
   }
@@ -283,50 +284,13 @@
       contentType: 'application/json; charset=utf-8',
       success: function () {
         callback();
-        _displayMessage( "Registration has been deleted." );
+        displayMessage( "Registration has been deleted." );
       },
       error: function () {
-        _displayMessage( "Registration could not be deleted.", true );
+        displayMessage( "Registration could not be deleted.", true );
       }
     } );
   }
 
-  function _getNotifcationTypes ( self, callback ) {
-    $.ajax( {
-      type: 'GET',
-      url: '/notificationTypes',
-      contentType: 'application/json; charset=utf-8',
-      success: function ( data ) {
-        _bindNotificationTypeData( data, self, callback );
-      },
-      error: function () {
-        _displayMessage( "An error occurred while retrieving the Notification Types.", true );
-      }
-    } );
-  };
-  
-  function _displayMessage ( msg, error ) {
-    $( '#feedbackMessage span' ).html( msg );
-    if ( error ) {
-      $( '#feedbackMessage' ).addClass( 'error' ).fadeIn( 'slow', function(){
-        $(this).fadeOut(2000);
-      });
-    } else {
-      $( '#feedbackMessage' ).removeClass( 'error' ).fadeIn( 'slow', function(){
-        $(this).fadeOut(2000);
-      });
-    }
-  };
 
-  function _findObjectInArray( item, item_id, array ) {
-
-    var foundObj = null;
-    for ( i in array ) {
-      var tmpObj = array[i];
-      if( tmpObj[item_id] === item ){
-        foundObj = tmpObj;
-        return foundObj;
-      }
-    }
-  }
 </script>
