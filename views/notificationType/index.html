@@ -24,6 +24,13 @@
         <td><input type="text" data-bind="value: currentType() ? currentType().registrationUrl : ''"/></td>
       </tr>
       <tr>
+        <td class="label top">Vendors:</td>
+        <td>
+          <ul data-bind="visible: currentType() && currentType().vendors, template: { name: vendorDisplayMode, foreach: currentType() ? currentType().vendors : ''}"></ul>
+          <a id="add-vendor" class="button secondary" href="javascript:void(0);" data-bind="click: addVendor"> add vendor </a>
+        </td>
+      </tr>
+      <tr>
         <td class="label">Username:</td>
         <td><input type="text" data-bind="value: currentType() ? currentType().userName : ''"/></td>
       </tr>
@@ -46,6 +53,7 @@
       <th>Name</th>
       <th>Registration URL</th>
       <th>Username</th>
+      <th>Vendors</th>
       <th class="button-column"></th>
       <th class="button-column"></th>
       </thead>
@@ -59,10 +67,82 @@
     <td>${ name }</td>
     <td>${ registrationUrl }</td>
     <td>${ userName }</td>
+    <td data-bind="template: { name:'notificationTypeTableVendorsTemplate', foreach: vendors }"></td>
     <td><a class="button primary" href="javascript:void(0);" data-bind="clickWithParams: { action: $item.select, params: [$data ] }">Edit</a></td>
     <td><a class="button secondary" href="javascript:void(0);" data-bind="click: remove">Delete</a></td>
   </tr>
 </script>
+
+<script id="notificationTypeTableVendorsTemplate" type="text/html">
+  <span> ${ name }, &nbsp; </span>
+</script>
+
+<script id="viewVendorListTemplate" type="text/html">
+  <li id="${ _id }">
+    <label>${ name }</label>
+    <a class="button secondary" href="javascript:void(0);" data-bind="click: function () { this.editing( true ); } ">edit</a>
+    <a class="button secondary" href="javascript:void(0);" data-bind="click: removeVendor">remove</a>
+  </li>
+</script>
+
+<script id="editVendorListTemplate" type="text/html">
+  <li id="${ _id }">
+    <div id="vendor-detail">
+      <table>
+        <tr>
+          <td class="label">Name:</td>
+          <td><input type="text" data-bind="value: name"/></td>
+        </tr>
+        <tr>
+          <td class="label">Type:</td>
+          <td>
+            <select name="type"  data-bind="options: ['ios','android'], optionsCaption: 'Choose Type... ', value: type" />
+          </td>
+        </tr>
+        <tr>
+          <td class="label">Key:</td>
+          <td>
+            <a class="button secondary" href="javascript:void(0);" onclick="$('#key-${_id}').show(200);">Show Key</a>
+            <div id="key-${_id}" class="input-box">
+              <textarea cols="50" rows="10" data-bind="value: keyData"/></textarea><br/>
+              <a class="button primary" href="javascript:void(0);" onclick="$('#key-${_id}').hide(200);">Done</a>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">Certificate:</td>
+          <td>
+            <a class="button secondary" href="javascript:void(0);" onclick="$('#cert-${_id}').show(200);">Show certificate</a>
+            <div id="cert-${_id}" class="input-box">
+              <textarea cols="50" rows="10" data-bind="value: certData"/></textarea><br/>
+              <a class="button primary" href="javascript:void(0);" onclick="$('#cert-${_id}').hide(200);">Done</a>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">Push Gateway URL:</td>
+          <td><input type="text" data-bind="value: pushGatewayUrl"/></td>
+        </tr>
+        <tr>
+          <td class="label">Feedback Gateway URL:</td>
+          <td><input type="text" data-bind="value: feedbackGatewayUrl"/></td>
+        </tr>
+        <tr>
+          <td class="label">Cache Length:</td>
+          <td><input type="text" data-bind="value: cacheLength"/></td>
+        </tr>
+        <tr>
+          <td colspan="2" style="text-align: right;">
+            <a id="cancel-vendor" class="button secondary" href="javascript:void(0);" data-bind="click: _id().indexOf( 'newVendor') == -1 ? function () { this.editing( false ); } : removeVendor"> cancel</a>
+            <a id="save-vendor" class="button secondary" href="javascript:void(0);" data-bind="click: function () { this.editing( false ); }"> done </a>
+          </td>
+        </tr>
+      </table>
+
+    </div>
+  </li>
+</script>
+
 
 <script type='text/javascript'>
   $( "#top-bar #types" ).addClass( 'selected' );
@@ -80,12 +160,32 @@
   };
 
   var parent = this;
+  var newVendorCount = 0;
   this.viewModel = {};
+
+
+  function vendor ( data ) {
+    this._id = ko.observable( data._id || 'newVendor' + newVendorCount++ );
+    this.type = ko.observable( data.type );
+    this.name = ko.observable( data.name || 'New Vendor');
+    this.keyData = ko.observable( data.keyData );
+    this.certData = ko.observable( data.certData );
+    this.pushGatewayUrl = ko.observable( data.pushGatewayUrl );
+    this.feedbackGatewayUrl = ko.observable( data.feedbackGatewayUrl );
+    this.cacheLength = ko.observable( data.cacheLength );
+    
+    this.editing = ko.observable( false );
+
+    this.removeVendor = function () {
+      parent.viewModel.currentType().vendors.remove(this);
+    };
+  }
 
   function notificationType ( data ) {
     this._id = ko.observable( data._id );
     this.name = ko.observable( data.name || "New Notification Type" );
     this.registrationUrl = ko.observable( data.registrationUrl || '' );
+    this.vendors = ko.observableArray( bindData( vendor, (data.vendors ? data.vendors : [] ) ) );
     this.userName = ko.observable( data.userName || data.username || '' );
     this.password = ko.observable( data.password || '' );
 
@@ -101,23 +201,37 @@
     this.notificationTypes = ko.observableArray( [] );
     this.currentType = ko.observable();
 
-
     this.showNew = function() {
-      parent.viewModel.selectItem(new notificationType( {} ));
+      parent.viewModel.selectItem( new notificationType( {} ) );
     };
 
+    this.addVendor = function () {
+      var newVendor = new vendor( {} );
+      newVendor.editing( true );
+      this.currentType().vendors.push( newVendor );
+    };
+
+    this.vendorDisplayMode = function ( vendor ) {
+       return vendor.editing()  ? 'editVendorListTemplate' : 'viewVendorListTemplate';
+    };
+    
     this.save = function() {
       var self = parent.viewModel.currentType;
       var notificationType = ko.mapping.toJS( self );
-      var id = notificationType._id;
 
+      var id = notificationType._id;
       delete notificationType['_id'];
-      delete notificationType['show'];
       delete notificationType['remove'];
+
+      for ( var field in notificationType.vendors ) {
+        delete notificationType.vendors[field]['_id'];
+        delete notificationType.vendors[field]['editing'];
+        delete notificationType.vendors[field]['removeVendor'];
+      }
 
       if( typeof id == 'undefined'){
         _create( notificationType, function ( newNotificationType ) {
-          parent.viewModel.notificationTypes.push( newNotificationType );
+          parent.viewModel.notificationTypes.push( new notificationType( newNotificationType ) );
           $( '#details-container' ).hide( 400 );
         });
       } else {
@@ -145,7 +259,8 @@
     };
 
     var self = this;
-    _bindData( <%- JSON.stringify(notificationTypes) %>, self );
+    var mappedNotificationTypes = bindData( notificationType, <%- JSON.stringify(notificationTypes) %> );
+    this.notificationTypes( mappedNotificationTypes );
   }
 
   this.viewModel = new notificationTypesViewModel();
@@ -156,46 +271,21 @@
     $('#name').focus();
   }.bind(this.viewModel);
 
-
-
   ko.applyBindings(this.viewModel);
-
-
-  function _bindData( data, self ){
-    var mappedTypes = $.map ( data, function( item ) {
-      return new notificationType( item );
-    });
-
-    self.notificationTypes( mappedTypes );
-  }
-
-  function _listNotificationTypes (self) {
-    $.ajax( {
-      type: 'GET',
-      url: '/notificationTypes',
-      contentType: 'application/json; charset=utf-8',
-      success: function ( data ) {
-        _bindData( data, self );
-      },
-      error: function () {
-        _displayMessage( "An error occurred while retrieving the Notification Types.", true );
-      }
-    } );
-  }
 
 
   function _create ( newNotificationType, callback ) {
     $.ajax( {
       type: 'PUT',
       url: '/notificationTypes',
-      data: JSON.stringify(newNotificationType),
+      data: JSON.stringify( newNotificationType ),
       contentType: 'application/json; charset=utf-8',
       success: function ( data ) {
-        callback( new notificationType( data ) );
-        _displayMessage( "Notification Type has been saved." );
+        callback( data );
+        displayMessage( "Notification Type has been saved." );
       },
       error: function () {
-        _displayMessage( "Notification Type could not be saved.", true );
+        displayMessage( "Notification Type could not be saved.", true );
       }
     } );
   }
@@ -204,14 +294,14 @@
     $.ajax( {
       type: 'POST',
       url: '/notificationTypes/' + notificationTypeId,
-      data: JSON.stringify(notificationType),
+      data: JSON.stringify( notificationType ),
       contentType: 'application/json; charset=utf-8',
       success: function () {
         callback();
-        _displayMessage( "Notification Type has been saved." );
+        displayMessage( "Notification Type has been saved." );
       },
       error: function () {
-        _displayMessage( "Notification Type could not be saved.", true );
+        displayMessage( "Notification Type could not be saved.", true );
       }
     } );
   }
@@ -224,25 +314,12 @@
       contentType: 'application/json; charset=utf-8',
       success: function () {
         callback();
-        _displayMessage( "Notification Type has been deleted." );
+        displayMessage( "Notification Type has been deleted." );
       },
       error: function () {
-        _displayMessage( "Notification Type could not be deleted.", true );
+        displayMessage( "Notification Type could not be deleted.", true );
       }
     } );
   }
-
-  function _displayMessage ( msg, error ) {
-    $( '#feedbackMessage span' ).html( msg );
-    if ( error ) {
-      $( '#feedbackMessage' ).addClass( 'error' ).fadeIn( 'slow', function(){
-        $(this).fadeOut(2000);
-      });
-    } else {
-      $( '#feedbackMessage' ).removeClass( 'error' ).fadeIn( 'slow', function(){
-        $(this).fadeOut(2000);
-      });
-    }
-  };
   
 </script>
