@@ -56,6 +56,11 @@ describe( 'nodification.tests.unit.middleware.event', function() {
         },
         event: {
           afterHook : stub.sync()
+        },
+        vendor: {
+          model: {
+            find: stub.sync( null, { where: stub.sync( null, { where: stub.sync( null, { exec: stub.async( null, mockEvent ) } ) } ) } )
+          }
         }
       },
       gateways: {
@@ -83,13 +88,13 @@ describe( 'nodification.tests.unit.middleware.event', function() {
   describe( '.afterInsert( err, event ) ', function() {
     it( 'should send only apple devices to the apn gateway', function( done ) {
       eventMiddleware.init( mockApp );
-      eventMiddleware.afterInsert( null, mockEvent );
+      eventMiddleware.afterInsert( null, mockEvent, function (err, count){
+        mockApnGateway.sendNotification.called.count( 2 );
+        mockApnGateway.sendNotification.called.time( 1 ).withArguments( mockEvent, mockRegistration.devices[0] );
+        mockApnGateway.sendNotification.called.time( 2 ).withArguments( mockEvent, mockRegistration.devices[2] );
 
-      mockApnGateway.sendNotification.called.count( 2 );
-      mockApnGateway.sendNotification.called.time( 1 ).withArguments( mockEvent, mockRegistration.devices[0] );
-      mockApnGateway.sendNotification.called.time( 2 ).withArguments( mockEvent, mockRegistration.devices[2] );
-
-      done();
+        done();
+      } );
     } );
   } );
 
