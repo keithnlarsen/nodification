@@ -1,4 +1,4 @@
-describe( 'nodification.tests.integration.controllers.notificationType', function() {
+describe( 'nodification.tests.integration.controllers.notificationType', function () {
 
   var http = require( 'http' );
   var should = require( 'should' );
@@ -9,35 +9,35 @@ describe( 'nodification.tests.integration.controllers.notificationType', functio
   var app;
 
   var localhost = http.createClient( 3000, 'localhost' );
-  var requestHandler = require('../../../libs/requestHandler');
+  var requestHandler = require( '../../../libs/requestHandler' );
 
-  before( function( done ) {
+  before( function ( done ) {
     app = require( '../../../app' );
     app.listen( 3000 );
 
     // Delay to make sure that node server has time to start up on slower computers before running the tests.
-    setTimeout( function() {
+    setTimeout( function () {
       // Just in case something bad happened, let's clear out the database
-      app.models.notificationType.getModel().remove( {}, function( err ) {
+      app.models.notificationType.getModel().remove( {}, function ( err ) {
         done( err )
       } );
 
     }, 500 );
   } );
 
-  after( function( done ) {
+  after( function ( done ) {
     // Clear out our database once we are done
-    app.models.notificationType.getModel().remove( {}, function( err ) {
+    app.models.notificationType.getModel().remove( {}, function ( err ) {
       done( err )
     } );
   } );
 
-  describe( 'PUT to /notificationType', function() {
-    it( 'should create a new NotificationType', function( done ) {
+  describe( 'PUT to /notificationType', function () {
+    it( 'should create a new NotificationType', function ( done ) {
       var request = localhost.request( 'PUT', '/notificationTypes', {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
       request.write( JSON.stringify( createJSON ) );
 
-      requestHandler.handle( request, function( err, response ) {
+      requestHandler.handle( request, function ( err, response ) {
         var actual = JSON.parse( response.body );
         var expected = createJSON;
 
@@ -51,11 +51,11 @@ describe( 'nodification.tests.integration.controllers.notificationType', functio
         done();
       } );
     } );
-    it( 'should return 409 Conflict when trying to insert a duplicate name record', function( done ) {
+    it( 'should return 409 Conflict when trying to insert a duplicate name record', function ( done ) {
       var request = localhost.request( 'PUT', '/notificationTypes', {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
       request.write( JSON.stringify( createJSON ) );
 
-      requestHandler.handle( request, function( err, response ) {
+      requestHandler.handle( request, function ( err, response ) {
         response.statusCode.should.equal( 409 );
         response.body.should.match( /duplicate key error/ );
 
@@ -64,11 +64,11 @@ describe( 'nodification.tests.integration.controllers.notificationType', functio
     } )
   } );
 
-  describe( 'GET to /notificationType/:id', function() {
-    it( 'should return a single NotificationType when given an existing Id', function( done ) {
+  describe( 'GET to /notificationType/:id', function () {
+    it( 'should return a single NotificationType when given an existing Id', function ( done ) {
       var request = localhost.request( 'GET', '/notificationTypes/' + newId, {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
 
-      requestHandler.handle( request, function( err, response ) {
+      requestHandler.handle( request, function ( err, response ) {
         var actual = JSON.parse( response.body );
         var expected = createJSON;
 
@@ -81,10 +81,10 @@ describe( 'nodification.tests.integration.controllers.notificationType', functio
         done();
       } );
     } );
-    it( 'should return 404 NotFound when given a non-existing Id', function( done ) {
+    it( 'should return 404 NotFound when given a non-existing Id', function ( done ) {
       var request = localhost.request( 'GET', '/notificationTypes/111111111111111111111111', {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
 
-      requestHandler.handle( request, function( err, response ) {
+      requestHandler.handle( request, function ( err, response ) {
         response.statusCode.should.equal( 404 );
 
         done();
@@ -92,12 +92,12 @@ describe( 'nodification.tests.integration.controllers.notificationType', functio
     } );
   } );
 
-  describe( 'POST to /notificationType/:id', function() {
-    it( 'should update an existing NotificationType', function( done ) {
+  describe( 'POST to /notificationType/:id', function () {
+    it( 'should update an existing NotificationType', function ( done ) {
       var request = localhost.request( 'POST', '/notificationTypes/' + newId, {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
       request.write( JSON.stringify( updateJSON ) );
 
-      requestHandler.handle( request, function( err, response ) {
+      requestHandler.handle( request, function ( err, response ) {
         var actual = JSON.parse( response.body );
         var expected = updateJSON;
 
@@ -111,11 +111,11 @@ describe( 'nodification.tests.integration.controllers.notificationType', functio
         done();
       } );
     } );
-    it( 'should return 404 NotFound when trying to Update a NotificationType That Doesn\'t Exist', function( done ) {
+    it( 'should return 404 NotFound when trying to Update a NotificationType That Doesn\'t Exist', function ( done ) {
       var request = localhost.request( 'POST', '/notificationTypes/111111111111111111111111', {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
       request.write( JSON.stringify( updateJSON ) );
 
-      requestHandler.handle( request, function( err, response ) {
+      requestHandler.handle( request, function ( err, response ) {
         response.statusCode.should.equal( 404 );
 
         done();
@@ -123,11 +123,11 @@ describe( 'nodification.tests.integration.controllers.notificationType', functio
     } );
   } );
 
-  describe( 'GET to /notificationType', function() {
-    it( 'should return all NotificationTypes', function( done ) {
+  describe( 'GET to /notificationType', function () {
+    it( 'should return all NotificationTypes', function ( done ) {
       var request = localhost.request( 'GET', '/notificationTypes', {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
 
-      requestHandler.handle( request, function( err, response ) {
+      requestHandler.handle( request, function ( err, response ) {
         var actual = JSON.parse( response.body );
         var expected = updateJSON;
 
@@ -142,21 +142,21 @@ describe( 'nodification.tests.integration.controllers.notificationType', functio
     } );
   } );
 
-  describe( 'DELETE to /notificationType/:id', function() {
-    it( 'should delete person when called with an existing Id', function( done ) {
+  describe( 'DELETE to /notificationType/:id', function () {
+    it( 'should delete person when called with an existing Id', function ( done ) {
       var request = localhost.request( 'DELETE', '/notificationTypes/' + newId, {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
-      request.write('{}');
+      request.write( '{}' );
 
-      requestHandler.handle( request, function( err, response ) {
+      requestHandler.handle( request, function ( err, response ) {
         response.statusCode.should.equal( 200 );
 
         done();
       } );
     } );
-    it( 'should return 404 when called with an Id that doesn\'t exist', function( done ) {
+    it( 'should return 404 when called with an Id that doesn\'t exist', function ( done ) {
       var request = localhost.request( 'DELETE', '/notificationTypes/' + newId, {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
-      request.write('{}');
-      requestHandler.handle( request, function( err, response ) {
+      request.write( '{}' );
+      requestHandler.handle( request, function ( err, response ) {
         response.statusCode.should.equal( 404 );
 
         done();

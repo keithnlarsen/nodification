@@ -1,15 +1,15 @@
-module.exports = ( function() {
+module.exports = ( function () {
 
-  function handle( request, callBack ) {
+  function handle ( request, callBack ) {
     request.on( 'response', function ( response ) {
       var responseBody = "";
       response.setEncoding( 'utf8' );
 
-      response.addListener( "data", function( chunk ) {
+      response.addListener( "data", function ( chunk ) {
         responseBody += chunk;
       } );
 
-      response.on( 'end', function() {
+      response.on( 'end', function () {
         response.body = responseBody;
         callBack( null, response );
       } );
@@ -19,7 +19,7 @@ module.exports = ( function() {
   }
 
   return {
-    handle : handle
+    handle: handle
   }
 }());
 

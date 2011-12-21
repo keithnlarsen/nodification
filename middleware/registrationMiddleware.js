@@ -8,14 +8,14 @@ module.exports = (function () {
 
   function afterInsert ( err, registration, callback ) {
 //    console.log( registration.notificationType._id );
-    app.models.notificationType.getModel().findById(registration.notificationType._id, function ( err, notificationType ) {
+    app.models.notificationType.getModel().findById( registration.notificationType._id, function ( err, notificationType ) {
 
       getGateway( notificationType ).register( registration, notificationType, function ( err ) {
         if ( err ) {
-          callback(err, null);
-        }else{
+          callback( err, null );
+        } else {
           app.controllers.registration.model.update( { _id: registration._id }, { registrationConfirmed: true }, function ( err, count ) {
-            callback(err, count);
+            callback( err, count );
           } );
         }
       } );

@@ -111,58 +111,58 @@ InflectionJS =
    These rules translate from the singular form of a noun to its plural form.
    */
   plural_rules: [
-    [new RegExp( '(m)an$', 'gi' ),                 '$1en'],
-    [new RegExp( '(pe)rson$', 'gi' ),              '$1ople'],
-    [new RegExp( '(child)$', 'gi' ),               '$1ren'],
-    [new RegExp( '^(ox)$', 'gi' ),                 '$1en'],
-    [new RegExp( '(ax|test)is$', 'gi' ),           '$1es'],
-    [new RegExp( '(octop|vir)us$', 'gi' ),         '$1i'],
-    [new RegExp( '(alias|status)$', 'gi' ),        '$1es'],
-    [new RegExp( '(bu)s$', 'gi' ),                 '$1ses'],
+    [new RegExp( '(m)an$', 'gi' ), '$1en'],
+    [new RegExp( '(pe)rson$', 'gi' ), '$1ople'],
+    [new RegExp( '(child)$', 'gi' ), '$1ren'],
+    [new RegExp( '^(ox)$', 'gi' ), '$1en'],
+    [new RegExp( '(ax|test)is$', 'gi' ), '$1es'],
+    [new RegExp( '(octop|vir)us$', 'gi' ), '$1i'],
+    [new RegExp( '(alias|status)$', 'gi' ), '$1es'],
+    [new RegExp( '(bu)s$', 'gi' ), '$1ses'],
     [new RegExp( '(buffal|tomat|potat)o$', 'gi' ), '$1oes'],
-    [new RegExp( '([ti])um$', 'gi' ),              '$1a'],
-    [new RegExp( 'sis$', 'gi' ),                   'ses'],
-    [new RegExp( '(?:([^f])fe|([lr])f)$', 'gi' ),  '$1$2ves'],
-    [new RegExp( '(hive)$', 'gi' ),                '$1s'],
-    [new RegExp( '([^aeiouy]|qu)y$', 'gi' ),       '$1ies'],
-    [new RegExp( '(x|ch|ss|sh)$', 'gi' ),          '$1es'],
-    [new RegExp( '(matr|vert|ind)ix|ex$', 'gi' ),  '$1ices'],
-    [new RegExp( '([m|l])ouse$', 'gi' ),           '$1ice'],
-    [new RegExp( '(quiz)$', 'gi' ),                '$1zes'],
-    [new RegExp( 's$', 'gi' ),                     's'],
-    [new RegExp( '$', 'gi' ),                      's']
+    [new RegExp( '([ti])um$', 'gi' ), '$1a'],
+    [new RegExp( 'sis$', 'gi' ), 'ses'],
+    [new RegExp( '(?:([^f])fe|([lr])f)$', 'gi' ), '$1$2ves'],
+    [new RegExp( '(hive)$', 'gi' ), '$1s'],
+    [new RegExp( '([^aeiouy]|qu)y$', 'gi' ), '$1ies'],
+    [new RegExp( '(x|ch|ss|sh)$', 'gi' ), '$1es'],
+    [new RegExp( '(matr|vert|ind)ix|ex$', 'gi' ), '$1ices'],
+    [new RegExp( '([m|l])ouse$', 'gi' ), '$1ice'],
+    [new RegExp( '(quiz)$', 'gi' ), '$1zes'],
+    [new RegExp( 's$', 'gi' ), 's'],
+    [new RegExp( '$', 'gi' ), 's']
   ],
 
   /*
    These rules translate from the plural form of a noun to its singular form.
    */
   singular_rules: [
-    [new RegExp( '(m)en$', 'gi' ),                                                       '$1an'],
-    [new RegExp( '(pe)ople$', 'gi' ),                                                    '$1rson'],
-    [new RegExp( '(child)ren$', 'gi' ),                                                  '$1'],
-    [new RegExp( '([ti])a$', 'gi' ),                                                     '$1um'],
+    [new RegExp( '(m)en$', 'gi' ), '$1an'],
+    [new RegExp( '(pe)ople$', 'gi' ), '$1rson'],
+    [new RegExp( '(child)ren$', 'gi' ), '$1'],
+    [new RegExp( '([ti])a$', 'gi' ), '$1um'],
     [new RegExp( '((a)naly|(b)a|(d)iagno|(p)arenthe|(p)rogno|(s)ynop|(t)he)ses$', 'gi' ), '$1$2sis'],
-    [new RegExp( '(hive)s$', 'gi' ),                                                     '$1'],
-    [new RegExp( '(tive)s$', 'gi' ),                                                     '$1'],
-    [new RegExp( '(curve)s$', 'gi' ),                                                    '$1'],
-    [new RegExp( '([lr])ves$', 'gi' ),                                                   '$1f'],
-    [new RegExp( '([^fo])ves$', 'gi' ),                                                  '$1fe'],
-    [new RegExp( '([^aeiouy]|qu)ies$', 'gi' ),                                           '$1y'],
-    [new RegExp( '(s)eries$', 'gi' ),                                                    '$1eries'],
-    [new RegExp( '(m)ovies$', 'gi' ),                                                    '$1ovie'],
-    [new RegExp( '(x|ch|ss|sh)es$', 'gi' ),                                              '$1'],
-    [new RegExp( '([m|l])ice$', 'gi' ),                                                  '$1ouse'],
-    [new RegExp( '(bus)es$', 'gi' ),                                                     '$1'],
-    [new RegExp( '(o)es$', 'gi' ),                                                       '$1'],
-    [new RegExp( '(shoe)s$', 'gi' ),                                                     '$1'],
-    [new RegExp( '(cris|ax|test)es$', 'gi' ),                                            '$1is'],
-    [new RegExp( '(octop|vir)i$', 'gi' ),                                                '$1us'],
-    [new RegExp( '(alias|status)es$', 'gi' ),                                            '$1'],
-    [new RegExp( '^(ox)en', 'gi' ),                                                      '$1'],
-    [new RegExp( '(vert|ind)ices$', 'gi' ),                                              '$1ex'],
-    [new RegExp( '(matr)ices$', 'gi' ),                                                  '$1ix'],
-    [new RegExp( '(quiz)zes$', 'gi' ),                                                   '$1'],
-    [new RegExp( 's$', 'gi' ),                                                           '']
+    [new RegExp( '(hive)s$', 'gi' ), '$1'],
+    [new RegExp( '(tive)s$', 'gi' ), '$1'],
+    [new RegExp( '(curve)s$', 'gi' ), '$1'],
+    [new RegExp( '([lr])ves$', 'gi' ), '$1f'],
+    [new RegExp( '([^fo])ves$', 'gi' ), '$1fe'],
+    [new RegExp( '([^aeiouy]|qu)ies$', 'gi' ), '$1y'],
+    [new RegExp( '(s)eries$', 'gi' ), '$1eries'],
+    [new RegExp( '(m)ovies$', 'gi' ), '$1ovie'],
+    [new RegExp( '(x|ch|ss|sh)es$', 'gi' ), '$1'],
+    [new RegExp( '([m|l])ice$', 'gi' ), '$1ouse'],
+    [new RegExp( '(bus)es$', 'gi' ), '$1'],
+    [new RegExp( '(o)es$', 'gi' ), '$1'],
+    [new RegExp( '(shoe)s$', 'gi' ), '$1'],
+    [new RegExp( '(cris|ax|test)es$', 'gi' ), '$1is'],
+    [new RegExp( '(octop|vir)i$', 'gi' ), '$1us'],
+    [new RegExp( '(alias|status)es$', 'gi' ), '$1'],
+    [new RegExp( '^(ox)en', 'gi' ), '$1'],
+    [new RegExp( '(vert|ind)ices$', 'gi' ), '$1ex'],
+    [new RegExp( '(matr)ices$', 'gi' ), '$1ix'],
+    [new RegExp( '(quiz)zes$', 'gi' ), '$1'],
+    [new RegExp( 's$', 'gi' ), '']
   ],
 
   /*
@@ -197,7 +197,7 @@ InflectionJS =
    Examples:
    InflectionJS.apply_rules("cows", InflectionJs.singular_rules) === 'cow'
    */
-  apply_rules: function( str, rules, skip, override ) {
+  apply_rules: function ( str, rules, skip, override ) {
     if ( override ) {
       str = override;
     }
@@ -231,7 +231,7 @@ InflectionJS =
  ['hi','there'].indexOf("hi") === 0
  */
 if ( !Array.prototype.indexOf ) {
-  Array.prototype.indexOf = function( item, fromIndex, compareFunc ) {
+  Array.prototype.indexOf = function ( item, fromIndex, compareFunc ) {
     if ( !fromIndex ) {
       fromIndex = -1;
     }
@@ -293,7 +293,7 @@ if ( !String.prototype._non_titlecased_words ) {
  "person".pluralize("guys") == "guys"
  */
 if ( !String.prototype.pluralize ) {
-  String.prototype.pluralize = function( plural ) {
+  String.prototype.pluralize = function ( plural ) {
     return InflectionJS.apply_rules(
       this,
       this._plural_rules,
@@ -318,7 +318,7 @@ if ( !String.prototype.pluralize ) {
  "guys".singularize("person") == "person"
  */
 if ( !String.prototype.singularize ) {
-  String.prototype.singularize = function( singular ) {
+  String.prototype.singularize = function ( singular ) {
     return InflectionJS.apply_rules(
       this,
       this._singular_rules,
@@ -343,7 +343,7 @@ if ( !String.prototype.singularize ) {
  "message_properties".camelize(true) == "messageProperties"
  */
 if ( !String.prototype.camelize ) {
-  String.prototype.camelize = function( lowFirstLetter ) {
+  String.prototype.camelize = function ( lowFirstLetter ) {
     var str = this.toLowerCase();
     var str_path = str.split( '/' );
     for ( var i = 0; i < str_path.length; i++ ) {
@@ -373,7 +373,7 @@ if ( !String.prototype.camelize ) {
  "messageProperties".underscore() == "message_properties"
  */
 if ( !String.prototype.underscore ) {
-  String.prototype.underscore = function() {
+  String.prototype.underscore = function () {
     var str = this;
     var str_path = str.split( '::' );
     for ( var i = 0; i < str_path.length; i++ ) {
@@ -399,7 +399,7 @@ if ( !String.prototype.underscore ) {
  "message_properties".humanize(true) == "message properties"
  */
 if ( !String.prototype.humanize ) {
-  String.prototype.humanize = function( lowFirstLetter ) {
+  String.prototype.humanize = function ( lowFirstLetter ) {
     var str = this.toLowerCase();
     str = str.replace( InflectionJS.id_suffix, '' );
     str = str.replace( InflectionJS.underbar, ' ' );
@@ -423,7 +423,7 @@ if ( !String.prototype.humanize ) {
  "message properties".capitalize() == "Message properties"
  */
 if ( !String.prototype.capitalize ) {
-  String.prototype.capitalize = function() {
+  String.prototype.capitalize = function () {
     var str = this.toLowerCase();
     str = str.substring( 0, 1 ).toUpperCase() + str.substring( 1 );
     return str;
@@ -443,7 +443,7 @@ if ( !String.prototype.capitalize ) {
  "Message Properties".capitalize() == "Message-Properties"
  */
 if ( !String.prototype.dasherize ) {
-  String.prototype.dasherize = function() {
+  String.prototype.dasherize = function () {
     var str = this;
     str = str.replace( InflectionJS.space_or_underbar, '-' );
     return str;
@@ -463,7 +463,7 @@ if ( !String.prototype.dasherize ) {
  "message properties to keep".titleize() == "Message Properties to Keep"
  */
 if ( !String.prototype.titleize ) {
-  String.prototype.titleize = function() {
+  String.prototype.titleize = function () {
     var str = this.toLowerCase();
     str = str.replace( InflectionJS.underbar, ' ' );
     var str_arr = str.split( ' ' );
@@ -494,7 +494,7 @@ if ( !String.prototype.titleize ) {
  "Message::Bus::Properties".demodulize() == "Properties"
  */
 if ( !String.prototype.demodulize ) {
-  String.prototype.demodulize = function() {
+  String.prototype.demodulize = function () {
     var str = this;
     var str_arr = str.split( '::' );
     str = str_arr[str_arr.length - 1];
@@ -514,7 +514,7 @@ if ( !String.prototype.demodulize ) {
  "MessageBusProperty".tableize() == "message_bus_properties"
  */
 if ( !String.prototype.tableize ) {
-  String.prototype.tableize = function() {
+  String.prototype.tableize = function () {
     var str = this;
     str = str.underscore().pluralize();
     return str;
@@ -533,7 +533,7 @@ if ( !String.prototype.tableize ) {
  "message_bus_properties".classify() == "MessageBusProperty"
  */
 if ( !String.prototype.classify ) {
-  String.prototype.classify = function() {
+  String.prototype.classify = function () {
     var str = this;
     str = str.camelize().singularize();
     return str;
@@ -554,7 +554,7 @@ if ( !String.prototype.classify ) {
  "MessageBusProperty".foreign_key(true) == "message_bus_propertyid"
  */
 if ( !String.prototype.foreign_key ) {
-  String.prototype.foreign_key = function( dropIdUbar ) {
+  String.prototype.foreign_key = function ( dropIdUbar ) {
     var str = this;
     str = str.demodulize().underscore() + ((dropIdUbar) ? ('') : ('_')) + 'id';
     return str;
@@ -573,7 +573,7 @@ if ( !String.prototype.foreign_key ) {
  "the 1 pitch".ordinalize() == "the 1st pitch"
  */
 if ( !String.prototype.ordinalize ) {
-  String.prototype.ordinalize = function() {
+  String.prototype.ordinalize = function () {
     var str = this;
     var str_arr = str.split( ' ' );
     for ( var x = 0; x < str_arr.length; x++ ) {

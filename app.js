@@ -1,24 +1,24 @@
-module.exports = ( function() {
+module.exports = ( function () {
   var express = require( 'express' );
   var mongoose = require( 'mongoose' );
 
   var app = express.createServer();
   app.mongoose = mongoose;
 
-  app.configure( 'development', function() {
+  app.configure( 'development', function () {
     app.use( express.logger( { format: '\x1b[1m :date \x1b[1m:method\x1b[0m \x1b[33m:url\x1b[0m :response-time ms\x1b[0m :status' } ) );
   } );
 
-  app.configure( 'test', function() {
-  });
+  app.configure( 'test', function () {
+  } );
 
-  app.configure( 'production', function() {
+  app.configure( 'production', function () {
     app.use( express.logger( { format: '\x1b[1m :date \x1b[1m:method\x1b[0m \x1b[33m:url\x1b[0m :response-time ms\x1b[0m :status' } ) );
   } );
 
   // Configuration
-  app.configure( function() {
-    app.set('root', __dirname);
+  app.configure( function () {
+    app.set( 'root', __dirname );
     app.set( 'views', __dirname + '/views' );
     app.register( 'html', require( 'ejs' ) );
     app.set( 'view engine', 'html' );
@@ -44,17 +44,17 @@ module.exports = ( function() {
   app.controllers.init( app.models, app.restErrors );
 
   // Register Middleware
-  app.middleWare = require('./middleware');
-  app.middleWare.init(app);
+  app.middleWare = require( './middleware' );
+  app.middleWare.init( app );
 
   app.gateways = {};
   app.gateways.notificationRegistration = {};
   app.gateways.apn = {};
 
   // Load the routes
-  var routes = require('./routes');
-  routes.init(app);
-  
+  var routes = require( './routes' );
+  routes.init( app );
+
   // Handle all other non-registered routes with a notFound error
   app.use( function ( req, res, next ) {
     next( app.restErrors.notFound.create( req.url ) );

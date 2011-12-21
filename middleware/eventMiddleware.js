@@ -20,8 +20,8 @@ module.exports = (function () {
               .where( 'notificationType', event.notificationType._id )
               .where( 'type', event.type )
               .exec( function ( err, instance ) {
-                if (instance.length > 1) {
-                  callback(new Error('More than one vendor found for NotificationType: ' + event.notificationType.name + ' and VendorType: ' + event.type), i -1);
+                if ( instance.length > 1 ) {
+                  callback( new Error( 'More than one vendor found for NotificationType: ' + event.notificationType.name + ' and VendorType: ' + event.type ), i - 1 );
                 } else {
                   if ( !app.gateways.apn[event.notificationType.name] ) {
                     app.gateways.apn[event.notificationType.name] = require( '../gateways/apnGateway' );

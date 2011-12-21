@@ -1,4 +1,4 @@
-describe( 'nodification.tests.unit.gateways.notificationRegistration', function() {
+describe( 'nodification.tests.unit.gateways.notificationRegistration', function () {
 
   var should = require( 'should' );
   var stub = require( 'stub.js' );
@@ -17,7 +17,7 @@ describe( 'nodification.tests.unit.gateways.notificationRegistration', function(
   };
   var eventNotificationUrl = 'http://localhost/events';
 
-  beforeEach( function( done ) {
+  beforeEach( function ( done ) {
     mockRequest.write = stub.sync();
     mockRequestHandler.handle = stub.async( null, mockResponse );
     mockClient.request = stub.sync( null, mockRequest );
@@ -37,12 +37,12 @@ describe( 'nodification.tests.unit.gateways.notificationRegistration', function(
     done();
   } );
 
-  afterEach( function( done ) {
+  afterEach( function ( done ) {
     done();
   } );
 
-  describe( '.register( registration, notificationType, callBack )', function() {
-    it( 'should return sucess when calling registrationUrl for given notificationType and getting http status code 200 back', function( done ) {
+  describe( '.register( registration, notificationType, callBack )', function () {
+    it( 'should return sucess when calling registrationUrl for given notificationType and getting http status code 200 back', function ( done ) {
 
       mockResponse.statusCode = 200;
 
@@ -56,7 +56,7 @@ describe( 'nodification.tests.unit.gateways.notificationRegistration', function(
 
     } );
 
-    it( 'should return sucess when calling registrationUrl for given notificationType and getting http status code 201 back', function( done ) {
+    it( 'should return sucess when calling registrationUrl for given notificationType and getting http status code 201 back', function ( done ) {
 
       mockResponse.statusCode = 201;
 
@@ -70,7 +70,7 @@ describe( 'nodification.tests.unit.gateways.notificationRegistration', function(
 
     } );
 
-    it( 'should return error when calling registrationUrl for given notificationType and getting http status code 500 back', function( done ) {
+    it( 'should return error when calling registrationUrl for given notificationType and getting http status code 500 back', function ( done ) {
       mockResponse.statusCode = 500;
       mockResponse.body = 'mock error';
 

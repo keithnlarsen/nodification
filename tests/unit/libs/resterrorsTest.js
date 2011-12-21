@@ -1,18 +1,18 @@
-describe( 'nodification.tests.unit.libs.restErrors', function() {
+describe( 'nodification.tests.unit.libs.restErrors', function () {
 
   var restErrors = require( '../../../libs/resterrors' );
   var restError = restErrors.errors;
 
-  beforeEach( function( done ) {
+  beforeEach( function ( done ) {
     done();
   } );
 
-  afterEach( function( done ) {
+  afterEach( function ( done ) {
     done();
   } );
 
-  describe( 'errorHandler(error, request, response)', function() {
-    it( 'should map notFound Error to 404 NotFound response', function( done ) {
+  describe( 'errorHandler(error, request, response)', function () {
+    it( 'should map notFound Error to 404 NotFound response', function ( done ) {
       var notFound = restError.notFound.create( 'Test Error' );
       var mockRequest = {};
       var mockResponse = {
@@ -27,7 +27,7 @@ describe( 'nodification.tests.unit.libs.restErrors', function() {
       restErrors.errorHandler( notFound, mockRequest, mockResponse );
     } );
 
-    it( 'should map badRequest Error to 400 BadRequest response', function( done ) {
+    it( 'should map badRequest Error to 400 BadRequest response', function ( done ) {
       var badRequest = restError.badRequest.create( 'Test Error' );
       var mockRequest = {};
       var mockResponse = {
@@ -42,7 +42,7 @@ describe( 'nodification.tests.unit.libs.restErrors', function() {
       restErrors.errorHandler( badRequest, mockRequest, mockResponse );
     } );
 
-    it( 'should map Generic Errors to 500 InternalServerError response', function( done ) {
+    it( 'should map Generic Errors to 500 InternalServerError response', function ( done ) {
       var error = new Error( 'Test Error' );
       var mockRequest = {};
       var mockResponse = {
@@ -58,30 +58,30 @@ describe( 'nodification.tests.unit.libs.restErrors', function() {
     } );
   } );
 
-  describe( 'restErrors.notfound', function() {
-    it( 'should have constructor named notFound', function( done ) {
+  describe( 'restErrors.notfound', function () {
+    it( 'should have constructor named notFound', function ( done ) {
       var notFound = restError.notFound.create( 'Test Error' );
       notFound.name.should.equal( "notFound" );
       done();
     } );
 
-    it( 'should inherit from Error', function( done ) {
+    it( 'should inherit from Error', function ( done ) {
       var notFound = restError.notFound.create( "Test Error" );
       notFound.prototype.name.should.equal( "Error" );
       done();
     } );
 
-    it( 'should pass error message', function( done ) {
+    it( 'should pass error message', function ( done ) {
       var notFound = restError.notFound.create( "Test NotFound message." );
       notFound.message.should.equal( "Test NotFound message." );
       done();
     } );
 
-    it( 'should throw notFound error', function( done ) {
+    it( 'should throw notFound error', function ( done ) {
       try {
         throw restError.notFound.create( "Test NotFound message." );
       }
-      catch( err ) {
+      catch ( err ) {
         err.name.should.equal( "notFound" );
         err.message.should.equal( "Test NotFound message." );
         err.prototype.name.should.equal( "Error" );
@@ -90,30 +90,30 @@ describe( 'nodification.tests.unit.libs.restErrors', function() {
     } );
   } );
 
-  describe( 'restErrors.badRequest', function() {
-    it( 'should have constructor named badRequest', function( done ) {
+  describe( 'restErrors.badRequest', function () {
+    it( 'should have constructor named badRequest', function ( done ) {
       var notFound = restError.badRequest.create( 'Test Error' );
       notFound.name.should.equal( "badRequest" );
       done();
     } );
 
-    it( 'should inherit from Error', function( done ) {
+    it( 'should inherit from Error', function ( done ) {
       var notFound = restError.badRequest.create( "Test Error" );
       notFound.prototype.name.should.equal( "Error" );
       done();
     } );
 
-    it( 'should pass error message', function( done ) {
+    it( 'should pass error message', function ( done ) {
       var notFound = restError.badRequest.create( "Test badRequest message." );
       notFound.message.should.equal( "Test badRequest message." );
       done();
     } );
 
-    it( 'should throw badRequest error', function( done ) {
+    it( 'should throw badRequest error', function ( done ) {
       try {
         throw restError.badRequest.create( "Test badRequest message." );
       }
-      catch( err ) {
+      catch ( err ) {
         err.name.should.equal( "badRequest" );
         err.message.should.equal( "Test badRequest message." );
         err.prototype.name.should.equal( "Error" );

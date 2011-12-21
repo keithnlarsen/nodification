@@ -1,4 +1,4 @@
-describe( 'nodification.tests.unit.libs.baseRestController', function() {
+describe( 'nodification.tests.unit.libs.baseRestController', function () {
 
   var should = require( 'should' );
   var createJSON = JSON.parse( "{\"name\":\"Test\",\"field2\":\"url\"}" );
@@ -11,7 +11,7 @@ describe( 'nodification.tests.unit.libs.baseRestController', function() {
   var testController;
   var newId = '';
 
-  before( function( done ) {
+  before( function ( done ) {
     // Setup our connection to the database and load our model and controller
     mongoose.connect( 'mongodb://localhost/nodification-dev' );
     testType = mongoose.model( 'TestType', new Schema( {
@@ -26,24 +26,24 @@ describe( 'nodification.tests.unit.libs.baseRestController', function() {
     testController = whatever.create( testType );
 
     // Just in case something bad happened, let's clear out the database
-    testType.remove( {}, function( err ) {
+    testType.remove( {}, function ( err ) {
       done( err )
     } );
   } );
 
-  after( function( done ) {
+  after( function ( done ) {
     // Clear out our database once we are done
-    testType.remove( {}, function( err ) {
+    testType.remove( {}, function ( err ) {
       done( err )
     } );
   } );
 
-  describe( '.insert( req, res, done )', function() {
-    it( 'should create a new testType', function( done ) {
+  describe( '.insert( req, res, done )', function () {
+    it( 'should create a new testType', function ( done ) {
       var mockReq = { body: createJSON };
 
       var mockRes = {
-        send: function( body ) {
+        send: function ( body ) {
           newId = body._id.toString();
           body._id.should.be.a( 'object' );
           body.name.should.be.equal( "Test" );
@@ -52,7 +52,7 @@ describe( 'nodification.tests.unit.libs.baseRestController', function() {
         }
       };
 
-      var next = function( err ) {
+      var next = function ( err ) {
         done( err );
       };
 
@@ -65,15 +65,15 @@ describe( 'nodification.tests.unit.libs.baseRestController', function() {
     // TODO: Test inserting another record
   } );
 
-  describe( '.get( req, res, done )', function() {
-    it( 'should get an existing testType', function( done ) {
+  describe( '.get( req, res, done )', function () {
+    it( 'should get an existing testType', function ( done ) {
       var mockReq = {
-        params : {
-          id : newId
+        params: {
+          id: newId
         }
       };
       var mockRes = {
-        send: function( body ) {
+        send: function ( body ) {
           body._id.should.be.a( 'object' );
           body.name.should.be.equal( "Test" );
           body.field2.should.be.equal( "url" );
@@ -81,7 +81,7 @@ describe( 'nodification.tests.unit.libs.baseRestController', function() {
         }
       };
 
-      var next = function( err ) {
+      var next = function ( err ) {
         done( err );
       };
 
@@ -90,17 +90,17 @@ describe( 'nodification.tests.unit.libs.baseRestController', function() {
     } );
   } );
 
-  describe( '.update( req, res, done )', function() {
-    it( 'should update an existing testType', function( done ) {
+  describe( '.update( req, res, done )', function () {
+    it( 'should update an existing testType', function ( done ) {
       var mockReq = {
-        params : {
-          id : newId
+        params: {
+          id: newId
         },
         body: updateJSON
       };
 
       var mockRes = {
-        send: function( body ) {
+        send: function ( body ) {
           newId = body._id.toString();
           body._id.should.be.a( 'object' );
           body.name.should.be.equal( "Test2" );
@@ -109,7 +109,7 @@ describe( 'nodification.tests.unit.libs.baseRestController', function() {
         }
       };
 
-      var next = function( err ) {
+      var next = function ( err ) {
         done( err );
       };
 
@@ -118,11 +118,11 @@ describe( 'nodification.tests.unit.libs.baseRestController', function() {
     } );
   } );
 
-  describe( '.list( req, res, done )', function() {
-    it( 'should get a list of all existing testTypes', function( done ) {
+  describe( '.list( req, res, done )', function () {
+    it( 'should get a list of all existing testTypes', function ( done ) {
       var mockReq = {};
       var mockRes = {
-        send: function( body ) {
+        send: function ( body ) {
           body[0]._id.should.be.a( 'object' );
           body[0].name.should.be.equal( "Test2" );
           body[0].field2.should.be.equal( "url2" );
@@ -132,7 +132,7 @@ describe( 'nodification.tests.unit.libs.baseRestController', function() {
         }
       };
 
-      var next = function( err ) {
+      var next = function ( err ) {
         done( err );
       };
 
@@ -140,20 +140,20 @@ describe( 'nodification.tests.unit.libs.baseRestController', function() {
     } );
   } );
 
-  describe( '.remove( req, res, done )', function() {
-    it( 'should remove an existing testType', function( done ) {
+  describe( '.remove( req, res, done )', function () {
+    it( 'should remove an existing testType', function ( done ) {
       var mockReq = {
-        params : {
-          id : newId
+        params: {
+          id: newId
         }
       };
       var mockRes = {
-        send: function() {
+        send: function () {
           done();
         }
       };
 
-      var next = function( err ) {
+      var next = function ( err ) {
         done( err );
       };
 

@@ -1,4 +1,4 @@
-describe( 'nodification.tests.integration.controllers.registration', function() {
+describe( 'nodification.tests.integration.controllers.registration', function () {
 
   var http = require( 'http' );
   var should = require( 'should' );
@@ -14,23 +14,23 @@ describe( 'nodification.tests.integration.controllers.registration', function() 
   var app;
 
   var localhost = http.createClient( 3000, 'localhost' );
-  var requestHandler = require('../../../libs/requestHandler');
+  var requestHandler = require( '../../../libs/requestHandler' );
 
-  before( function( done ) {
+  before( function ( done ) {
     app = require( '../../../app' );
     app.listen( 3000 );
 
     // Delay to make sure that node server has time to start up on slower computers before running the tests.
-    setTimeout( function() {
+    setTimeout( function () {
 
       // Hardcode a stub gateway to register voicemail with
       app.gateways.notificationRegistration.Voicemail = { register: stub.async( null, true ) };
-      
+
       // Just in case something bad happened, let's clear out the database
-      app.models.registration.getModel().remove( {}, function( err ) {
-        app.models.notificationType.getModel().remove( {}, function( err ) {
+      app.models.registration.getModel().remove( {}, function ( err ) {
+        app.models.notificationType.getModel().remove( {}, function ( err ) {
           // populate the database with a new notificationType
-          app.models.notificationType.getModel().create( voiceMailJSON, function( err, voiceMail ) {
+          app.models.notificationType.getModel().create( voiceMailJSON, function ( err, voiceMail ) {
             // setup our test records to use that notificationType
             voiceMailId = voiceMail._id.toString();
             createJSON.notificationType = voiceMailId;
@@ -42,21 +42,21 @@ describe( 'nodification.tests.integration.controllers.registration', function() 
     }, 250 );
   } );
 
-  after( function( done ) {
+  after( function ( done ) {
     // Clear out our database once we are done
-    app.models.registration.getModel().remove( {}, function( err ) {
-      app.models.notificationType.getModel().remove( {}, function( err ) {
+    app.models.registration.getModel().remove( {}, function ( err ) {
+      app.models.notificationType.getModel().remove( {}, function ( err ) {
         done( err )
       } );
     } );
   } );
 
-  describe( 'PUT to /registrations', function() {
-    it( 'should create a new Registration', function( done ) {
+  describe( 'PUT to /registrations', function () {
+    it( 'should create a new Registration', function ( done ) {
       var request = localhost.request( 'PUT', '/registrations', {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
       request.write( JSON.stringify( createJSON ) );
 
-      requestHandler.handle( request, function( err, response ) {
+      requestHandler.handle( request, function ( err, response ) {
         var actual = JSON.parse( response.body );
         var expected = createJSON;
 
@@ -74,11 +74,11 @@ describe( 'nodification.tests.integration.controllers.registration', function() 
     } );
   } );
 
-  describe( 'GET to /registrations/:id', function() {
-    it( 'should return a single Registration when given an existing Id', function( done ) {
+  describe( 'GET to /registrations/:id', function () {
+    it( 'should return a single Registration when given an existing Id', function ( done ) {
       var request = localhost.request( 'GET', '/registrations/' + newId, {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
 
-      requestHandler.handle( request, function( err, response ) {
+      requestHandler.handle( request, function ( err, response ) {
         var actual = JSON.parse( response.body );
         var expected = createJSON;
 
@@ -95,10 +95,10 @@ describe( 'nodification.tests.integration.controllers.registration', function() 
         done();
       } );
     } );
-    it( 'should return 404 NotFound when given a non-existing Id', function( done ) {
+    it( 'should return 404 NotFound when given a non-existing Id', function ( done ) {
       var request = localhost.request( 'GET', '/registrations/111111111111111111111111', {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
 
-      requestHandler.handle( request, function( err, response ) {
+      requestHandler.handle( request, function ( err, response ) {
         response.statusCode.should.equal( 404 );
 
         done();
@@ -106,12 +106,12 @@ describe( 'nodification.tests.integration.controllers.registration', function() 
     } );
   } );
 
-  describe( 'POST to /registrations/:id', function() {
-    it( 'should update an existing Registration', function( done ) {
+  describe( 'POST to /registrations/:id', function () {
+    it( 'should update an existing Registration', function ( done ) {
       var request = localhost.request( 'POST', '/registrations/' + newId, {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
       request.write( JSON.stringify( updateJSON ) );
 
-      requestHandler.handle( request, function( err, response ) {
+      requestHandler.handle( request, function ( err, response ) {
         var actual = JSON.parse( response.body );
         var expected = updateJSON;
 
@@ -130,12 +130,12 @@ describe( 'nodification.tests.integration.controllers.registration', function() 
     } );
   } );
 
-  describe( 'POST to /registrations/:id', function() {
-    it( 'should update the devices collection of an existing Registration', function( done ) {
+  describe( 'POST to /registrations/:id', function () {
+    it( 'should update the devices collection of an existing Registration', function ( done ) {
       var request = localhost.request( 'POST', '/registrations/' + newId, {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
       request.write( JSON.stringify( updateDevicesJSON ) );
 
-      requestHandler.handle( request, function( err, response ) {
+      requestHandler.handle( request, function ( err, response ) {
         var actual = JSON.parse( response.body );
         var expected = updateJSON;
         var expectedDevices = updateDevicesJSON;
@@ -158,11 +158,11 @@ describe( 'nodification.tests.integration.controllers.registration', function() 
     } );
   } );
 
-  describe( 'GET to /registrations', function() {
-    it( 'should return all registrations', function( done ) {
+  describe( 'GET to /registrations', function () {
+    it( 'should return all registrations', function ( done ) {
       var request = localhost.request( 'GET', '/registrations', {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
 
-      requestHandler.handle( request, function( err, response ) {
+      requestHandler.handle( request, function ( err, response ) {
         var actual = JSON.parse( response.body );
         var expected = updateJSON;
         var expectedDevices = updateDevicesJSON;
@@ -187,12 +187,12 @@ describe( 'nodification.tests.integration.controllers.registration', function() 
     } );
   } );
 
-  describe( 'DELETE to /registrations/:id', function() {
-    it( 'should delete registrations when called with an existing Id', function( done ) {
+  describe( 'DELETE to /registrations/:id', function () {
+    it( 'should delete registrations when called with an existing Id', function ( done ) {
       var request = localhost.request( 'DELETE', '/registrations/' + newId, {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
-      request.write('{}');
+      request.write( '{}' );
 
-      requestHandler.handle( request, function( err, response ) {
+      requestHandler.handle( request, function ( err, response ) {
         response.statusCode.should.equal( 200 );
 
         done();

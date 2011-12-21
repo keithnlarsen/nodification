@@ -1,4 +1,4 @@
-module.exports = ( function() {
+module.exports = ( function () {
   var vendor = require( './vendor' );
   var notificationType = require( './notificationType' );
   var device = require( './device' );
@@ -6,7 +6,7 @@ module.exports = ( function() {
   var event = require( './event' );
 
   function init ( nodificationApp ) {
-    vendor.init( nodificationApp);
+    vendor.init( nodificationApp );
     notificationType.init( nodificationApp );
     device.init( nodificationApp );
     registration.init( nodificationApp );

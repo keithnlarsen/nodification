@@ -1,4 +1,4 @@
-describe( 'nodification.tests.unit.middleware.registration', function() {
+describe( 'nodification.tests.unit.middleware.registration', function () {
 
   var should = require( 'should' );
   var stub = require( 'stub.js' );
@@ -8,7 +8,7 @@ describe( 'nodification.tests.unit.middleware.registration', function() {
   var mockNotificationType;
   var mockRegistrationGateway;
 
-  beforeEach( function( done ) {
+  beforeEach( function ( done ) {
     mockNotificationType = {
       _id: '987654321',
       name: 'testNotification',
@@ -27,12 +27,12 @@ describe( 'nodification.tests.unit.middleware.registration', function() {
     mockApp = {
       models: {
         notificationType: {
-          getModel: stub.sync( null, { findById: stub.async( null, mockNotificationType ) })
+          getModel: stub.sync( null, { findById: stub.async( null, mockNotificationType ) } )
         }
       },
       controllers: {
         registration: {
-          afterHook : stub.sync(),
+          afterHook: stub.sync(),
           model: {
             update: stub.async( null, 1 )
           }
@@ -48,24 +48,24 @@ describe( 'nodification.tests.unit.middleware.registration', function() {
     done();
   } );
 
-  afterEach( function( done ) {
+  afterEach( function ( done ) {
     done();
   } );
 
-  describe( '.init( controllers ) ', function() {
-    it( 'should bind the after create hook to the afterCreate function', function( done ) {
+  describe( '.init( controllers ) ', function () {
+    it( 'should bind the after create hook to the afterCreate function', function ( done ) {
       registrationMiddleware.init( mockApp );
 
-      mockApp.controllers.registration.afterHook.called.withArguments('insert', registrationMiddleware.afterInsert);
+      mockApp.controllers.registration.afterHook.called.withArguments( 'insert', registrationMiddleware.afterInsert );
 
       done();
     } );
   } );
 
-  describe( '.afterInsert( err, registration ) ', function() {
-    it( 'should do a bunch of stuff', function( done ) {
-      registrationMiddleware.init(mockApp);
-      registrationMiddleware.afterInsert( null, mockRegistration, function() {
+  describe( '.afterInsert( err, registration ) ', function () {
+    it( 'should do a bunch of stuff', function ( done ) {
+      registrationMiddleware.init( mockApp );
+      registrationMiddleware.afterInsert( null, mockRegistration, function () {
         mockApp.models.notificationType.getModel.called.withNoArguments();
         mockApp.models.notificationType.getModel().findById.called.withArguments( mockNotificationType._id );
         mockRegistrationGateway.register.called.withArguments( mockRegistration, mockNotificationType );

@@ -1,7 +1,7 @@
-module.exports = ( function() {
-  var baseController = require('../libs/baseEmbeddedCollectionController');
+module.exports = ( function () {
+  var baseController = require( '../libs/baseEmbeddedCollectionController' );
 
-  var registrationDeviceController = baseController.extend({
+  var registrationDeviceController = baseController.extend( {
 
     // Example of how to call the super class from the base class
 //  list: function(fn){
@@ -9,7 +9,7 @@ module.exports = ( function() {
 //      fn(err, list);
 //    }]);
 //  }
-  });
+  } );
 
   return registrationDeviceController;
 }());

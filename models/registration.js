@@ -1,4 +1,4 @@
-module.exports = ( function() {
+module.exports = ( function () {
   var app;
 
   var name = 'Registration';
@@ -19,9 +19,15 @@ module.exports = ( function() {
   }
 
   return {
-    getName: function() { return name; },
-    getModel: function () { return model; },
-    getSchema: function() { return schema; },
+    getName: function () {
+      return name;
+    },
+    getModel: function () {
+      return model;
+    },
+    getSchema: function () {
+      return schema;
+    },
     init: init
   }
 }());

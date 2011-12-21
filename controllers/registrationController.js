@@ -1,23 +1,23 @@
-module.exports = ( function() {
-  var baseController = require('../libs/baseRestController');
+module.exports = ( function () {
+  var baseController = require( '../libs/baseRestController' );
 
-  var registrationController = baseController.extend({
+  var registrationController = baseController.extend( {
 
-    getQuery: function(req) {
-      return this.model.findById(req.params.id).populate('notificationType', ['name']);
+    getQuery: function ( req ) {
+      return this.model.findById( req.params.id ).populate( 'notificationType', ['name'] );
     },
 
-    listQuery: function() {
-      return this.model.find({}).populate('notificationType', ['name']);
+    listQuery: function () {
+      return this.model.find( {} ).populate( 'notificationType', ['name'] );
     },
 
     index: function ( req, res, next ) {
-      this.listQuery( req ).exec( function( err, instance ) {
+      this.listQuery( req ).exec( function ( err, instance ) {
         if ( err ) {
           next( new Error( 'Internal Server Error: see logs for details: ' + err ), req, res );
         } else {
           var options = {};
-          options['registrations'] = instance.map( function( instance ) {
+          options['registrations'] = instance.map( function ( instance ) {
             return instance.toObject();
           } );
 
@@ -32,7 +32,7 @@ module.exports = ( function() {
 //      fn(err, list);
 //    }]);
 //  }
-  });
+  } );
 
   return registrationController;
 }());

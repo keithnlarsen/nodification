@@ -1,4 +1,4 @@
-module.exports = ( function() {
+module.exports = ( function () {
   var sys = require( 'sys' );
   var baseObject = require( './baseobject' );
 
@@ -8,13 +8,13 @@ module.exports = ( function() {
     description: '',
     message: '',
 
-    _construct: function( message ) {
+    _construct: function ( message ) {
       this.message = message;
       Error.call( this, message );
       Error.captureStackTrace( this, arguments.callee );
     },
 
-    toString: function() {
+    toString: function () {
       return this.title + ": " + this.message;
     }
   } );
@@ -49,14 +49,14 @@ module.exports = ( function() {
   };
 
   var errorMapper = {
-    'restError': function( error, request, response ) {
+    'restError': function ( error, request, response ) {
       response.render( 'restError/restError.jade', {
         title: error.title,
         status: error.httpStatus,
         error: error
       } );
     },
-    'default': function( error, request, response ) {
+    'default': function ( error, request, response ) {
       console.log( error );
 
       response.render( 'restError/500.jade', {

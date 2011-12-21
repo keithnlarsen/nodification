@@ -7,27 +7,27 @@ var baseController = baseObject.extend( {
   embeddedFieldName: null,
   restErrors: null,
 
-  _construct: function( model, embeddedFieldName, restErrors ) {
+  _construct: function ( model, embeddedFieldName, restErrors ) {
     this.model = model;
     this.embeddedFieldName = embeddedFieldName;
     this.restErrors = restErrors;
     this.name = model.modelName;
   },
 
-  getQuery: function( req ) {
+  getQuery: function ( req ) {
     return this.model.findById( req.params.id );
   },
 
-  list: function( req, res, next ) {
+  list: function ( req, res, next ) {
     var self = this;
-    this.getQuery( req ).exec( function( err, instance ) {
+    this.getQuery( req ).exec( function ( err, instance ) {
       if ( err ) {
         next( new Error( 'Internal Server Error: see logs for details: ' + err ), req, res );
       } else {
         if ( instance.length == 0 ) {
           res.send( instance, 204 );
         } else {
-          res.send( instance[self.embeddedFieldName].map( function( instance ) {
+          res.send( instance[self.embeddedFieldName].map( function ( instance ) {
             return instance.toObject();
           } ) );
         }
@@ -35,9 +35,9 @@ var baseController = baseObject.extend( {
     } );
   },
 
-  get: function( req, res, next ) {
+  get: function ( req, res, next ) {
     var self = this;
-    this.getQuery( req ).exec( function( err, instance ) {
+    this.getQuery( req ).exec( function ( err, instance ) {
       if ( err ) {
         next( new Error( 'Internal Server Error: see logs for details: ' + err ), req, res );
       } else if ( !instance ) {
@@ -53,9 +53,9 @@ var baseController = baseObject.extend( {
     } );
   },
 
-  update: function( req, res, next ) {
+  update: function ( req, res, next ) {
     var self = this;
-    this.getQuery( req ).exec( function( err, instance ) {
+    this.getQuery( req ).exec( function ( err, instance ) {
       if ( err ) {
         next( new Error( 'Internal Server Error: see logs for details: ' + err ), req, res );
       } else if ( !instance ) {
@@ -65,7 +65,7 @@ var baseController = baseObject.extend( {
         for ( var name in req.body ) {
           toUpdate[name] = req.body[name];
         }
-        instance.save( function( err, updated ) {
+        instance.save( function ( err, updated ) {
           if ( err ) {
             next( new Error( 'Internal Server Error: see logs for details: ' + err ), req, res );
           } else {
@@ -81,21 +81,21 @@ var baseController = baseObject.extend( {
     } );
   },
 
-  insert: function( req, res, next ) {
+  insert: function ( req, res, next ) {
     var self = this;
-    this.getQuery( req ).exec( function( err, instance ) {
+    this.getQuery( req ).exec( function ( err, instance ) {
       if ( err ) {
         next( new Error( 'Internal Server Error: see logs for details: ' + err ), req, res );
       } else if ( !instance ) {
         next( self.restErrors.notFound.create( self.name + ' Id: "' + req.params.id + '" was not found.' ), req, res );
       } else {
         instance[self.embeddedFieldName].push( req.body );
-        instance.save( function( err, instance ) {
+        instance.save( function ( err, instance ) {
           if ( err ) {
             next( new Error( 'Internal Server Error: see logs for details: ' + err ), req, res );
           } else {
             var embedded = instance[self.embeddedFieldName];
-            for ( var i = 0; i < embedded.length; i ++ ) {
+            for ( var i = 0; i < embedded.length; i++ ) {
               var doc = embedded[i];
               var found = true;
               for ( var name in req.body ) {
@@ -117,16 +117,16 @@ var baseController = baseObject.extend( {
     } );
   },
 
-  remove: function( req, res, next ) {
+  remove: function ( req, res, next ) {
     var self = this;
-    this.getQuery( req ).exec( function( err, instance ) {
+    this.getQuery( req ).exec( function ( err, instance ) {
       if ( err ) {
         next( new Error( 'Internal Server Error: see logs for details: ' + err ), req, res );
       } else if ( !instance ) {
         next( self.restErrors.notFound.create( self.name + ' Id: "' + req.params.id + '" was not found.' ), req, res );
       } else {
         instance[self.embeddedFieldName].id( req.params.eid ).remove();
-        instance.save( function( err ) {
+        instance.save( function ( err ) {
           if ( err ) {
             next( new Error( 'Internal Server Error: see logs for details: ' + err ), req, res );
           } else {

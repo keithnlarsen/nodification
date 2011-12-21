@@ -1,26 +1,27 @@
-module.exports = (function() {
+module.exports = (function () {
 
-  var apns = require( 'apn' );
+  var apns;
   var apnsConnection;
 
-  function init ( vendor ) {
+  function init ( vendor, apn ) {
+    apns = apn || require( 'apn' );
     var url = require( 'url' ).parse( vendor.pushGatewayUrl );
 
-    options = {
+    var options = {
       certData: vendor.certData,
-      keyData:  vendor.keyData,
+      keyData: vendor.keyData,
       gateway: url.hostname,
       port: url.port,
-      enhanced: true,
+      enhanced: false,
       errorCallback: undefined,
-      cacheLength: 5
+      cacheLength: vendor.cacheLength
     };
 
     apnsConnection = new apns.Connection( options );
   }
 
-  function createNotification (event, device) {
-    var myDevice = new apns.Device(device.token /*, ascii=true*/);
+  function createNotification ( event, device ) {
+    var myDevice = new apns.Device( device.token /*, ascii=true*/ );
     var notification = new apns.Notification();
 
     notification.badge = event.badge;
@@ -33,12 +34,14 @@ module.exports = (function() {
   }
 
   function sendNotification ( event, device ) {
-    var notification = createNotification(event, device);
-    apnsConnection.sendNotification( notification );
+    var notification = createNotification( event, device );
+    var response = apnsConnection.sendNotification( notification );
+    console.log(response);
+    return response;
   }
 
   return {
     init: init,
-    register: sendNotification
+    sendNotification: sendNotification
   };
 }());

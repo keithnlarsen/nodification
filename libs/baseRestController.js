@@ -108,7 +108,7 @@ module.exports = ( function () {
           self.getQuery( req ).exec( function ( err, instance ) {
             if ( err ) {
               if ( self.afterQueue.insert ) {
-                self.afterQueue.insert( new Error( 'Internal Server Error: see logs for details: ' + err ), instance, function (err, count) {
+                self.afterQueue.insert( new Error( 'Internal Server Error: see logs for details: ' + err ), instance, function ( err, count ) {
                   next( new Error( 'Internal Server Error: see logs for details: ' + err ), req, res );
                 } );
               } else {
@@ -116,7 +116,7 @@ module.exports = ( function () {
               }
             } else if ( !instance ) {
               if ( self.afterQueue.insert ) {
-                self.afterQueue.insert( self.restErrors.notFound.create( self.name + ' Id: "' + req.params.id + '" was not found.' ), instance, function(err, count){
+                self.afterQueue.insert( self.restErrors.notFound.create( self.name + ' Id: "' + req.params.id + '" was not found.' ), instance, function ( err, count ) {
                   next( self.restErrors.notFound.create( self.name + ' Id: "' + req.params.id + '" was not found.' ), req, res );
                 } );
               } else {
@@ -124,7 +124,7 @@ module.exports = ( function () {
               }
             } else {
               if ( self.afterQueue.insert ) {
-                self.afterQueue.insert( null, instance, function(err, count){
+                self.afterQueue.insert( null, instance, function ( err, count ) {
                   res.send( instance.toObject(), 201 );
                 } );
               } else {

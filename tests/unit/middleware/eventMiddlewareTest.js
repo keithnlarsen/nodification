@@ -1,4 +1,4 @@
-describe( 'nodification.tests.unit.middleware.event', function() {
+describe( 'nodification.tests.unit.middleware.event', function () {
 
   var should = require( 'should' );
   var stub = require( 'stub.js' );
@@ -8,7 +8,7 @@ describe( 'nodification.tests.unit.middleware.event', function() {
   var mockApp;
   var mockApnGateway;
 
-  beforeEach( function( done ) {
+  beforeEach( function ( done ) {
     mockEvent = {
       _id: '111111',
       notificationType: {
@@ -37,8 +37,8 @@ describe( 'nodification.tests.unit.middleware.event', function() {
         },
         {
           id: '56565656',
-          name:'test3',
-          type:'ios'
+          name: 'test3',
+          type: 'ios'
         }
       ]
     };
@@ -55,7 +55,7 @@ describe( 'nodification.tests.unit.middleware.event', function() {
           }
         },
         event: {
-          afterHook : stub.sync()
+          afterHook: stub.sync()
         },
         vendor: {
           model: {
@@ -71,12 +71,12 @@ describe( 'nodification.tests.unit.middleware.event', function() {
     done();
   } );
 
-  afterEach( function( done ) {
+  afterEach( function ( done ) {
     done();
   } );
 
-  describe( '.init( controllers ) ', function() {
-    it( 'should bind the after create hook to the afterCreate function', function( done ) {
+  describe( '.init( controllers ) ', function () {
+    it( 'should bind the after create hook to the afterCreate function', function ( done ) {
       eventMiddleware.init( mockApp );
 
       mockApp.controllers.event.afterHook.called.withArguments( 'insert', eventMiddleware.afterInsert );
@@ -85,10 +85,10 @@ describe( 'nodification.tests.unit.middleware.event', function() {
     } );
   } );
 
-  describe( '.afterInsert( err, event ) ', function() {
-    it( 'should send only apple devices to the apn gateway', function( done ) {
+  describe( '.afterInsert( err, event ) ', function () {
+    it( 'should send only apple devices to the apn gateway', function ( done ) {
       eventMiddleware.init( mockApp );
-      eventMiddleware.afterInsert( null, mockEvent, function (err, count){
+      eventMiddleware.afterInsert( null, mockEvent, function ( err, count ) {
         mockApnGateway.sendNotification.called.count( 2 );
         mockApnGateway.sendNotification.called.time( 1 ).withArguments( mockEvent, mockRegistration.devices[0] );
         mockApnGateway.sendNotification.called.time( 2 ).withArguments( mockEvent, mockRegistration.devices[2] );
