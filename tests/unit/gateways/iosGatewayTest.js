@@ -1,8 +1,8 @@
-describe( 'nodification.tests.unit.gateways.apnGateway', function () {
+describe( 'nodification.tests.unit.gateways.iosGateway', function () {
 
   var should = require( 'should' );
   var stub = require( 'stub.js' );
-  var apnGateway = require( '../../../gateways/apnGateway' );
+  var iosGateway = require( '../../../gateways/iosGateway' );
   var apns = require('apn');
   var mockEvent;
   var mockDevice;
@@ -45,8 +45,8 @@ describe( 'nodification.tests.unit.gateways.apnGateway', function () {
   describe( '.sendNotification( notification )', function () {
     it( 'should send a properly constructed notification to the apns servers', function ( done ) {
 
-      apnGateway.init( mockVendor, apns );
-      apnGateway.sendNotification( mockEvent, mockDevice );
+      iosGateway.init( mockVendor, apns );
+      iosGateway.sendNotification( mockEvent, mockDevice );
 
       apns.Connection().sendNotification.called.withAnyArguments( );
 

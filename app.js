@@ -49,7 +49,6 @@ module.exports = ( function () {
 
   app.gateways = {};
   app.gateways.notificationRegistration = {};
-  app.gateways.apn = {};
 
   app.configure( 'development', function () {
     console.log('Stub attached!');

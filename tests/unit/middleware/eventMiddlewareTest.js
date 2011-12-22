@@ -129,4 +129,16 @@ describe( 'nodification.tests.unit.middleware.event', function () {
     } );
   } );
 
+  describe( '.afterInsert( err, event ) ', function() {
+    it( 'should blow up if given a non-existent gateway', function( done ) {
+      eventMiddleware.init( mockApp );
+      eventMiddleware.afterInsert( null, mockEvent, function ( err, count ) {
+
+      });
+
+
+      done();
+    });
+  })
+
 } );

@@ -87,17 +87,25 @@ describe( 'nodification.tests.acceptance.application', function () {
     ]
   };
 
+//  {
+//        type: 'ios',
+//        name: 'Daniels iPhone',
+//        token: '8ce71cc1 58c12f7c af0e799a 7ef112f9 2cc43a32 74f44072 dc925c09 a225c4bf'
+//  },
+
   var createRegistration = {
     notificationType: '',
     key: '4035551212',
     registrationConfirmed: false,
-    devices: [
-      {
-        type: 'ios',
-        name: 'iPhone',
-        token: '8ce71cc1 58c12f7c af0e799a 7ef112f9 2cc43a32 74f44072 dc925c09 a225c4bf'
-      }
-    ]
+    devices: [  {
+      type: 'ios',
+      name: 'T3 iPhone',
+      token: '38626daf f457c387 4ffb7870 16d84ff6 96ed2476 caf8f3b2 aa04a3d9 97f90a0b'
+    }, {
+      type: 'ios',
+      name: 'iPod Touch',
+      token: '298aed9c 705d07e8 925979cf c24adb20 00152d62 203f6647 7c9ab92a 0640e505'
+    } ]
   };
 
   var createEvent = {
@@ -179,6 +187,8 @@ describe( 'nodification.tests.acceptance.application', function () {
         actual.registrationConfirmed.should.equal( expected.registrationConfirmed );
         actual.devices[0].type.should.equal( expected.devices[0].type );
         actual.devices[0].name.should.equal( expected.devices[0].name );
+        actual.devices[1].type.should.equal( expected.devices[1].type );
+        actual.devices[1].name.should.equal( expected.devices[1].name );
 //        app.gateways.notificationRegistration.Voicemail.register.called.withAnyArguments();
 
         response.statusCode.should.equal( 201 );

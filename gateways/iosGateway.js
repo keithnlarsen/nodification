@@ -35,6 +35,7 @@ module.exports = (function () {
 
   function sendNotification ( event, device ) {
     var notification = createNotification( event, device );
+    console.log('Message sent to: ' + device);
     return apnsConnection.sendNotification( notification );
   }
 
