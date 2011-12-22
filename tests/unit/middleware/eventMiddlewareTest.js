@@ -5,6 +5,7 @@ describe( 'nodification.tests.unit.middleware.event', function () {
   var eventMiddleware = require( '../../../middleware/eventMiddleware' );
   var mockEvent;
   var mockRegistration;
+  var mockNotificationType;
   var mockApp;
   var mockApnGateway;
 
@@ -43,6 +44,31 @@ describe( 'nodification.tests.unit.middleware.event', function () {
       ]
     };
 
+    mockNotificationType = {
+      _id: '987654321',
+      name: 'notificationTypeName',
+      vendors: [
+        {
+          type: 'ios',
+          name: 'Apple Voicemail',
+          keyData: 'pretend key',
+          certData: 'pretend cert',
+          pushGatewayUrl: 'https://gateway.sandbox.push.apple.com:2195',
+          feedbackGatewayUrl: 'https://feedback.sandbox.push.apple.com:2196',
+          cacheLength: 0
+        },
+        {
+          type: 'android',
+          name: 'Android Voicemail',
+          keyData: 'pretend key',
+          certData: 'pretend cert',
+          pushGatewayUrl: 'https://gateway.sandbox.push.android.com:2195',
+          feedbackGatewayUrl: 'https://feedback.sandbox.push.android.com:2196',
+          cacheLength: 0
+        }
+      ]
+    };
+
     mockApnGateway = {
       sendNotification: stub.sync( null, true )
     };
@@ -51,7 +77,12 @@ describe( 'nodification.tests.unit.middleware.event', function () {
       controllers: {
         registration: {
           model: {
-            find: stub.sync( null, { where: stub.sync( null, { where: stub.sync( null, { exec: stub.async( null, mockRegistration ) } ) } ) } )
+            find: stub.sync( null, { where: stub.sync( null, { where: stub.sync( null, { exec: stub.async( null, [mockRegistration] ) } ) } ) } )
+          }
+        },
+        notificationType: {
+          model: {
+            findById: stub.sync( null, { exec: stub.async( null, mockNotificationType ) } )
           }
         },
         event: {

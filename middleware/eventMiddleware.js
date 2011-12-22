@@ -11,7 +11,6 @@ module.exports = (function () {
       .where( 'key', event.registrationKey )
       .where( 'notificationType', event.notificationType._id )
       .exec( function ( err, instance ) {
-
         var devices = instance[0].devices;
         var i;
         for (i = 0 ; i < devices.length; i++ ) {

@@ -132,11 +132,12 @@ describe( 'nodification.tests.acceptance.application', function () {
   } );
 
   after( function ( done ) {
-    app.models.notificationType.getModel().remove( {}, function ( err ) {
-      app.models.registration.getModel().remove( {}, function ( err ) {
-        done( err );
-      } );
-    } );
+//    app.models.notificationType.getModel().remove( {}, function ( err ) {
+//      app.models.registration.getModel().remove( {}, function ( err ) {
+//        done( err );
+//      } );
+//    } );
+    done();
   } );
 
   describe( 'NotificationType', function () {
