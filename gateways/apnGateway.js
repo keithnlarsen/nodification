@@ -12,8 +12,8 @@ module.exports = (function () {
       keyData: vendor.keyData,
       gateway: url.hostname,
       port: url.port,
-      enhanced: false,
-      errorCallback: undefined,
+      enhanced: true,
+      errorCallback: errorCallback,
       cacheLength: vendor.cacheLength
     };
 
@@ -35,9 +35,11 @@ module.exports = (function () {
 
   function sendNotification ( event, device ) {
     var notification = createNotification( event, device );
-    var response = apnsConnection.sendNotification( notification );
-    console.log(response);
-    return response;
+    return apnsConnection.sendNotification( notification );
+  }
+
+  function errorCallback ( errorNumber, notification ) {
+    console.log( 'Error: ' + errorNumber + ' ' + notification);
   }
 
   return {

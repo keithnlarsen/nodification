@@ -1,18 +1,9 @@
-describe( 'nodification.tests.acceptance.application', function () {
+var apns = require('apn');
 
-  var http = require( 'http' );
-  var should = require( 'should' );
-  var stub = require( 'stub.js' );
-  var createNotificationType = {
-    name: 'Voicemail',
-    registrationUrl: 'url',
-    userName: 'username',
-    password: 'password',
-    vendors: [
-      {
-        type: 'ios',
-        name: 'Apple Voicemail',
-        keyData: 'Bag Attributes\n' +
+var options = {
+//    cert: 'apns-dev-cert.pem',                 /* Certificate file */
+    cert: 'cert.pem',
+    keyData: 'Bag Attributes\n' +
           '    friendlyName: Daniel Lemmon\n' +
           '    localKeyID: 13 3B D9 05 30 7A 0D 4C 38 21 A2 5F 72 CD 27 24 64 D2 11 6C\n' +
           'Key Attributes: <No Attributes>\n' +
@@ -80,136 +71,32 @@ describe( 'nodification.tests.acceptance.application', function () {
           'E36LT0oe5DUhJX082d60k9fnq+zRUgEXamfTPB3wzuVbY/3e5bnATQd8EOxJpAzw\n' +
           'xTTbOHmX5+XWXAg=\n' +
           '-----END CERTIFICATE-----',
-        pushGatewayUrl: 'https://gateway.sandbox.push.apple.com:2195',
-        feedbackGatewayUrl: 'https://feedback.sandbox.push.apple.com:2196',
-        cacheLength: 0
-      }
-    ]
-  };
+//    certData: null,                   /* Optional: if supplied uses this instead of Certificate File */
+    key:  'apns-dev-key-noenc.pem',                  /* Key file */
+//    key: 'key.pem',
+//    keyData: null,                    /* Optional: if supplied uses this instead of Key file */
+    gateway: 'gateway.sandbox.push.apple.com',/* gateway address */
+    port: 2195,                       /* gateway port */
+    enhanced: true,                   /* enable enhanced format */
+    errorCallback: errorCallback,         /* Callback when error occurs */
+    cacheLength: 0                    /* Number of notifications to cache for error purposes */
+};
 
-  var createRegistration = {
-    notificationType: '',
-    key: '4035551212',
-    registrationConfirmed: false,
-    devices: [
-      {
-        type: 'ios',
-        name: 'iPhone',
-        token: '8ce71cc1 58c12f7c af0e799a 7ef112f9 2cc43a32 74f44072 dc925c09 a225c4bf'
-      }
-    ]
-  };
+var apnsConnection = new apns.Connection(options);
 
-  var createEvent = {
-    notificationType: '',
-    registrationKey: '',
-    badge: 1,
-    alert: 'If you get this, please email us.',
-    payload: {'messageFrom': 'Pamela Anderson'}
-  };
-  var newId = '';
-  var newRegistrationKey = '';
-  var notificationType;
-  var app;
+var myDevice = new apns.Device('8ce71cc1 58c12f7c af0e799a 7ef112f9 2cc43a32 74f44072 dc925c09 a225c4bf' /*, ascii=true*/);
 
-  var localhost = http.createClient( 3000, 'localhost' );
-  var requestHandler = require( '../../libs/requestHandler' );
+var note = new apns.Notification();
 
-  before( function ( done ) {
-    app = require( '../../app' );
+note.badge = 3;
+note.sound = "ping.aiff";
+note.alert = "You have a new message";
+note.payload = {'messageFrom': 'Pamela Anderson'};
+note.device = myDevice;
 
-//    app.listen( 3000 );
-    console.log( 'Running testing server at http://127.0.0.1:3000/' + '\r\r' );
+var res = apnsConnection.sendNotification(note);
+console.log("Response: " + res);
 
-    // Delay to make sure that node server has time to start up on slower computers before running the tests.
-    setTimeout( function () {
-      app.models.notificationType.getModel().remove( {}, function ( err ) {
-        app.models.registration.getModel().remove( {}, function ( err ) {
-          done( err );
-        } );
-      } );
-    }, 500 );
-  } );
-
-  after( function ( done ) {
-    app.models.notificationType.getModel().remove( {}, function ( err ) {
-      app.models.registration.getModel().remove( {}, function ( err ) {
-        done( err );
-      } );
-    } );
-  } );
-
-  describe( 'NotificationType', function () {
-    it( 'should create a new NotificationType', function ( done ) {
-      var request = localhost.request( 'PUT', '/notificationTypes', {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
-      request.write( JSON.stringify( createNotificationType ) );
-
-      requestHandler.handle( request, function ( err, response ) {
-        var actual = JSON.parse( response.body );
-        var expected = createNotificationType;
-
-        newId = actual._id.toString();
-        actual.name.should.equal( expected.name );
-        actual.registrationUrl.should.equal( expected.registrationUrl );
-        actual.userName.should.equal( expected.userName );
-        actual.password.should.equal( expected.password );
-        actual.vendors[0].name.should.equal( expected.vendors[0].name );
-        actual.vendors[0].keyData.should.equal( expected.vendors[0].keyData );
-        response.statusCode.should.equal( 201 );
-
-        done();
-      } );
-    } );
-  } );
-
-  describe( 'Registration', function () {
-    it( 'should create a new Notification Registration', function ( done ) {
-      var request = localhost.request( 'PUT', '/registrations', {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
-      createRegistration.notificationType = newId;
-      request.write( JSON.stringify( createRegistration ) );
-
-      requestHandler.handle( request, function ( err, response ) {
-        var actual = JSON.parse( response.body );
-        var expected = createRegistration;
-
-        newRegistrationKey = actual.key;
-        actual.notificationType._id.should.equal( expected.notificationType );
-        actual.key.should.equal( expected.key );
-        actual.registrationConfirmed.should.equal( expected.registrationConfirmed );
-        actual.devices[0].type.should.equal( expected.devices[0].type );
-        actual.devices[0].name.should.equal( expected.devices[0].name );
-//        app.gateways.notificationRegistration.Voicemail.register.called.withAnyArguments();
-
-        response.statusCode.should.equal( 201 );
-
-        done();
-      } );
-    } );
-  } );
-
-  describe( 'Send Event', function () {
-    it( 'should create a new event and send it to registered devices at Apple!', function ( done ) {
-      var request = localhost.request( 'PUT', '/events', {'Host': 'localhost', 'Accept': 'application/json', 'Content-Type': 'application/json'} );
-
-      createEvent.notificationType = newId;
-      createEvent.registrationKey = newRegistrationKey;
-
-      request.write( JSON.stringify( createEvent ) );
-
-      requestHandler.handle( request, function ( err, response ) {
-        var actual = JSON.parse( response.body );
-        var expected = createEvent;
-
-        actual.notificationType._id.should.equal( expected.notificationType );
-        actual.registrationKey.should.equal( expected.registrationKey );
-        actual.badge.should.equal( expected.badge );
-        actual.alert.should.equal( expected.alert );
-//        actual.payload.should.equal( expected.payload );
-
-        response.statusCode.should.equal( 201 );
-
-        done();
-      } );
-    } );
-  } );
-} );
+function errorCallback ( number, notification ) {
+    console.log('Error: ' + number + ' ' + notification);
+}

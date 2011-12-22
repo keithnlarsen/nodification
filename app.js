@@ -51,6 +51,13 @@ module.exports = ( function () {
   app.gateways.notificationRegistration = {};
   app.gateways.apn = {};
 
+  app.configure( 'development', function () {
+    console.log('Stub attached!');
+    var stub = require('stub.js');
+    app.gateways.notificationRegistration.Voicemail = { register: stub.async( null, true ) };
+  } );
+
+
   // Load the routes
   var routes = require( './routes' );
   routes.init( app );
