@@ -8,7 +8,7 @@ Nodificaiton is a simple notification service.  It is intended to consolidate no
 
 (The MIT License)
 
-Copyright (c) 2011 Keith Larsen &lt;keithnlarsen@gmail.com&gt;
+Copyright (c) 2011 Shaw Communications Inc.
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the

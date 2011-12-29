@@ -14,7 +14,7 @@ describe( 'nodification.tests.unit.gateways.iosGateway', function () {
     mockEvent = {
       badge: 2,
       alert: 'testAlert',
-      payload: 'testPayload'
+      payload: {'messageFrom': 'ios gateway test'}
     };
     mockDevice = {
       token: 'deviceToken'
@@ -25,16 +25,17 @@ describe( 'nodification.tests.unit.gateways.iosGateway', function () {
       pushGatewayUrl: 'https://testurl.com:1234'
     };
 
-//    var myDevice = new apns.Device( mockDevice.token /*, ascii=true*/ );
-//    var notification = new apns.Notification();
-//
-//    notification.badge = mockEvent.badge;
-//    notification.sound = "ping.aiff";
-//    notification.alert = mockEvent.alert;
-//    notification.payload = mockEvent.payload;
-//    notification.device = myDevice;
-//
+    var myDevice = new apns.Device( mockDevice.token /*, ascii=true*/ );
+    var notification = new apns.Notification();
+
+    notification.badge = mockEvent.badge;
+    notification.sound = "ping.aiff";
+    notification.alert = mockEvent.alert;
+    notification.payload = mockEvent.payload;
+    notification.device = myDevice;
+
 //    expectedNotification = JSON.stringify(notification);
+    expectedNotification = notification;
     done();
   } );
 
@@ -48,7 +49,7 @@ describe( 'nodification.tests.unit.gateways.iosGateway', function () {
       iosGateway.init( mockVendor, apns );
       iosGateway.sendNotification( mockEvent, mockDevice );
 
-      apns.Connection().sendNotification.called.withAnyArguments( );
+      apns.Connection().sendNotification.called.withArguments(expectedNotification);
 
       done( );
     } );

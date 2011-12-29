@@ -29,17 +29,20 @@ describe( 'nodification.tests.unit.middleware.event', function () {
         {
           _id: '12121212',
           name: 'test1',
-          type: 'ios'
+          type: 'ios',
+          token: 'deviceToken 12121212'
         },
         {
           _id: '34343434',
           name: 'test2',
-          type: 'android'
+          type: 'android',
+          token: 'deviceToken 34343434'
         },
         {
           id: '56565656',
           name: 'test3',
-          type: 'ios'
+          type: 'ios',
+          token: 'deviceToken 56565656'
         }
       ]
     };
@@ -95,7 +98,7 @@ describe( 'nodification.tests.unit.middleware.event', function () {
         }
       },
       gateways: {
-        apn: { notificationTypeName: mockApnGateway }
+        ios: { notificationTypeName: mockApnGateway }
       }
     };
 
@@ -130,14 +133,13 @@ describe( 'nodification.tests.unit.middleware.event', function () {
   } );
 
   describe( '.afterInsert( err, event ) ', function() {
-    it( 'should blow up if given a non-existent gateway', function( done ) {
+    it( 'should return error if given a non-existent gateway', function( done ) {
       eventMiddleware.init( mockApp );
       eventMiddleware.afterInsert( null, mockEvent, function ( err, count ) {
-
+        err[0].message.should.equal('Invalid Gateway: androidGateway does not exist. test2 could not be notified.');
+        done();
       });
 
-
-      done();
     });
   })
 
