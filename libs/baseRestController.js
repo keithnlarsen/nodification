@@ -126,7 +126,10 @@ module.exports = ( function () {
               if ( self.afterQueue.insert ) {
                 self.afterQueue.insert( null, instance, function ( err, count ) {
                   if( err ) {
-                    //TODO: log errors
+                    // TODO: log errors
+                    for( var errName in err ) {
+                      self.app.logger.error( err[errName] );
+                    }
                   } else {
                     res.send( instance.toObject(), 201 );
                   }

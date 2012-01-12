@@ -1,6 +1,11 @@
 module.exports = ( function () {
   var sys = require( 'sys' );
   var baseObject = require( './baseobject' );
+  var log4js = require( 'log4js' );
+  log4js.addAppender(log4js.fileAppender('logs/nodification.log'), 'nodification');
+
+  var logger = log4js.getLogger( 'nodification' );
+  logger.setLevel('WARN');
 
   var baseRestError = baseObject.extend( {
     name: 'restError',
@@ -18,6 +23,13 @@ module.exports = ( function () {
       return this.title + ": " + this.message;
     }
   } );
+
+  var initLogger = function ( app ) {
+    app.configure( function () {
+      app.use( log4js.connectLogger( logger ) );
+    });
+    return logger;
+  };
 
   sys.inherits( baseRestError, Error );
 
@@ -37,13 +49,13 @@ module.exports = ( function () {
     conflict: baseRestError.extend( {
       name: 'conflict',
       title: 'Conflict',
-      description: 'The was a conflict that prevented the operation from continuing.',
+      description: 'There was a conflict that prevented the operation from continuing.',
       httpStatus: 409
     } ),
     unsupportedMediaType: baseRestError.extend( {
       name: 'unsupportedMediaType',
       title: 'Unsupported Media Type',
-      description: 'The server is refusing to service the request beacuse the entity of the request is in a format not supported by the requested resource.',
+      description: 'The server is refusing to service the request because the entity of the request is in a format not supported by the requested resource.',
       httpStatus: 415
     } )
   };
@@ -78,7 +90,8 @@ module.exports = ( function () {
     baseRestError: baseRestError,
     errors: restErrors,
     errorMapper: errorMapper,
-    errorHandler: errorHandler
+    errorHandler: errorHandler,
+    initLogger: initLogger
   };
 
 }());

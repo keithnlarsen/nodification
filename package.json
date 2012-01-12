@@ -12,13 +12,14 @@
     "jade": ">= 0.0.1",
     "ejs": "*",
     "mongoose": ">= 2.3.13",
-    "apn": "1.1.4"
+    "apn": "1.1.4",
+    "log4js": ">= 0.4"
   },
 
   "devDependencies": {
     "mocha": "*",
     "should": "0.3.2",
-    "stub.js": "1.0.0"
+    "stub.js": "1.0.1"
   },
 
   "scripts": {

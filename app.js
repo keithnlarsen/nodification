@@ -1,8 +1,15 @@
 module.exports = ( function () {
   var express = require( 'express' );
   var mongoose = require( 'mongoose' );
+//  var log4js = require( 'log4js' );
+
+//  log4js.addAppender(log4js.consoleAppender());
+//  log4js.addAppender(log4js.fileAppender('logs/nodification.log'), 'nodification');
 
   var app = express.createServer();
+
+//  app.logger = log4js.getLogger( 'nodification' );
+//  app.logger.setLevel('DEBUG');
   app.mongoose = mongoose;
 
   app.configure( 'development', function () {
@@ -34,6 +41,7 @@ module.exports = ( function () {
   var restErrors = require( './libs/resterrors' );
   app.error( restErrors.errorHandler );
   app.restErrors = restErrors.errors;
+  app.logger = restErrors.initLogger( app );
 
   // Register Models
   app.models = require( './models' );
@@ -51,7 +59,8 @@ module.exports = ( function () {
   app.gateways.notificationRegistration = {};
 
   app.configure( 'development', function () {
-    console.log('Stub attached!');
+//    console.log('Stub Attached!');
+    app.logger.warn('Stub Attached!');
     var stub = require('stub.js');
     app.gateways.notificationRegistration.Voicemail = { register: stub.async( null, true ) };
   } );
@@ -68,7 +77,8 @@ module.exports = ( function () {
 
   if ( !module.parent ) {
     app.listen( 3000 );
-    console.log( "Express server listening on port %d in %s mode", app.address().port, app.settings.env );
+//    console.log( "Express server listening on port %d in %s mode", app.address().port, app.settings.env );
+    app.logger.info( "Express server listening on port %d in %s mode", app.address().port, app.settings.env );
   }
 
   return app;
